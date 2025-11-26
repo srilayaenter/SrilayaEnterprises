@@ -1,26 +1,28 @@
 # Srilaya Enterprises Organic Store Requirements Document
 
 ## 1. Website Overview
-\n### 1.1 Website Name
+
+### 1.1 Website Name
 Srilaya Enterprises Organic Store
 
-### 1.2 Website Description\nAn e-commerce platform dedicated to selling organic products including millets, rice, flakes, flour, honey, and related items. The website targets health-conscious individuals and families seeking ready-to-cook organic items with convenient packaging options.\n
+### 1.2 Website Description
+An e-commerce platform dedicated to selling organic products including millets, rice, flakes, flour, honey, and related items. The website targets health-conscious individuals and families seeking ready-to-cook organic items with convenient packaging options.
+
 ### 1.3 Target Audience
-- Health-conscious individuals
-- Families looking for organic food options
+- Health-conscious individuals\n- Families looking for organic food options
 - Local organic food buyers
 - Customers seeking ready-to-cook essential items
 
 ## 2. Product Categories and Specifications
 
 ### 2.1 Product Categories
-- Rice
-- Flour
+- Rice\n- Flour
 - Flakes
 - Millets
 - Honey
 \n### 2.2 Product List with Pricing (All prices in Indian Rupees)
-\n#### Rice Category
+
+#### Rice Category
 - RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final: ₹94.5/kg
 - RICE002: Mapillai samba - Cost: ₹75/kg, Selling: ₹93.75/kg, GST: 4.69%, Final: ₹98.44/kg
 - RICE003: Poongar rice - Cost: ₹57/kg, Selling: ₹71.25/kg, GST: 3.56%, Final: ₹74.81/kg
@@ -76,49 +78,49 @@ Each category contains multiple product variants with different packaging option
 - Search functionality\n- Filter options by category, price, packaging size
 - Product detail pages with specifications and pricing information
 
-### 3.2 Shopping Experience
-- Shopping cart functionality
-- Checkout process with order summary
-- Multiple payment options integration
-\n### 3.3 User Management
-- User registration and login
-- User profile management
-- Order history viewing
-- Order tracking system
+### 3.2 Shopping Cart and Checkout Process
+- Add to cart functionality with quantity selection
+- Cart summary showing items, quantities, and total price
+- Ability to update or remove items from cart
+- Checkout process with order summary and final price calculation including GST
+- Delivery address input and validation
 
-### 3.4 Payment Integration
-- Secure payment gateway integration
-- Support for multiple payment methods
-\n### 3.5 Admin Dashboard
+### 3.3 User Registration, Login, and Profile Management
+- User registration with email and password
+- Secure login system\n- User profile management including personal information and delivery addresses
+- Password reset functionality\n\n### 3.4 Payment Gateway Integration
+- Secure payment gateway integration supporting multiple payment methods
+- Support for credit/debit cards, UPI, net banking, and digital wallets
+- Payment confirmation and receipt generation
+\n### 3.5 Order Tracking and History
+- Order confirmation with unique order ID
+- Real-time order status tracking (Order Placed, Processing, Shipped, Delivered)
+- Order history viewing with details of past purchases
+- Order invoice download option
+
+### 3.6 Admin Dashboard
 - Product management (add, edit, delete products)
-- Order management and processing
-- Customer management
-- Inventory tracking
+- Order management and processing with status updates
+- Customer management and user data viewing
+- Inventory tracking and stock management
+- Sales reports and analytics
 
-## 4. Business Goals
-
+## 4. Business Goals\n
 ### 4.1 Sales Objectives
-- Achieve defined sales targets
-- Customer acquisition and retention
+- Achieve defined sales targets\n- Customer acquisition and retention
 \n### 4.2 Marketing Strategies
-- Discount programs
-- Loyalty rewards system
+- Discount programs\n- Loyalty rewards system
 - Promotional campaigns
-
-## 5. Design Style
-
+\n## 5. Design Style\n
 ### 5.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
 - Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
-
-### 5.2 Layout
-- Card-based layout for product display with clear visual hierarchy
+\n### 5.2 Layout\n- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
-
-### 5.3 Visual Elements
-- Rounded corners (8px radius) for cards and buttons for a friendly, approachable feel\n- Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth
-- Nature-inspired icons with line-style design
+\n### 5.3 Visual Elements
+- Rounded corners (8px radius) for cards and buttons for a friendly, approachable feel
+- Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth\n- Nature-inspired icons with line-style design
 - Smooth hover transitions (0.3s ease) for interactive elements
 
 ### 5.4 Typography
