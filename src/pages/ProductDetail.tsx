@@ -128,7 +128,7 @@ export default function ProductDetail() {
                     >
                       <Package className="w-4 h-4 mb-1" />
                       <span className="font-semibold">{variant.packaging_size}</span>
-                      <span className="text-xs">${variant.price.toFixed(2)}</span>
+                      <span className="text-xs">₹{variant.price.toFixed(2)}</span>
                     </Button>
                   ))}
                 </div>
@@ -161,7 +161,7 @@ export default function ProductDetail() {
                     <div className="flex items-center justify-between mb-4">
                       <span className="text-lg font-medium">Total Price</span>
                       <span className="text-2xl font-bold text-primary">
-                        ${(selectedVariant.price * quantity).toFixed(2)}
+                        ₹{(selectedVariant.price * quantity).toFixed(2)}
                       </span>
                     </div>
                     <Button onClick={handleAddToCart} className="w-full" size="lg">

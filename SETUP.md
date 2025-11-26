@@ -57,16 +57,22 @@ A complete e-commerce platform for selling organic products including millets, r
 - **product_variants**: Different packaging sizes and prices
 - **orders**: Customer orders and payment status
 
-### Sample Data
-The database includes 17 sample products across all categories:
-- 3 Millets (Foxtail, Pearl, Finger)
-- 3 Rice varieties (Basmati, Brown, Red)
-- 3 Flakes (Oat, Corn, Rice)
-- 2 Sugar alternatives (Jaggery, Coconut)
-- 3 Honey types (Raw, Forest, Manuka)
-- 3 Laddus (Ragi, Sesame, Dry Fruit)
+### Product Data
+The database includes 40 real products from your inventory:
+- **6 Rice varieties**: Parboiled, Mapillai Samba, Poongar, Tooyamalli, Karupukavuni, White Ponni
+- **10 Flour products**: Foxtail, Little, Browntop, Barnyard, Ragi, Natty Pearl, Pearl, Sorghum, Proso, Millet
+- **7 Flakes**: Foxtail, Little, Kodo, Barnyard, Ragi, Pearl, Sorghum
+- **11 Millets**: Foxtail Rice, Little Rice, Kodo Rice, Barnyard Rice, Browntop Rice, Proso Rice, Ragi, Native Pearl, Pearl, Sorghum (White & Red)
+- **6 Honey varieties**: Cave Black, Siru, Kombu, Honey & Fig, Honey & Amla, Rose Petals
 
-Each product has multiple packaging variants with appropriate pricing.
+### Packaging Options
+- **Rice, Flour, Flakes, Millets**: 1kg, 2kg, 5kg, 10kg
+- **Honey**: 250g, 500g, 1kg
+
+### Pricing
+- All prices in **Indian Rupees (₹)**
+- Prices based on your provided spreadsheet
+- Proportional pricing for different package sizes
 
 ## User Roles
 

@@ -37,36 +37,37 @@ Access at `/admin` to manage:
 - **Customers**: View registered customer accounts
 
 ### Managing Products
-Current products in your store:
+Current products in your store (40 products total):
 
-**Millets:**
-- Foxtail Millet (1kg, 2kg, 5kg, 10kg)
-- Pearl Millet (Bajra) (1kg, 2kg, 5kg, 10kg)
-- Finger Millet (Ragi) (1kg, 2kg, 5kg, 10kg)
+**Rice (6 products):**
+- Parboiled Rice, Mapillai Samba, Poongar Rice
+- Tooyamalli Rice, Karupukavuni, White Ponni
+- Packaging: 1kg, 2kg, 5kg, 10kg
 
-**Rice:**
-- Basmati Rice (1kg, 2kg, 5kg, 10kg)
-- Brown Rice (1kg, 2kg, 5kg, 10kg)
-- Red Rice (1kg, 2kg, 5kg, 10kg)
+**Flour (10 products):**
+- Foxtail, Little, Browntop, Barnyard Flour
+- Ragi, Natty Pearl, Pearl, Sorghum Flour
+- Proso, Millet Flour
+- Packaging: 1kg, 2kg, 5kg, 10kg
 
-**Flakes:**
-- Oat Flakes (1kg, 2kg, 5kg, 10kg)
-- Corn Flakes (1kg, 2kg, 5kg, 10kg)
-- Rice Flakes (Poha) (1kg, 2kg, 5kg, 10kg)
+**Flakes (7 products):**
+- Foxtail, Little, Kodo, Barnyard Flakes
+- Ragi, Pearl, Sorghum Flakes
+- Packaging: 1kg, 2kg, 5kg, 10kg
 
-**Sugar Alternatives:**
-- Jaggery Powder (1kg, 2kg, 5kg, 10kg)
-- Coconut Sugar (1kg, 2kg, 5kg, 10kg)
+**Millets (11 products):**
+- Foxtail Rice, Little Rice, Kodo Rice
+- Barnyard Rice, Browntop Rice, Proso Rice
+- Ragi, Native Pearl, Pearl
+- Sorghum (White), Sorghum (Red)
+- Packaging: 1kg, 2kg, 5kg, 10kg
 
-**Honey:**
-- Raw Honey (200g, 500g, 1kg)
-- Forest Honey (200g, 500g, 1kg)
-- Manuka Honey (200g, 500g, 1kg)
+**Honey (6 products):**
+- Cave Black Honey, Siru Honey, Kombu Honey
+- Honey & Fig, Honey & Amla, Rose Petals Honey
+- Packaging: 250g, 500g, 1kg
 
-**Laddus:**
-- Ragi Laddu (1kg, 2kg, 5kg, 10kg)
-- Sesame Laddu (1kg, 2kg, 5kg, 10kg)
-- Dry Fruit Laddu (1kg, 2kg, 5kg, 10kg)
+**All prices are in Indian Rupees (₹)**
 
 ### Processing Orders
 1. View all orders in the admin dashboard

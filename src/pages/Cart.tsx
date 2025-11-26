@@ -28,7 +28,7 @@ export default function Cart() {
             product_id: item.product_id,
             variant_id: item.variant_id,
           })),
-          currency: 'usd',
+          currency: 'inr',
           payment_method_types: ['card'],
         }),
       });
@@ -79,7 +79,7 @@ export default function Cart() {
                   <div className="flex-1">
                     <h3 className="font-semibold text-lg">{item.name}</h3>
                     <p className="text-sm text-muted-foreground">{item.packaging_size}</p>
-                    <p className="text-primary font-bold mt-2">${item.price.toFixed(2)}</p>
+                    <p className="text-primary font-bold mt-2">₹{item.price.toFixed(2)}</p>
                   </div>
                   <div className="flex flex-col items-end gap-2">
                     <Button
@@ -121,7 +121,7 @@ export default function Cart() {
             <CardContent className="space-y-4">
               <div className="flex justify-between">
                 <span>Subtotal</span>
-                <span className="font-semibold">${totalPrice.toFixed(2)}</span>
+                <span className="font-semibold">₹{totalPrice.toFixed(2)}</span>
               </div>
               <div className="flex justify-between">
                 <span>Shipping</span>
@@ -130,7 +130,7 @@ export default function Cart() {
               <div className="border-t pt-4">
                 <div className="flex justify-between text-lg font-bold">
                   <span>Total</span>
-                  <span className="text-primary">${totalPrice.toFixed(2)}</span>
+                  <span className="text-primary">₹{totalPrice.toFixed(2)}</span>
                 </div>
               </div>
             </CardContent>

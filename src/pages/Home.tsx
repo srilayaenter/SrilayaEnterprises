@@ -137,7 +137,7 @@ export default function Home() {
                       {product.description}
                     </p>
                     <p className="text-xl font-bold text-primary">
-                      ${product.base_price.toFixed(2)}
+                      ₹{product.base_price.toFixed(2)}
                     </p>
                   </CardContent>
                   <CardFooter className="p-4 pt-0">
