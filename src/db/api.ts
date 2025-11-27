@@ -231,6 +231,49 @@ export const profilesApi = {
     if (error) throw error;
     if (!data) throw new Error('Failed to promote user');
     return data;
+  },
+
+  async createCustomer(customerData: {
+    email: string;
+    password: string;
+    nickname: string;
+    phone: string;
+    address: string;
+    role: 'user' | 'admin';
+  }): Promise<Profile> {
+    // Create auth user
+    const { data: authData, error: authError } = await supabase.auth.signUp({
+      email: customerData.email,
+      password: customerData.password,
+      options: {
+        data: {
+          nickname: customerData.nickname,
+          phone: customerData.phone,
+          address: customerData.address
+        }
+      }
+    });
+
+    if (authError) throw authError;
+    if (!authData.user) throw new Error('Failed to create user');
+
+    // Update profile with additional details
+    const { data: profileData, error: profileError } = await supabase
+      .from('profiles')
+      .update({
+        nickname: customerData.nickname,
+        phone: customerData.phone,
+        address: customerData.address,
+        role: customerData.role
+      })
+      .eq('id', authData.user.id)
+      .select()
+      .maybeSingle();
+
+    if (profileError) throw profileError;
+    if (!profileData) throw new Error('Failed to update profile');
+    
+    return profileData;
   }
 };
 

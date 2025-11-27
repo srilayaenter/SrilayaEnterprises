@@ -1,7 +1,7 @@
 # Admin Dashboard Updates - Change Log
 
 ## Overview
-Three major improvements have been implemented to enhance the admin dashboard functionality based on user feedback.
+Four major improvements have been implemented to enhance the admin dashboard functionality based on user feedback.
 
 ---
 

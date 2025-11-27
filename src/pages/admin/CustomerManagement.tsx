@@ -6,16 +6,26 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { UserCog, ShoppingBag, Edit } from 'lucide-react';
+import { UserCog, ShoppingBag, Edit, UserPlus } from 'lucide-react';
 
 interface CustomerFormData {
   nickname: string;
   phone: string;
   address: string;
+}
+
+interface NewCustomerFormData {
+  email: string;
+  password: string;
+  nickname: string;
+  phone: string;
+  address: string;
+  role: 'user' | 'admin';
 }
 
 export default function CustomerManagement() {
@@ -25,6 +35,7 @@ export default function CustomerManagement() {
   const [loading, setLoading] = useState(true);
   const [ordersDialogOpen, setOrdersDialogOpen] = useState(false);
   const [editDialogOpen, setEditDialogOpen] = useState(false);
+  const [addDialogOpen, setAddDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const customerForm = useForm<CustomerFormData>({
@@ -32,6 +43,17 @@ export default function CustomerManagement() {
       nickname: '',
       phone: '',
       address: ''
+    }
+  });
+
+  const newCustomerForm = useForm<NewCustomerFormData>({
+    defaultValues: {
+      email: '',
+      password: '',
+      nickname: '',
+      phone: '',
+      address: '',
+      role: 'user'
     }
   });
 
@@ -128,6 +150,25 @@ export default function CustomerManagement() {
     }
   };
 
+  const onSubmitNewCustomer = async (data: NewCustomerFormData) => {
+    try {
+      await profilesApi.createCustomer(data);
+      toast({
+        title: 'Customer created',
+        description: 'New customer has been created successfully'
+      });
+      setAddDialogOpen(false);
+      newCustomerForm.reset();
+      loadCustomers();
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message || 'Failed to create customer',
+        variant: 'destructive'
+      });
+    }
+  };
+
   const calculateTotalSpent = (orders: Order[]) => {
     return orders
       .filter(order => order.status === 'completed')
@@ -138,6 +179,10 @@ export default function CustomerManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Customer Management</h2>
+        <Button onClick={() => setAddDialogOpen(true)}>
+          <UserPlus className="h-4 w-4 mr-2" />
+          Add Customer
+        </Button>
       </div>
 
       {loading ? (
@@ -360,6 +405,135 @@ export default function CustomerManagement() {
                   Cancel
                 </Button>
                 <Button type="submit">Update Customer</Button>
+              </div>
+            </form>
+          </Form>
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={addDialogOpen} onOpenChange={(open) => {
+        setAddDialogOpen(open);
+        if (!open) {
+          newCustomerForm.reset();
+        }
+      }}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Add New Customer</DialogTitle>
+          </DialogHeader>
+          <Form {...newCustomerForm}>
+            <form onSubmit={newCustomerForm.handleSubmit(onSubmitNewCustomer)} className="space-y-4">
+              <FormField
+                control={newCustomerForm.control}
+                name="email"
+                rules={{ 
+                  required: 'Email is required',
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: 'Invalid email address'
+                  }
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Email *</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="email" placeholder="customer@example.com" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={newCustomerForm.control}
+                name="password"
+                rules={{ 
+                  required: 'Password is required',
+                  minLength: {
+                    value: 6,
+                    message: 'Password must be at least 6 characters'
+                  }
+                }}
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Password *</FormLabel>
+                    <FormControl>
+                      <Input {...field} type="password" placeholder="Enter password" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={newCustomerForm.control}
+                name="nickname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nickname</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter nickname" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={newCustomerForm.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter phone number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={newCustomerForm.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter address" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={newCustomerForm.control}
+                name="role"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <Select onValueChange={field.onChange} defaultValue={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select role" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        <SelectItem value="user">User</SelectItem>
+                        <SelectItem value="admin">Admin</SelectItem>
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setAddDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Create Customer</Button>
               </div>
             </form>
           </Form>
