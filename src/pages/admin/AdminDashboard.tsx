@@ -19,44 +19,46 @@ export default function AdminDashboard() {
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-3 xl:grid-cols-9">
-          <TabsTrigger value="products" className="flex items-center gap-2">
-            <Package className="h-4 w-4" />
-            Products
-          </TabsTrigger>
-          <TabsTrigger value="inventory" className="flex items-center gap-2">
-            <Warehouse className="h-4 w-4" />
-            Inventory
-          </TabsTrigger>
-          <TabsTrigger value="orders" className="flex items-center gap-2">
-            <ShoppingBag className="h-4 w-4" />
-            Orders
-          </TabsTrigger>
-          <TabsTrigger value="customers" className="flex items-center gap-2">
-            <Users className="h-4 w-4" />
-            Customers
-          </TabsTrigger>
-          <TabsTrigger value="shipping" className="flex items-center gap-2">
-            <Truck className="h-4 w-4" />
-            Shipping
-          </TabsTrigger>
-          <TabsTrigger value="vendors" className="flex items-center gap-2">
-            <UserCog className="h-4 w-4" />
-            Vendors
-          </TabsTrigger>
-          <TabsTrigger value="supplies" className="flex items-center gap-2">
-            <ClipboardList className="h-4 w-4" />
-            Supplies
-          </TabsTrigger>
-          <TabsTrigger value="handlers" className="flex items-center gap-2">
-            <Truck className="h-4 w-4" />
-            Handlers
-          </TabsTrigger>
-          <TabsTrigger value="shipments" className="flex items-center gap-2">
-            <PackageCheck className="h-4 w-4" />
-            Shipments
-          </TabsTrigger>
-        </TabsList>
+        <div className="w-full overflow-x-auto">
+          <TabsList className="inline-flex w-auto min-w-full">
+            <TabsTrigger value="products" className="flex items-center gap-2 whitespace-nowrap">
+              <Package className="h-4 w-4" />
+              Products
+            </TabsTrigger>
+            <TabsTrigger value="inventory" className="flex items-center gap-2 whitespace-nowrap">
+              <Warehouse className="h-4 w-4" />
+              Inventory
+            </TabsTrigger>
+            <TabsTrigger value="orders" className="flex items-center gap-2 whitespace-nowrap">
+              <ShoppingBag className="h-4 w-4" />
+              Orders
+            </TabsTrigger>
+            <TabsTrigger value="customers" className="flex items-center gap-2 whitespace-nowrap">
+              <Users className="h-4 w-4" />
+              Customers
+            </TabsTrigger>
+            <TabsTrigger value="shipping" className="flex items-center gap-2 whitespace-nowrap">
+              <Truck className="h-4 w-4" />
+              Shipping
+            </TabsTrigger>
+            <TabsTrigger value="vendors" className="flex items-center gap-2 whitespace-nowrap">
+              <UserCog className="h-4 w-4" />
+              Vendors
+            </TabsTrigger>
+            <TabsTrigger value="supplies" className="flex items-center gap-2 whitespace-nowrap">
+              <ClipboardList className="h-4 w-4" />
+              Supplies
+            </TabsTrigger>
+            <TabsTrigger value="handlers" className="flex items-center gap-2 whitespace-nowrap">
+              <Truck className="h-4 w-4" />
+              Handlers
+            </TabsTrigger>
+            <TabsTrigger value="shipments" className="flex items-center gap-2 whitespace-nowrap">
+              <PackageCheck className="h-4 w-4" />
+              Shipments
+            </TabsTrigger>
+          </TabsList>
+        </div>
 
         <TabsContent value="products">
           <ProductManagement />
