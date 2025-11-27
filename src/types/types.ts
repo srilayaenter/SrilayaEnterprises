@@ -1,5 +1,5 @@
 export type UserRole = 'user' | 'admin';
-export type ProductCategory = 'millets' | 'rice' | 'flakes' | 'sugar' | 'honey' | 'laddus';
+export type ProductCategory = 'millets' | 'rice' | 'flour' | 'flakes' | 'sugar' | 'honey' | 'laddus';
 export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
 
 export interface Profile {

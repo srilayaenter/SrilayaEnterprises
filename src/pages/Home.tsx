@@ -14,6 +14,7 @@ const categories: { value: ProductCategory | 'all'; label: string }[] = [
   { value: 'all', label: 'All Products' },
   { value: 'millets', label: 'Millets' },
   { value: 'rice', label: 'Rice' },
+  { value: 'flour', label: 'Flour' },
   { value: 'flakes', label: 'Flakes' },
   { value: 'sugar', label: 'Sugar' },
   { value: 'honey', label: 'Honey' },
