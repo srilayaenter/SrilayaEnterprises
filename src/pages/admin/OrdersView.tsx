@@ -345,6 +345,7 @@ export default function OrdersView() {
                       <TableHead>Product</TableHead>
                       <TableHead>Size</TableHead>
                       <TableHead>Price</TableHead>
+                      <TableHead>Discount</TableHead>
                       <TableHead>Quantity</TableHead>
                       <TableHead className="text-right">Subtotal</TableHead>
                     </TableRow>
@@ -354,7 +355,23 @@ export default function OrdersView() {
                       <TableRow key={index}>
                         <TableCell>{item.name}</TableCell>
                         <TableCell>{item.packaging_size || '-'}</TableCell>
-                        <TableCell>₹{item.price.toFixed(2)}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col">
+                            <span>₹{item.price.toFixed(2)}</span>
+                            {item.discount_percentage && item.discount_percentage > 0 && item.original_price && (
+                              <span className="text-xs text-muted-foreground line-through">
+                                ₹{item.original_price.toFixed(2)}
+                              </span>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          {item.discount_percentage && item.discount_percentage > 0 ? (
+                            <Badge variant="secondary">{item.discount_percentage}%</Badge>
+                          ) : (
+                            '-'
+                          )}
+                        </TableCell>
                         <TableCell>{item.quantity}</TableCell>
                         <TableCell className="text-right">
                           ₹{(item.price * item.quantity).toFixed(2)}

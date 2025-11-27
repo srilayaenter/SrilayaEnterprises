@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -95,6 +96,16 @@ export default function Checkout() {
       }
       
       return total + (weightPerUnit * item.quantity);
+    }, 0);
+  };
+
+  const calculateTotalDiscount = () => {
+    return items.reduce((total, item) => {
+      if (item.discount_percentage && item.discount_percentage > 0 && item.original_price) {
+        const discountAmount = (item.original_price - item.price) * item.quantity;
+        return total + discountAmount;
+      }
+      return total;
     }, 0);
   };
 
@@ -313,16 +324,35 @@ export default function Checkout() {
             <CardContent className="space-y-4">
               <div className="space-y-2">
                 {items.map((item) => (
-                  <div key={item.variant_id} className="flex justify-between text-sm">
-                    <span className="text-muted-foreground">
-                      {item.name} ({item.packaging_size}) × {item.quantity}
-                    </span>
-                    <span className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</span>
+                  <div key={item.variant_id} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">
+                        {item.name} ({item.packaging_size}) × {item.quantity}
+                        {item.discount_percentage && item.discount_percentage > 0 && (
+                          <Badge variant="secondary" className="ml-2 text-xs">
+                            {item.discount_percentage}% OFF
+                          </Badge>
+                        )}
+                      </span>
+                      <span className="font-medium">₹{(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                    {item.discount_percentage && item.discount_percentage > 0 && item.original_price && (
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Original Price</span>
+                        <span className="line-through">₹{(item.original_price * item.quantity).toFixed(2)}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
               </div>
 
               <div className="border-t pt-4 space-y-2">
+                {calculateTotalDiscount() > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>Total Discount Savings</span>
+                    <span className="font-medium">-₹{calculateTotalDiscount().toFixed(2)}</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Subtotal</span>
                   <span className="font-medium">₹{totalPrice.toFixed(2)}</span>

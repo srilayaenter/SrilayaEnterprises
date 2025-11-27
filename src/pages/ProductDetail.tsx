@@ -48,6 +48,11 @@ export default function ProductDetail() {
   const handleAddToCart = () => {
     if (!product || !selectedVariant) return;
 
+    // Calculate original price before discount
+    const originalPrice = selectedVariant.discount_percentage > 0 
+      ? selectedVariant.price / (1 - selectedVariant.discount_percentage / 100)
+      : selectedVariant.price;
+
     addItem({
       product_id: product.id,
       variant_id: selectedVariant.id,
@@ -56,6 +61,8 @@ export default function ProductDetail() {
       quantity,
       image_url: product.image_url || undefined,
       packaging_size: selectedVariant.packaging_size,
+      discount_percentage: selectedVariant.discount_percentage,
+      original_price: originalPrice,
     });
 
     toast({
@@ -124,11 +131,24 @@ export default function ProductDetail() {
                       key={variant.id}
                       variant={selectedVariant?.id === variant.id ? 'default' : 'outline'}
                       onClick={() => setSelectedVariant(variant)}
-                      className="flex flex-col h-auto py-3"
+                      className="flex flex-col h-auto py-3 relative"
                     >
+                      {variant.discount_percentage > 0 && (
+                        <Badge 
+                          variant="destructive" 
+                          className="absolute -top-2 -right-2 text-xs px-1.5 py-0.5"
+                        >
+                          {variant.discount_percentage}% OFF
+                        </Badge>
+                      )}
                       <Package className="w-4 h-4 mb-1" />
                       <span className="font-semibold">{variant.packaging_size}</span>
                       <span className="text-xs">₹{variant.price.toFixed(2)}</span>
+                      {variant.discount_percentage > 0 && (
+                        <span className="text-xs line-through opacity-60">
+                          ₹{(variant.price / (1 - variant.discount_percentage / 100)).toFixed(2)}
+                        </span>
+                      )}
                     </Button>
                   ))}
                 </div>

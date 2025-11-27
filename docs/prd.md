@@ -20,54 +20,70 @@ An e-commerce platform dedicated to selling organic products including millets, 
 - Flakes
 - Millets
 - Honey
-\n### 2.2 Product List with Pricing (All prices in Indian Rupees)
+\n### 2.2 Pricing Structure
+\n**Selling Price Calculation:**
+Selling Price = Cost Price + 25%
 
-#### Rice Category\n- RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final: ₹94.5/kg
-- RICE002: Mapillai samba - Cost: ₹75/kg, Selling: ₹93.75/kg, GST: 4.69%, Final: ₹98.44/kg
-- RICE003: Poongar rice - Cost: ₹57/kg, Selling: ₹71.25/kg, GST: 3.56%, Final: ₹74.81/kg
-- RICE004: Tooyamalli rice - Cost: ₹64/kg, Selling: ₹80/kg, GST: 4%, Final: ₹84/kg
-- RICE005: Karupukavuni - Cost: ₹145/kg, Selling: ₹181.25/kg, GST: 9.06%, Final: ₹190.31/kg
-- RICE006: White Ponni - Cost: ₹71/kg, Selling: ₹88.75/kg, GST: 4.44%, Final: ₹93.19/kg
+**Package-Based Discount Policy:**
+- **Standard Products (Rice, Flour, Flakes, Millets):**
+  + 1kg package: No discount
+  + 2kg package: No discount
+  + 5kg package: 2% discount
+  + 10kg package: 3% discount
+\n- **Honey Products:**
+  + 200g package: No discount
+  + 500g package: 2% discount
+  + 1kg package: 3% discount
+\n### 2.3 Product List with Updated Pricing (All prices in Indian Rupees)
+
+#### Rice Category
+- RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final (1kg): ₹94.5/kg
+- RICE002: Mapillai samba - Cost: ₹75/kg, Selling: ₹93.75/kg, GST: 4.69%, Final (1kg): ₹98.44/kg
+- RICE003: Poongar rice - Cost: ₹57/kg, Selling: ₹71.25/kg, GST: 3.56%, Final (1kg): ₹74.81/kg
+- RICE004: Tooyamalli rice - Cost: ₹64/kg, Selling: ₹80/kg, GST: 4%, Final (1kg): ₹84/kg
+- RICE005: Karupukavuni - Cost: ₹145/kg, Selling: ₹181.25/kg, GST: 9.06%, Final (1kg): ₹190.31/kg
+- RICE006: White Ponni - Cost: ₹71/kg, Selling: ₹88.75/kg, GST: 4.44%, Final (1kg): ₹93.19/kg
 \n#### Flour Category
-- FLOUR001: Foxtail flour - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final: ₹87.94/kg
-- FLOUR002: Little flour - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final: ₹87.94/kg
-- FLOUR003: Browntop flour - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final: ₹87.94/kg
-- FLOUR004: Barnyard flour - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final: ₹87.94/kg
-- FLOUR005: Ragi flour - Cost: ₹43/kg, Selling: ₹53.75/kg, GST: 2.69%, Final: ₹56.44/kg
-- FLOUR006: Natty Pearl flour - Cost: ₹57/kg, Selling: ₹71.25/kg, GST: 3.56%, Final: ₹74.81/kg
-- FLOUR007: I Pearl flour - Cost: ₹45/kg, Selling: ₹56.25/kg, GST: 2.81%, Final: ₹59.06/kg
-- FLOUR008: Sorghum flour - Cost: ₹47/kg, Selling: ₹58.75/kg, GST: 2.94%, Final: ₹61.69/kg
-- FLOUR009: Proso flour - Cost: ₹55/kg, Selling: ₹68.75/kg, GST: 3.44%, Final: ₹72.19/kg
-- FLOUR010: Millet flour (From broken millet rice) - Cost: ₹45/kg, Selling: ₹56.25/kg, GST: 2.81%, Final: ₹59.06/kg
+- FLOUR001: Foxtail flour - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final (1kg): ₹87.94/kg
+- FLOUR002: Little flour - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final (1kg): ₹87.94/kg
+- FLOUR003: Browntop flour - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final (1kg): ₹87.94/kg
+- FLOUR004: Barnyard flour - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final (1kg): ₹87.94/kg
+- FLOUR005: Ragi flour - Cost: ₹43/kg, Selling: ₹53.75/kg, GST: 2.69%, Final (1kg): ₹56.44/kg
+- FLOUR006: Natty Pearl flour - Cost: ₹57/kg, Selling: ₹71.25/kg, GST: 3.56%, Final (1kg): ₹74.81/kg
+- FLOUR007: I Pearl flour - Cost: ₹45/kg, Selling: ₹56.25/kg, GST: 2.81%, Final (1kg): ₹59.06/kg
+- FLOUR008: Sorghum flour - Cost: ₹47/kg, Selling: ₹58.75/kg, GST: 2.94%, Final (1kg): ₹61.69/kg
+- FLOUR009: Proso flour - Cost: ₹55/kg, Selling: ₹68.75/kg, GST: 3.44%, Final (1kg): ₹72.19/kg
+- FLOUR010: Millet flour (From broken millet rice) - Cost: ₹45/kg, Selling: ₹56.25/kg, GST: 2.81%, Final (1kg): ₹59.06/kg
 \n#### Flakes Category
-- FLAKES001: Foxtail flakes - Cost: ₹100/kg, Selling: ₹125/kg, GST: 6.25%, Final: ₹131.25/kg\n- FLAKES002: Little flakes - Cost: ₹110/kg, Selling: ₹137.5/kg, GST: 6.88%, Final: ₹144.38/kg
-- FLAKES003: Kodo flakes - Cost: ₹102/kg, Selling: ₹127.5/kg, GST: 6.38%, Final: ₹133.88/kg
-- FLAKES004: Barnyard flakes - Cost: ₹112/kg, Selling: ₹140/kg, GST: 7%, Final: ₹147/kg
-- FLAKES005: Ragi flakes - Cost: ₹68/kg, Selling: ₹85/kg, GST: 4.25%, Final: ₹89.25/kg
-- FLAKES006: Pearl flakes - Cost: ₹69/kg, Selling: ₹86.25/kg, GST: 4.31%, Final: ₹90.56/kg
-- FLAKES007: Sorghum flakes - Cost: ₹69/kg, Selling: ₹86.25/kg, GST: 4.31%, Final: ₹90.56/kg
+- FLAKES001: Foxtail flakes - Cost: ₹100/kg, Selling: ₹125/kg, GST: 6.25%, Final (1kg): ₹131.25/kg
+- FLAKES002: Little flakes - Cost: ₹110/kg, Selling: ₹137.5/kg, GST: 6.88%, Final (1kg): ₹144.38/kg
+- FLAKES003: Kodo flakes - Cost: ₹102/kg, Selling: ₹127.5/kg, GST: 6.38%, Final (1kg): ₹133.88/kg
+- FLAKES004: Barnyard flakes - Cost: ₹112/kg, Selling: ₹140/kg, GST: 7%, Final (1kg): ₹147/kg
+- FLAKES005: Ragi flakes - Cost: ₹68/kg, Selling: ₹85/kg, GST: 4.25%, Final (1kg): ₹89.25/kg
+- FLAKES006: Pearl flakes - Cost: ₹69/kg, Selling: ₹86.25/kg, GST: 4.31%, Final (1kg): ₹90.56/kg
+- FLAKES007: Sorghum flakes - Cost: ₹69/kg, Selling: ₹86.25/kg, GST: 4.31%, Final (1kg): ₹90.56/kg
 \n#### Millets Category
-- MILLETS001: Foxtail rice - Cost: ₹66/kg, Selling: ₹82.5/kg, GST: 4.13%, Final: ₹86.63/kg
-- MILLETS002: Little rice - Cost: ₹90/kg, Selling: ₹112.5/kg, GST: 5.63%, Final: ₹118.13/kg
-- MILLETS003: Kodo rice - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final: ₹87.94/kg
-- MILLETS004: Barnyard rice - Cost: ₹102/kg, Selling: ₹127.5/kg, GST: 6.38%, Final: ₹133.88/kg
-- MILLETS005: Browntop rice - Cost: ₹79/kg, Selling: ₹98.75/kg, GST: 4.94%, Final: ₹103.69/kg
-- MILLETS006: Proso rice - Cost: ₹84/kg, Selling: ₹105/kg, GST: 5.25%, Final: ₹110.25/kg
-- MILLETS007: Ragi - Cost: ₹43/kg, Selling: ₹53.75/kg, GST: 2.69%, Final: ₹56.44/kg
-- MILLETS008: Native Pearl - Cost: ₹55/kg, Selling: ₹68.75/kg, GST: 3.44%, Final: ₹72.19/kg
-- MILLETS009: I Pearl - Cost: ₹38/kg, Selling: ₹47.5/kg, GST: 2.38%, Final: ₹49.88/kg
-- MILLETS010: Sorghum (white) - Cost: ₹55/kg, Selling: ₹68.75/kg, GST: 3.44%, Final: ₹72.19/kg
-- MILLETS011: Sorghum (Red) - Cost: ₹56/kg, Selling: ₹70/kg, GST: 3.5%, Final: ₹73.5/kg
+- MILLETS001: Foxtail rice - Cost: ₹66/kg, Selling: ₹82.5/kg, GST: 4.13%, Final (1kg): ₹86.63/kg
+- MILLETS002: Little rice - Cost: ₹90/kg, Selling: ₹112.5/kg, GST: 5.63%, Final (1kg): ₹118.13/kg
+- MILLETS003: Kodo rice - Cost: ₹67/kg, Selling: ₹83.75/kg, GST: 4.19%, Final (1kg): ₹87.94/kg
+- MILLETS004: Barnyard rice - Cost: ₹102/kg, Selling: ₹127.5/kg, GST: 6.38%, Final (1kg): ₹133.88/kg
+- MILLETS005: Browntop rice - Cost: ₹79/kg, Selling: ₹98.75/kg, GST: 4.94%, Final (1kg): ₹103.69/kg
+- MILLETS006: Proso rice - Cost: ₹84/kg, Selling: ₹105/kg, GST: 5.25%, Final (1kg): ₹110.25/kg
+- MILLETS007: Ragi - Cost: ₹43/kg, Selling: ₹53.75/kg, GST: 2.69%, Final (1kg): ₹56.44/kg
+- MILLETS008: Native Pearl - Cost: ₹55/kg, Selling: ₹68.75/kg, GST: 3.44%, Final (1kg): ₹72.19/kg
+- MILLETS009: I Pearl - Cost: ₹38/kg, Selling: ₹47.5/kg, GST: 2.38%, Final (1kg): ₹49.88/kg
+- MILLETS010: Sorghum (white) - Cost: ₹55/kg, Selling: ₹68.75/kg, GST: 3.44%, Final (1kg): ₹72.19/kg
+- MILLETS011: Sorghum (Red) - Cost: ₹56/kg, Selling: ₹70/kg, GST: 3.5%, Final (1kg): ₹73.5/kg
 \n#### Honey Category
-- HONEY001: Cave Black Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
-- HONEY002: Siru Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
-- HONEY003: Kombu Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
-- HONEY004: Honey&Fig - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
-- HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
-- HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final: ₹1004.06/kg
-\n### 2.3 Packaging Options
+- HONEY001: Cave Black Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
+- HONEY002: Siru Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
+- HONEY003: Kombu Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
+- HONEY004: Honey&Fig - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
+- HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
+- HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
+\n### 2.4 Packaging Options
 - Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg
-- Honey: 200g, 500g, 1kg\n\n### 2.4 Product Structure
+- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -81,7 +97,7 @@ Each category contains multiple product variants with different packaging option
 - Add to cart functionality with quantity selection
 - Cart summary showing items, quantities, and total price
 - Ability to update or remove items from cart
-- Checkout process with order summary and final price calculation including GST
+- Checkout process with order summary and final price calculation including GST and package discounts
 - Delivery address input and validation
 
 ### 3.3 User Registration, Login, and Profile Management
@@ -100,20 +116,21 @@ Each category contains multiple product variants with different packaging option
 
 ### 3.6 Invoice Generation with Shipping Cost Calculation
 - Automatic invoice generation upon order confirmation
-- Invoice includes order details, product list, quantities, prices, GST breakdown\n- **Weight-based shipping cost calculation:**
+- Invoice includes order details, product list, quantities, prices, GST breakdown, **package discount percentage**
+- **Weight-based shipping cost calculation:**
   + **Intrastate delivery (same city and state):** ₹30-50per kg
   + **Interstate delivery:** ₹70-100 per kg
 - **Delivery location detection:** System identifies whether delivery address is within the same state or interstate to apply appropriate shipping rates
-- Final invoice displays: subtotal, GST, shipping charges (calculated based on total order weight and delivery location), and grand total
+- **Invoice line item display:** Each product line shows base price, applicable discount percentage (if any), discounted price, GST, and final price
+- Final invoice displays: subtotal, package discount (with percentage), GST, shipping charges (calculated based on total order weight and delivery location), and grand total
 
 ### 3.7 Admin Dashboard
 \n#### 3.7.1 Product Management (Implementation Ready)
 \n**Add New Product**
-- Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (₹/kg), GST percentage\n- Image upload functionality with preview
+- Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
 - Packaging options selection (checkboxes for1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey)
-- Final price auto-calculation display
-- Save and Cancel buttons
-
+- Final price auto-calculation display with discount application
+- Save and Cancel buttons\n
 **View Product List**
 - Table display with columns: Product ID, Product Name, Category, Cost Price, Selling Price, GST%, Final Price, Stock Status, Actions
 - Pagination with 20 products per page
@@ -124,6 +141,7 @@ Each category contains multiple product variants with different packaging option
 **Edit Product**
 - Pre-filled form with existing product data
 - All fields editable except Product ID
+- Selling price auto-updates when cost price changes (Cost + 25%)
 - Image replacement option
 - Update and Cancel buttons
 - Confirmation prompt before saving changes
@@ -152,8 +170,7 @@ Each category contains multiple product variants with different packaging option
 
 **View Customer Profile**
 - Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
-- Order history table: Order ID, Date, Items Count, Total Amount, Status
-- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
+- Order history table: Order ID, Date, Items Count, Total Amount, Status\n- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
 
 **Edit Customer Information**
 - Pre-filled form with existing customer data
@@ -212,8 +229,9 @@ Each category contains multiple product variants with different packaging option
 - **Editable order status dropdown with options:** Order Placed, Processing, Shipped, Delivered\n- **Status update functionality:** Admin can change order status directly from the order list or order detail page with immediate save
 - **Delivery location identification:** System automatically detects whether delivery is intrastate (same city and state) or interstate based on customer delivery address
 - **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
-- Generate and download invoices with shipping cost included
-- Order details view showing: Order ID, Customer information, Delivery address with state, Product list with weights, Subtotal, GST, Shipping charges (with delivery type indicator), Grand total\n
+- Generate and download invoices with shipping cost and discount percentage included
+- Order details view showing: Order ID, Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total
+
 #### 3.7.6 Sales Reports and Analytics
 - Sales reports by product, category, and time period
 - Customer analytics and purchase trends
@@ -222,9 +240,10 @@ Each category contains multiple product variants with different packaging option
 
 ### 4.1 Sales Objectives
 - Achieve defined sales targets\n- Customer acquisition and retention\n\n### 4.2 Marketing Strategies
-- Discount programs\n- Loyalty rewards system
-- Promotional campaigns
-\n## 5. Design Style
+- Package-based discount programs to encourage bulk purchases
+- Loyalty rewards system
+- Promotional campaigns\n
+## 5. Design Style
 
 ### 5.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
@@ -233,8 +252,7 @@ Each category contains multiple product variants with different packaging option
 - Clean navigation with prominent search bar and category filters
 \n### 5.3 Visual Elements
 - Rounded corners (8px radius) for cards and buttons for a friendly, approachable feel
-- Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth\n- Nature-inspired icons with line-style design
-- Smooth hover transitions (0.3s ease) for interactive elements
+- Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth\n- Nature-inspired icons with line-style design\n- Smooth hover transitions (0.3s ease) for interactive elements
 \n### 5.4 Typography
 - Clean, readable sans-serif fonts for easy navigation and product information display
 \n## 6. Reference Files

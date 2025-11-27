@@ -31,6 +31,8 @@ interface VariantFormData {
   price: number;
   stock: number;
   weight_kg: number;
+  cost_price: number;
+  discount_percentage: number;
 }
 
 export default function ProductManagement() {
@@ -58,7 +60,9 @@ export default function ProductManagement() {
       packaging_size: '1kg',
       price: 0,
       stock: 100,
-      weight_kg: 1.0
+      weight_kg: 1.0,
+      cost_price: 0,
+      discount_percentage: 0
     }
   });
 
@@ -511,7 +515,53 @@ export default function ProductManagement() {
                       }}
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel>Price (₹)</FormLabel>
+                          <FormLabel>Selling Price (₹)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="number" 
+                              step="0.01"
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={variantForm.control}
+                      name="cost_price"
+                      rules={{ 
+                        required: 'Cost price is required',
+                        min: { value: 0, message: 'Cost price must be positive' }
+                      }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Cost Price (₹)</FormLabel>
+                          <FormControl>
+                            <Input 
+                              {...field} 
+                              type="number" 
+                              step="0.01"
+                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                            />
+                          </FormControl>
+                          <FormMessage />
+                        </FormItem>
+                      )}
+                    />
+
+                    <FormField
+                      control={variantForm.control}
+                      name="discount_percentage"
+                      rules={{ 
+                        min: { value: 0, message: 'Discount must be positive' },
+                        max: { value: 100, message: 'Discount cannot exceed 100%' }
+                      }}
+                      render={({ field }) => (
+                        <FormItem>
+                          <FormLabel>Discount (%)</FormLabel>
                           <FormControl>
                             <Input 
                               {...field} 
@@ -586,7 +636,9 @@ export default function ProductManagement() {
               <TableHeader>
                 <TableRow>
                   <TableHead>Size</TableHead>
-                  <TableHead>Price</TableHead>
+                  <TableHead>Cost Price</TableHead>
+                  <TableHead>Selling Price</TableHead>
+                  <TableHead>Discount</TableHead>
                   <TableHead>Weight</TableHead>
                   <TableHead>Stock</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -596,7 +648,15 @@ export default function ProductManagement() {
                 {variants.map((variant) => (
                   <TableRow key={variant.id}>
                     <TableCell className="font-medium">{variant.packaging_size}</TableCell>
+                    <TableCell>₹{variant.cost_price.toFixed(2)}</TableCell>
                     <TableCell>₹{variant.price.toFixed(2)}</TableCell>
+                    <TableCell>
+                      {variant.discount_percentage > 0 ? (
+                        <Badge variant="secondary">{variant.discount_percentage}%</Badge>
+                      ) : (
+                        '-'
+                      )}
+                    </TableCell>
                     <TableCell>{variant.weight_kg}kg</TableCell>
                     <TableCell>
                       <Input

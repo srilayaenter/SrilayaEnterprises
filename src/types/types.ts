@@ -38,6 +38,8 @@ export interface ProductVariant {
   price: number;
   stock: number;
   weight_kg: number;
+  cost_price: number;
+  discount_percentage: number;
   created_at: string;
 }
 
@@ -53,6 +55,8 @@ export interface OrderItem {
   packaging_size?: string;
   product_id?: string;
   variant_id?: string;
+  discount_percentage?: number;
+  original_price?: number;
 }
 
 export interface Order {

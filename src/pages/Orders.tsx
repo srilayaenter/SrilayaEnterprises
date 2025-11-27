@@ -92,11 +92,24 @@ export default function Orders() {
             <CardContent>
               <div className="space-y-2">
                 {order.items.map((item, idx) => (
-                  <div key={idx} className="flex justify-between text-sm">
-                    <span>
-                      {item.name} {item.packaging_size && `(${item.packaging_size})`} x{item.quantity}
-                    </span>
-                    <span className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</span>
+                  <div key={idx} className="space-y-1">
+                    <div className="flex justify-between text-sm">
+                      <span className="flex items-center gap-2">
+                        {item.name} {item.packaging_size && `(${item.packaging_size})`} x{item.quantity}
+                        {item.discount_percentage && item.discount_percentage > 0 && (
+                          <Badge variant="secondary" className="text-xs">
+                            {item.discount_percentage}% OFF
+                          </Badge>
+                        )}
+                      </span>
+                      <span className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</span>
+                    </div>
+                    {item.discount_percentage && item.discount_percentage > 0 && item.original_price && (
+                      <div className="flex justify-between text-xs text-muted-foreground">
+                        <span>Original Price</span>
+                        <span className="line-through">₹{(item.original_price * item.quantity).toFixed(2)}</span>
+                      </div>
+                    )}
                   </div>
                 ))}
                 <div className="border-t pt-2 mt-2 space-y-1">
