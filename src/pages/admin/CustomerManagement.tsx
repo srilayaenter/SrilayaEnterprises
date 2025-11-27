@@ -17,6 +17,8 @@ interface CustomerFormData {
   nickname: string;
   phone: string;
   address: string;
+  city: string;
+  state: string;
 }
 
 interface NewCustomerFormData {
@@ -25,6 +27,8 @@ interface NewCustomerFormData {
   nickname: string;
   phone: string;
   address: string;
+  city: string;
+  state: string;
   role: 'user' | 'admin';
 }
 
@@ -42,7 +46,9 @@ export default function CustomerManagement() {
     defaultValues: {
       nickname: '',
       phone: '',
-      address: ''
+      address: '',
+      city: '',
+      state: ''
     }
   });
 
@@ -53,6 +59,8 @@ export default function CustomerManagement() {
       nickname: '',
       phone: '',
       address: '',
+      city: '',
+      state: '',
       role: 'user'
     }
   });
@@ -123,7 +131,9 @@ export default function CustomerManagement() {
     customerForm.reset({
       nickname: customer.nickname || '',
       phone: customer.phone || '',
-      address: customer.address || ''
+      address: customer.address || '',
+      city: customer.city || '',
+      state: customer.state || ''
     });
     setEditDialogOpen(true);
   };
@@ -199,6 +209,8 @@ export default function CustomerManagement() {
                   <TableHead>Email</TableHead>
                   <TableHead>Nickname</TableHead>
                   <TableHead>Phone</TableHead>
+                  <TableHead>City</TableHead>
+                  <TableHead>State</TableHead>
                   <TableHead>Role</TableHead>
                   <TableHead>Registered</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -210,6 +222,8 @@ export default function CustomerManagement() {
                     <TableCell className="font-medium">{customer.email}</TableCell>
                     <TableCell>{customer.nickname || '-'}</TableCell>
                     <TableCell>{customer.phone || '-'}</TableCell>
+                    <TableCell>{customer.city || '-'}</TableCell>
+                    <TableCell>{customer.state || '-'}</TableCell>
                     <TableCell>
                       <Badge variant={customer.role === 'admin' ? 'default' : 'secondary'}>
                         {customer.role}
@@ -400,6 +414,34 @@ export default function CustomerManagement() {
                 )}
               />
 
+              <FormField
+                control={customerForm.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter city" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={customerForm.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>State</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter state" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>
                   Cancel
@@ -501,6 +543,34 @@ export default function CustomerManagement() {
                     <FormLabel>Address</FormLabel>
                     <FormControl>
                       <Input {...field} placeholder="Enter address" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={newCustomerForm.control}
+                name="city"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>City</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter city" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={newCustomerForm.control}
+                name="state"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>State</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter state" />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
