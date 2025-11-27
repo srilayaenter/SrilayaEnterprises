@@ -1,55 +1,18 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '@/contexts/CartContext';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
 import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
-import { supabase } from '@/db/supabase';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
-  const [loading, setLoading] = useState(false);
+  const navigate = useNavigate();
   const { toast } = useToast();
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
     if (items.length === 0) return;
-
-    setLoading(true);
-    try {
-      const { data, error } = await supabase.functions.invoke('create_stripe_checkout', {
-        body: JSON.stringify({
-          items: items.map(item => ({
-            name: item.name,
-            price: item.price,
-            quantity: item.quantity,
-            image_url: item.image_url,
-            packaging_size: item.packaging_size,
-            product_id: item.product_id,
-            variant_id: item.variant_id,
-          })),
-          currency: 'inr',
-          payment_method_types: ['card'],
-        }),
-      });
-
-      if (error) {
-        const errorMsg = await error?.context?.text();
-        throw new Error(errorMsg || 'Failed to create checkout session');
-      }
-
-      if (data?.data?.url) {
-        window.open(data.data.url, '_blank');
-      }
-    } catch (error: any) {
-      toast({
-        title: 'Checkout failed',
-        description: error.message,
-        variant: 'destructive',
-      });
-    } finally {
-      setLoading(false);
-    }
+    navigate('/checkout');
   };
 
   if (items.length === 0) {
@@ -135,8 +98,8 @@ export default function Cart() {
               </div>
             </CardContent>
             <CardFooter className="flex-col gap-2">
-              <Button onClick={handleCheckout} className="w-full" size="lg" disabled={loading}>
-                {loading ? 'Processing...' : 'Proceed to Checkout'}
+              <Button onClick={handleCheckout} className="w-full" size="lg">
+                Proceed to Checkout
               </Button>
               <Button variant="outline" onClick={clearCart} className="w-full">
                 Clear Cart

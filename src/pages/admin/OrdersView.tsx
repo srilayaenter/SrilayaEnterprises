@@ -194,6 +194,7 @@ export default function OrdersView() {
                     </TableCell>
                     <TableCell>
                       <Select
+                        key={`${order.id}-${order.status}`}
                         value={order.status}
                         onValueChange={(value) => handleStatusChange(order.id, value as OrderStatus)}
                       >

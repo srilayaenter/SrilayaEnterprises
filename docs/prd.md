@@ -100,10 +100,14 @@ Each category contains multiple product variants with different packaging option
 
 ### 3.6 Invoice Generation with Shipping Cost Calculation
 - Automatic invoice generation upon order confirmation
-- Invoice includes order details, product list, quantities, prices, GST breakdown\n- Shipping cost calculation based on total order weight
-- Final invoice displays: subtotal, GST, shipping charges, and grand total
+- Invoice includes order details, product list, quantities, prices, GST breakdown\n- **Weight-based shipping cost calculation:**
+  + **Intrastate delivery (same city and state):** ₹30-50per kg
+  + **Interstate delivery:** ₹70-100 per kg
+- **Delivery location detection:** System identifies whether delivery address is within the same state or interstate to apply appropriate shipping rates
+- Final invoice displays: subtotal, GST, shipping charges (calculated based on total order weight and delivery location), and grand total
 
-### 3.7 Admin Dashboard\n\n#### 3.7.1 Product Management (Implementation Ready)
+### 3.7 Admin Dashboard
+\n#### 3.7.1 Product Management (Implementation Ready)
 \n**Add New Product**
 - Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (₹/kg), GST percentage\n- Image upload functionality with preview
 - Packaging options selection (checkboxes for1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey)
@@ -135,7 +139,8 @@ Each category contains multiple product variants with different packaging option
 \n#### 3.7.2 Customer Management (Implementation Ready)
 
 **Add New Customer**
-- Form fields: Customer Name, Email, Phone Number, Primary Delivery Address (Street, City, State, Pincode), Secondary Address (optional)\n- Account status selection (Active/Inactive)
+- Form fields: Customer Name, Email, Phone Number, Primary Delivery Address (Street, City, State, Pincode), Secondary Address (optional)
+- Account status selection (Active/Inactive)
 - Save and Cancel buttons
 
 **View Customer List**
@@ -160,7 +165,8 @@ Each category contains multiple product variants with different packaging option
 - Last login date and time
 - Recent browsing history (last 10 products viewed)
 - Cart abandonment tracking
-\n#### 3.7.3 Inventory Management (Implementation Ready)\n
+\n#### 3.7.3Inventory Management (Implementation Ready)
+
 **Stock Level Dashboard**
 - Overview cards: Total Products, Low Stock Items, Out of Stock Items, Total Inventory Value
 - Real-time stock status for all products
@@ -203,9 +209,12 @@ Each category contains multiple product variants with different packaging option
 - Search and filter users by role, registration date, or status
 \n#### 3.7.5 Order Management
 - View and process orders with status updates
-- Update order status (Order Placed, Processing, Shipped, Delivered)
+- **Editable order status dropdown with options:** Order Placed, Processing, Shipped, Delivered\n- **Status update functionality:** Admin can change order status directly from the order list or order detail page with immediate save
+- **Delivery location identification:** System automatically detects whether delivery is intrastate (same city and state) or interstate based on customer delivery address
+- **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
 - Generate and download invoices with shipping cost included
-\n#### 3.7.6 Sales Reports and Analytics
+- Order details view showing: Order ID, Customer information, Delivery address with state, Product list with weights, Subtotal, GST, Shipping charges (with delivery type indicator), Grand total\n
+#### 3.7.6 Sales Reports and Analytics
 - Sales reports by product, category, and time period
 - Customer analytics and purchase trends
 - Inventory turnover reports
@@ -219,16 +228,14 @@ Each category contains multiple product variants with different packaging option
 
 ### 5.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
-- Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
-\n### 5.2 Layout\n- Card-based layout for product display with clear visual hierarchy
+- Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons\n\n### 5.2 Layout\n- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
 \n### 5.3 Visual Elements
 - Rounded corners (8px radius) for cards and buttons for a friendly, approachable feel
 - Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth\n- Nature-inspired icons with line-style design
 - Smooth hover transitions (0.3s ease) for interactive elements
-
-### 5.4 Typography
+\n### 5.4 Typography
 - Clean, readable sans-serif fonts for easy navigation and product information display
 \n## 6. Reference Files
 1. Product list with pricing: image.png

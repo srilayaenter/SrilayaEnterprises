@@ -9,6 +9,8 @@ export interface Profile {
   full_name: string | null;
   phone: string | null;
   address: string | null;
+  city: string | null;
+  state: string | null;
   role: UserRole;
   created_at: string;
   updated_at: string;
@@ -23,6 +25,7 @@ export interface Product {
   product_code: string | null;
   image_url: string | null;
   stock: number;
+  weight_per_kg: number;
   is_active: boolean;
   created_at: string;
   updated_at: string;
@@ -77,11 +80,12 @@ export interface CartItem extends OrderItem {
 
 export interface ShippingRate {
   id: string;
-  min_weight_kg: number;
-  max_weight_kg: number;
-  rate_per_kg: number;
-  base_cost: number;
-  is_active: boolean;
+  store_state: string;
+  store_city: string;
+  local_rate_min: number;
+  local_rate_max: number;
+  interstate_rate_min: number;
+  interstate_rate_max: number;
   created_at: string;
   updated_at: string;
 }

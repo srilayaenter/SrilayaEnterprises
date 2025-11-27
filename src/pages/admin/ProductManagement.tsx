@@ -21,6 +21,7 @@ interface ProductFormData {
   category: ProductCategory;
   description: string;
   base_price: number;
+  weight_per_kg: number;
   product_code: string;
   image_url: string;
 }
@@ -105,6 +106,7 @@ export default function ProductManagement() {
       } else {
         await productsApi.create({
           ...data,
+          weight_per_kg: 1.0,
           stock: 0,
           is_active: true
         });
@@ -327,6 +329,30 @@ export default function ProductManagement() {
                           step="0.01"
                           onChange={(e) => field.onChange(parseFloat(e.target.value))}
                           placeholder="Enter base price" 
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={productForm.control}
+                  name="weight_per_kg"
+                  rules={{ 
+                    required: 'Weight is required',
+                    min: { value: 0.1, message: 'Weight must be at least 0.1 kg' }
+                  }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Weight per Unit (kg)</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          type="number" 
+                          step="0.1"
+                          onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                          placeholder="Enter weight in kg" 
                         />
                       </FormControl>
                       <FormMessage />

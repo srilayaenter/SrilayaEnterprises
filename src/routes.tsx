@@ -4,6 +4,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
+import Checkout from './pages/Checkout';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Orders from './pages/Orders';
 import AdminDashboard from './pages/admin/AdminDashboard';
@@ -26,6 +27,12 @@ const routes: RouteConfig[] = [
     name: 'Cart',
     path: '/cart',
     element: <Cart />,
+    visible: false
+  },
+  {
+    name: 'Checkout',
+    path: '/checkout',
+    element: <Checkout />,
     visible: false
   },
   {

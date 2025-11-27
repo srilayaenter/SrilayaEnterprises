@@ -282,14 +282,24 @@ export const shippingApi = {
     const { data, error } = await supabase
       .from('shipping_rates')
       .select('*')
-      .eq('is_active', true)
-      .order('min_weight_kg', { ascending: true });
+      .order('created_at', { ascending: false });
 
     if (error) throw error;
     return Array.isArray(data) ? data : [];
   },
 
-  async updateRate(id: string, updates: Partial<ShippingRate>): Promise<ShippingRate> {
+  async getConfig(): Promise<ShippingRate | null> {
+    const { data, error } = await supabase
+      .from('shipping_rates')
+      .select('*')
+      .limit(1)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async updateConfig(id: string, updates: Partial<ShippingRate>): Promise<ShippingRate> {
     const { data, error } = await supabase
       .from('shipping_rates')
       .update(updates)
@@ -298,8 +308,20 @@ export const shippingApi = {
       .maybeSingle();
 
     if (error) throw error;
-    if (!data) throw new Error('Failed to update shipping rate');
+    if (!data) throw new Error('Failed to update shipping configuration');
     return data;
+  },
+
+  async calculateShipping(customerState: string, customerCity: string, totalWeight: number): Promise<number> {
+    const { data, error } = await supabase
+      .rpc('calculate_shipping_cost', {
+        p_customer_state: customerState,
+        p_customer_city: customerCity,
+        p_total_weight: totalWeight
+      });
+
+    if (error) throw error;
+    return data || 0;
   }
 };
 
