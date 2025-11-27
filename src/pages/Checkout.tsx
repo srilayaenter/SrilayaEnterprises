@@ -463,7 +463,13 @@ export default function Checkout() {
 
               <Button
                 onClick={handleCheckout}
-                disabled={loading || shippingCost === 0}
+                disabled={
+                  loading || 
+                  !shippingInfo.name || 
+                  !shippingInfo.email || 
+                  !shippingInfo.phone ||
+                  (orderType === 'online' && (!shippingInfo.address || !shippingInfo.city || !shippingInfo.state || shippingCost === 0))
+                }
                 className="w-full"
               >
                 {loading ? 'Processing...' : 'Proceed to Payment'}
