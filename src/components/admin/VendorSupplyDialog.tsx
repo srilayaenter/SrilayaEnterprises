@@ -376,7 +376,7 @@ export default function VendorSupplyDialog({
                       </Button>
                     </div>
 
-                    <div className="grid grid-cols-3 gap-3">
+                    <div className="grid grid-cols-2 gap-3">
                       <div className="space-y-2">
                         <Label>Product *</Label>
                         <Select
@@ -397,14 +397,14 @@ export default function VendorSupplyDialog({
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Variant</Label>
+                        <Label>Variant / Packaging Size *</Label>
                         <Select
                           value={item.variant_id}
                           onValueChange={(value) => updateItem(index, 'variant_id', value)}
                           disabled={!item.product_id}
                         >
                           <SelectTrigger>
-                            <SelectValue placeholder="Select variant" />
+                            <SelectValue placeholder={item.product_id ? "Select packaging size" : "Select product first"} />
                           </SelectTrigger>
                           <SelectContent>
                             {variants
@@ -416,30 +416,34 @@ export default function VendorSupplyDialog({
                               ))}
                           </SelectContent>
                         </Select>
+                        {!item.product_id && (
+                          <p className="text-xs text-muted-foreground">
+                            Select a product first to see available packaging sizes
+                          </p>
+                        )}
+                        {item.product_id && variants.filter(v => v.product_id === item.product_id).length === 0 && (
+                          <p className="text-xs text-destructive">
+                            No variants found for this product
+                          </p>
+                        )}
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Packaging Size</Label>
-                        <Input
-                          value={item.packaging_size}
-                          onChange={(e) => updateItem(index, 'packaging_size', e.target.value)}
-                          placeholder="1kg"
-                        />
-                      </div>
-
-                      <div className="space-y-2">
-                        <Label>Quantity *</Label>
+                        <Label>Quantity (Number of packages) *</Label>
                         <Input
                           type="number"
                           min="1"
                           value={item.quantity || ''}
                           onChange={(e) => updateItem(index, 'quantity', parseFloat(e.target.value) || 0)}
-                          placeholder="0"
+                          placeholder="e.g., 10"
                         />
+                        <p className="text-xs text-muted-foreground">
+                          Enter the number of packages, not total weight
+                        </p>
                       </div>
 
                       <div className="space-y-2">
-                        <Label>Unit Cost (₹) *</Label>
+                        <Label>Unit Cost (₹ per package) *</Label>
                         <Input
                           type="number"
                           min="0"
@@ -448,6 +452,9 @@ export default function VendorSupplyDialog({
                           onChange={(e) => updateItem(index, 'unit_cost', parseFloat(e.target.value) || 0)}
                           placeholder="0.00"
                         />
+                        <p className="text-xs text-muted-foreground">
+                          Cost for one package
+                        </p>
                       </div>
 
                       <div className="space-y-2">
@@ -458,6 +465,9 @@ export default function VendorSupplyDialog({
                           disabled
                           className="bg-muted"
                         />
+                        <p className="text-xs text-muted-foreground">
+                          Auto-calculated: Quantity × Unit Cost
+                        </p>
                       </div>
                     </div>
                   </div>
