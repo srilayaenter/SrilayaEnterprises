@@ -16,7 +16,7 @@ const App = () => {
           <div className="flex flex-col min-h-screen">
             <Header />
             <main className="flex-grow">
-              <RequireAuth whiteList={["/", "/login", "/register", "/products/*", "/cart", "/payment-success"]}>
+              <RequireAuth whiteList={["/", "/login", "/register", "/products/*", "/cart", "/checkout", "/payment-success"]}>
                 <Routes>
                   {routes.map((route, index) => (
                     <Route
