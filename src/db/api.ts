@@ -1,5 +1,22 @@
 import { supabase } from './supabase';
-import type { Product, ProductVariant, ProductWithVariants, Order, Profile, ProductCategory, ShippingRate, OrderStatus } from '@/types/types';
+import type { 
+  Product, 
+  ProductVariant, 
+  ProductWithVariants, 
+  Order, 
+  Profile, 
+  ProductCategory, 
+  ShippingRate, 
+  OrderStatus,
+  Vendor,
+  VendorTransaction,
+  VendorWithTransactions,
+  ShipmentHandler,
+  ShipmentHandlerTransaction,
+  ShipmentHandlerWithTransactions,
+  Shipment,
+  ShipmentWithDetails
+} from '@/types/types';
 
 export const productsApi = {
   async getAll(category?: ProductCategory): Promise<Product[]> {
@@ -375,5 +392,339 @@ export const adminApi = {
     if (errors.length > 0) {
       throw new Error(`Failed to update ${errors.length} variants`);
     }
+  }
+};
+
+// Vendor Management API
+export const vendorsApi = {
+  async getAll(): Promise<Vendor[]> {
+    const { data, error } = await supabase
+      .from('vendors')
+      .select('*')
+      .order('name', { ascending: true });
+    
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string): Promise<VendorWithTransactions | null> {
+    const { data: vendor, error: vendorError } = await supabase
+      .from('vendors')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (vendorError) throw vendorError;
+    if (!vendor) return null;
+
+    const { data: transactions, error: transError } = await supabase
+      .from('vendor_transactions')
+      .select('*')
+      .eq('vendor_id', id)
+      .order('transaction_date', { ascending: false });
+
+    if (transError) throw transError;
+
+    const total_purchases = transactions?.filter(t => t.transaction_type === 'purchase').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+    const total_payments = transactions?.filter(t => t.transaction_type === 'payment').reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+    const balance = total_purchases - total_payments;
+
+    return {
+      ...vendor,
+      transactions: Array.isArray(transactions) ? transactions : [],
+      total_purchases,
+      total_payments,
+      balance
+    };
+  },
+
+  async create(vendor: Omit<Vendor, 'id' | 'created_at' | 'updated_at'>): Promise<Vendor> {
+    const { data, error } = await supabase
+      .from('vendors')
+      .insert(vendor)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create vendor');
+    return data;
+  },
+
+  async update(id: string, vendor: Partial<Vendor>): Promise<Vendor> {
+    const { data, error } = await supabase
+      .from('vendors')
+      .update(vendor)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update vendor');
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('vendors')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+};
+
+export const vendorTransactionsApi = {
+  async getAll(vendorId?: string): Promise<VendorTransaction[]> {
+    let query = supabase
+      .from('vendor_transactions')
+      .select('*')
+      .order('transaction_date', { ascending: false });
+
+    if (vendorId) {
+      query = query.eq('vendor_id', vendorId);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async create(transaction: Omit<VendorTransaction, 'id' | 'created_at'>): Promise<VendorTransaction> {
+    const { data, error } = await supabase
+      .from('vendor_transactions')
+      .insert(transaction)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create transaction');
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('vendor_transactions')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+};
+
+// Shipment Handler Management API
+export const shipmentHandlersApi = {
+  async getAll(): Promise<ShipmentHandler[]> {
+    const { data, error } = await supabase
+      .from('shipment_handlers')
+      .select('*')
+      .order('name', { ascending: true });
+    
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string): Promise<ShipmentHandlerWithTransactions | null> {
+    const { data: handler, error: handlerError } = await supabase
+      .from('shipment_handlers')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (handlerError) throw handlerError;
+    if (!handler) return null;
+
+    const { data: transactions, error: transError } = await supabase
+      .from('shipment_handler_transactions')
+      .select('*')
+      .eq('handler_id', id)
+      .order('transaction_date', { ascending: false });
+
+    if (transError) throw transError;
+
+    const total_amount = transactions?.reduce((sum, t) => sum + Number(t.amount), 0) || 0;
+
+    return {
+      ...handler,
+      transactions: Array.isArray(transactions) ? transactions : [],
+      total_amount
+    };
+  },
+
+  async create(handler: Omit<ShipmentHandler, 'id' | 'created_at' | 'updated_at'>): Promise<ShipmentHandler> {
+    const { data, error } = await supabase
+      .from('shipment_handlers')
+      .insert(handler)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create shipment handler');
+    return data;
+  },
+
+  async update(id: string, handler: Partial<ShipmentHandler>): Promise<ShipmentHandler> {
+    const { data, error } = await supabase
+      .from('shipment_handlers')
+      .update(handler)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update shipment handler');
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('shipment_handlers')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+};
+
+export const shipmentHandlerTransactionsApi = {
+  async getAll(handlerId?: string): Promise<ShipmentHandlerTransaction[]> {
+    let query = supabase
+      .from('shipment_handler_transactions')
+      .select('*')
+      .order('transaction_date', { ascending: false });
+
+    if (handlerId) {
+      query = query.eq('handler_id', handlerId);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async create(transaction: Omit<ShipmentHandlerTransaction, 'id' | 'created_at'>): Promise<ShipmentHandlerTransaction> {
+    const { data, error } = await supabase
+      .from('shipment_handler_transactions')
+      .insert(transaction)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create transaction');
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('shipment_handler_transactions')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  }
+};
+
+// Shipment Tracking API
+export const shipmentsApi = {
+  async getAll(): Promise<ShipmentWithDetails[]> {
+    const { data, error } = await supabase
+      .from('shipments')
+      .select(`
+        *,
+        order:orders(*),
+        handler:shipment_handlers(*)
+      `)
+      .order('created_at', { ascending: false });
+    
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string): Promise<ShipmentWithDetails | null> {
+    const { data, error } = await supabase
+      .from('shipments')
+      .select(`
+        *,
+        order:orders(*),
+        handler:shipment_handlers(*)
+      `)
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getByOrderId(orderId: string): Promise<Shipment | null> {
+    const { data, error } = await supabase
+      .from('shipments')
+      .select('*')
+      .eq('order_id', orderId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getByTrackingNumber(trackingNumber: string): Promise<ShipmentWithDetails | null> {
+    const { data, error } = await supabase
+      .from('shipments')
+      .select(`
+        *,
+        order:orders(*),
+        handler:shipment_handlers(*)
+      `)
+      .eq('tracking_number', trackingNumber)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async create(shipment: Omit<Shipment, 'id' | 'created_at' | 'updated_at'>): Promise<Shipment> {
+    const { data, error } = await supabase
+      .from('shipments')
+      .insert(shipment)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create shipment');
+    return data;
+  },
+
+  async update(id: string, shipment: Partial<Shipment>): Promise<Shipment> {
+    const { data, error } = await supabase
+      .from('shipments')
+      .update(shipment)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update shipment');
+    return data;
+  },
+
+  async updateStatus(id: string, status: string, notes?: string): Promise<Shipment> {
+    const updateData: Partial<Shipment> = { status: status as any };
+    
+    if (status === 'delivered') {
+      updateData.actual_delivery_date = new Date().toISOString();
+    }
+    
+    if (notes) {
+      updateData.notes = notes;
+    }
+
+    return this.update(id, updateData);
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('shipments')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
   }
 };

@@ -98,3 +98,93 @@ export interface ShippingRate {
   created_at: string;
   updated_at: string;
 }
+
+export type VendorStatus = 'active' | 'inactive';
+export type TransactionType = 'purchase' | 'payment' | 'return';
+export type PaymentMethod = 'cash' | 'bank_transfer' | 'cheque' | 'upi' | 'card';
+export type ServiceType = 'courier' | 'freight' | 'local_delivery';
+export type ShipmentStatus = 'pending' | 'picked_up' | 'in_transit' | 'out_for_delivery' | 'delivered' | 'returned' | 'cancelled';
+
+export interface Vendor {
+  id: string;
+  name: string;
+  contact_person: string | null;
+  email: string | null;
+  phone: string | null;
+  address: string | null;
+  gstin: string | null;
+  payment_terms: string;
+  status: VendorStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VendorTransaction {
+  id: string;
+  vendor_id: string;
+  transaction_type: TransactionType;
+  amount: number;
+  payment_method: PaymentMethod | null;
+  reference_number: string | null;
+  description: string | null;
+  transaction_date: string;
+  created_at: string;
+}
+
+export interface VendorWithTransactions extends Vendor {
+  transactions?: VendorTransaction[];
+  total_purchases?: number;
+  total_payments?: number;
+  balance?: number;
+}
+
+export interface ShipmentHandler {
+  id: string;
+  name: string;
+  contact_person: string | null;
+  email: string | null;
+  phone: string | null;
+  service_type: ServiceType;
+  coverage_area: string | null;
+  status: VendorStatus;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ShipmentHandlerTransaction {
+  id: string;
+  handler_id: string;
+  amount: number;
+  payment_method: PaymentMethod | null;
+  reference_number: string | null;
+  description: string | null;
+  transaction_date: string;
+  created_at: string;
+}
+
+export interface ShipmentHandlerWithTransactions extends ShipmentHandler {
+  transactions?: ShipmentHandlerTransaction[];
+  total_amount?: number;
+}
+
+export interface Shipment {
+  id: string;
+  order_id: string;
+  handler_id: string | null;
+  tracking_number: string | null;
+  status: ShipmentStatus;
+  shipped_date: string | null;
+  expected_delivery_date: string | null;
+  actual_delivery_date: string | null;
+  return_reason: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ShipmentWithDetails extends Shipment {
+  order?: Order;
+  handler?: ShipmentHandler;
+}

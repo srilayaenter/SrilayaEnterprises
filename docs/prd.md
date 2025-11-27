@@ -33,8 +33,7 @@ Selling Price = Cost Price + 25%
 \n- **Honey Products:**
   + 200g package: No discount
   + 500g package: 2% discount
-  + 1kg package: 3% discount
-\n### 2.3 Product List with Updated Pricing (All prices in Indian Rupees)
+  + 1kg package: 3% discount\n\n### 2.3 Product List with Updated Pricing (All prices in Indian Rupees)
 
 #### Rice Category
 - RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final (1kg): ₹94.5/kg
@@ -116,8 +115,7 @@ Each category contains multiple product variants with different packaging option
 
 ### 3.6 Invoice Generation with Shipping Cost Calculation
 - Automatic invoice generation upon order confirmation
-- Invoice includes order details, product list, quantities, prices, GST breakdown, **package discount percentage**
-- **Weight-based shipping cost calculation:**
+- Invoice includes order details, product list, quantities, prices, GST breakdown, package discount percentage\n- **Weight-based shipping cost calculation:**
   + **Intrastate delivery (same city and state):** ₹30-50per kg
   + **Interstate delivery:** ₹70-100 per kg
 - **Delivery location detection:** System identifies whether delivery address is within the same state or interstate to apply appropriate shipping rates
@@ -125,7 +123,7 @@ Each category contains multiple product variants with different packaging option
 - Final invoice displays: subtotal, package discount (with percentage), GST, shipping charges (calculated based on total order weight and delivery location), and grand total
 
 ### 3.7 Admin Dashboard
-\n#### 3.7.1 Product Management (Implementation Ready)
+\n####3.7.1 Product Management (Implementation Ready)
 \n**Add New Product**
 - Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
 - Packaging options selection (checkboxes for1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey)
@@ -170,7 +168,8 @@ Each category contains multiple product variants with different packaging option
 
 **View Customer Profile**
 - Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
-- Order history table: Order ID, Date, Items Count, Total Amount, Status\n- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
+- Order history table: Order ID, Date, Items Count, Total Amount, Status
+- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
 
 **Edit Customer Information**
 - Pre-filled form with existing customer data
@@ -229,21 +228,107 @@ Each category contains multiple product variants with different packaging option
 - **Editable order status dropdown with options:** Order Placed, Processing, Shipped, Delivered\n- **Status update functionality:** Admin can change order status directly from the order list or order detail page with immediate save
 - **Delivery location identification:** System automatically detects whether delivery is intrastate (same city and state) or interstate based on customer delivery address
 - **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
+- **Shipment status tracking:** Track shipment status including received by customer or returned back for any reason
 - Generate and download invoices with shipping cost and discount percentage included
 - Order details view showing: Order ID, Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total
 
-#### 3.7.6 Sales Reports and Analytics
+#### 3.7.6 Vendor Management (Implementation Ready)
+
+**Add New Vendor**
+- Form fields: Vendor ID (auto-generated), Vendor Name, Contact Person, Email, Phone Number, Address, Product Categories Supplied, Payment Terms, GST Number
+- Save and Cancel buttons
+
+**View Vendor List**
+- Table display with columns: Vendor ID, Vendor Name, Contact Person, Phone, Product Categories, Total Transactions, Outstanding Amount, Status, Actions
+- Pagination with 20 vendors per page
+- Search bar for vendor name or ID\n- Filter options: Product Category, Status (Active/Inactive)
+- Sort options: Name (A-Z), Total Transactions, Outstanding Amount
+\n**View Vendor Profile**
+- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms
+- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status
+- Financial summary: Total purchases, Total paid, Outstanding amount\n
+**Edit Vendor Information**
+- Pre-filled form with existing vendor data
+- All fields editable except Vendor ID\n- Update and Cancel buttons
+\n**Record Purchase Transaction**
+- Vendor selection dropdown
+- Product selection with quantity and cost price input
+- Transaction date\n- Payment status (Paid/Pending/Partial)\n- Amount paid field
+- Invoice upload option
+- Notes field
+- Submit button
+
+**Transaction Management**
+- View all transactions between vendor and buyer
+- Filter by vendor, date range, payment status
+- Update payment status and record payments
+- Generate purchase reports
+- Export to CSV/PDF\n
+#### 3.7.7 Shipping Management (Implementation Ready)
+
+**Add Shipment Handler**
+- Form fields: Handler ID (auto-generated), Handler Name, Contact Person, Email, Phone Number, Service Areas (Intrastate/Interstate/Both), Rate per kg (Intrastate), Rate per kg (Interstate), Payment Terms\n- Save and Cancel buttons
+
+**View Shipment Handler List**
+- Table display with columns: Handler ID, Handler Name, Contact Person, Phone, Service Areas, Intrastate Rate, Interstate Rate, Total Shipments, Status, Actions
+- Pagination with 20 handlers per page
+- Search bar for handler name or ID
+- Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n
+**View Handler Profile**
+- Handler details section: Name, Contact Person, Email, Phone, Service Areas, Rate Structure, Payment Terms
+- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status
+- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
+
+**Edit Handler Information**
+- Pre-filled form with existing handler data
+- All fields editable except Handler ID\n- Update and Cancel buttons
+
+**Assign Shipment**
+- Order selection dropdown (shows orders with 'Shipped' status)
+- Handler selection based on delivery location (intrastate/interstate)
+- Automatic calculation of shipping charges based on order weight and handler rates
+- Expected delivery date input
+- Tracking number input
+- Assign button
+
+**Shipment Tracking**
+- View all shipments with status: Assigned, In Transit, Out for Delivery, Delivered, Returned
+- Update shipment status with timestamp
+- Record delivery confirmation or return reason
+- Customer notification on status updates
+- Filter by handler, status, date range
+- Export shipment reports
+
+**Transaction Management with Handlers**
+- View all financial transactions with shipment handlers
+- Record payments made to handlers
+- Track outstanding amounts
+- Generate handler payment reports
+- Filter by handler, date range, payment status
+- Export to CSV/PDF
+
+**Return Management**
+- Record returned shipments with reason (Customer Refused, Wrong Address, Damaged, Other)
+- Update order status to reflect return
+- Notify customer and initiate refund process
+- Track return statistics by handler
+- Generate return analysis reports
+\n#### 3.7.8 Sales Reports and Analytics
 - Sales reports by product, category, and time period
 - Customer analytics and purchase trends
 - Inventory turnover reports
-\n## 4. Business Goals
+- Vendor performance reports
+- Shipping handler performance reports
+- Return rate analysis
+
+## 4. Business Goals
 
 ### 4.1 Sales Objectives
-- Achieve defined sales targets\n- Customer acquisition and retention\n\n### 4.2 Marketing Strategies
+- Achieve defined sales targets\n- Customer acquisition and retention
+\n### 4.2 Marketing Strategies
 - Package-based discount programs to encourage bulk purchases
 - Loyalty rewards system
-- Promotional campaigns\n
-## 5. Design Style
+- Promotional campaigns\n\n## 5. Design Style
 
 ### 5.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
@@ -252,8 +337,10 @@ Each category contains multiple product variants with different packaging option
 - Clean navigation with prominent search bar and category filters
 \n### 5.3 Visual Elements
 - Rounded corners (8px radius) for cards and buttons for a friendly, approachable feel
-- Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth\n- Nature-inspired icons with line-style design\n- Smooth hover transitions (0.3s ease) for interactive elements
-\n### 5.4 Typography
+- Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth\n- Nature-inspired icons with line-style design
+- Smooth hover transitions (0.3s ease) for interactive elements
+
+### 5.4 Typography
 - Clean, readable sans-serif fonts for easy navigation and product information display
 \n## 6. Reference Files
 1. Product list with pricing: image.png

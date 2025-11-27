@@ -7,7 +7,11 @@ import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Orders from './pages/Orders';
+import TrackShipment from './pages/TrackShipment';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import VendorsManagement from './pages/admin/VendorsManagement';
+import ShipmentHandlersManagement from './pages/admin/ShipmentHandlersManagement';
+import ShipmentTracking from './pages/admin/ShipmentTracking';
 
 interface RouteConfig {
   name: string;
@@ -42,6 +46,12 @@ const routes: RouteConfig[] = [
     visible: false
   },
   {
+    name: 'Track Shipment',
+    path: '/track-shipment',
+    element: <TrackShipment />,
+    visible: true
+  },
+  {
     name: 'Product Detail',
     path: '/products/:id',
     element: <ProductDetail />,
@@ -69,6 +79,24 @@ const routes: RouteConfig[] = [
     name: 'Admin',
     path: '/admin',
     element: <AdminDashboard />,
+    visible: false
+  },
+  {
+    name: 'Vendors Management',
+    path: '/admin/vendors',
+    element: <VendorsManagement />,
+    visible: false
+  },
+  {
+    name: 'Shipment Handlers',
+    path: '/admin/handlers',
+    element: <ShipmentHandlersManagement />,
+    visible: false
+  },
+  {
+    name: 'Shipment Tracking',
+    path: '/admin/shipments',
+    element: <ShipmentTracking />,
     visible: false
   }
 ];
