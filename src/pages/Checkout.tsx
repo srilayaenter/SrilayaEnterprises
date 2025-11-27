@@ -18,6 +18,7 @@ export default function Checkout() {
   const navigate = useNavigate();
   const { toast } = useToast();
 
+  const GST_RATE = 5; // 5% GST
   const [loading, setLoading] = useState(false);
   const [calculatingShipping, setCalculatingShipping] = useState(false);
   const [shippingCost, setShippingCost] = useState(0);
@@ -30,6 +31,14 @@ export default function Checkout() {
     city: '',
     state: '',
   });
+
+  const calculateGST = () => {
+    return (totalPrice * GST_RATE) / 100;
+  };
+
+  const calculateFinalTotal = () => {
+    return totalPrice + calculateGST() + shippingCost;
+  };
 
   useEffect(() => {
     if (items.length === 0) {
@@ -75,8 +84,16 @@ export default function Checkout() {
 
   const calculateTotalWeight = () => {
     return items.reduce((total, item) => {
-      const product = products.find(p => p.id === item.product_id);
-      const weightPerUnit = product?.weight_per_kg || 1.0;
+      // Extract weight from packaging_size (e.g., "1kg" -> 1, "500g" -> 0.5)
+      const packagingSize = item.packaging_size.toLowerCase();
+      let weightPerUnit = 1.0;
+      
+      if (packagingSize.includes('kg')) {
+        weightPerUnit = parseFloat(packagingSize.replace('kg', '')) || 1.0;
+      } else if (packagingSize.includes('g')) {
+        weightPerUnit = (parseFloat(packagingSize.replace('g', '')) || 1000) / 1000;
+      }
+      
       return total + (weightPerUnit * item.quantity);
     }, 0);
   };
@@ -311,8 +328,12 @@ export default function Checkout() {
                   <span className="font-medium">₹{totalPrice.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between text-sm">
+                  <span className="text-muted-foreground">GST ({GST_RATE}%)</span>
+                  <span className="font-medium">₹{calculateGST().toFixed(2)}</span>
+                </div>
+                <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Total Weight</span>
-                  <span className="font-medium">{calculateTotalWeight()}kg</span>
+                  <span className="font-medium">{calculateTotalWeight().toFixed(2)}kg</span>
                 </div>
                 <div className="flex justify-between text-sm">
                   <span className="text-muted-foreground">Shipping</span>
@@ -322,7 +343,7 @@ export default function Checkout() {
                 </div>
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total</span>
-                  <span>₹{(totalPrice + shippingCost).toFixed(2)}</span>
+                  <span>₹{calculateFinalTotal().toFixed(2)}</span>
                 </div>
               </div>
 

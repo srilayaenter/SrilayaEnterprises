@@ -61,6 +61,8 @@ export interface Order {
   items: OrderItem[];
   total_amount: number;
   shipping_cost: number;
+  gst_rate: number;
+  gst_amount: number;
   currency: string;
   status: OrderStatus;
   stripe_session_id: string | null;

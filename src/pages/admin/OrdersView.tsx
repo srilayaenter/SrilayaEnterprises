@@ -102,13 +102,19 @@ export default function OrdersView() {
   const getTotalRevenue = () => {
     return orders
       .filter(o => o.status === 'completed')
-      .reduce((sum, o) => sum + o.total_amount + (o.shipping_cost || 0), 0);
+      .reduce((sum, o) => sum + o.total_amount + (o.gst_amount || 0) + (o.shipping_cost || 0), 0);
   };
 
   const getTotalShippingRevenue = () => {
     return orders
       .filter(o => o.status === 'completed')
       .reduce((sum, o) => sum + (o.shipping_cost || 0), 0);
+  };
+
+  const getTotalGSTRevenue = () => {
+    return orders
+      .filter(o => o.status === 'completed')
+      .reduce((sum, o) => sum + (o.gst_amount || 0), 0);
   };
 
   const getAverageOrderValue = () => {
@@ -210,6 +216,7 @@ export default function OrdersView() {
                   <TableHead>Date</TableHead>
                   <TableHead>Items</TableHead>
                   <TableHead>Subtotal</TableHead>
+                  <TableHead>GST</TableHead>
                   <TableHead>Shipping</TableHead>
                   <TableHead>Total</TableHead>
                   <TableHead>Status</TableHead>
@@ -229,12 +236,17 @@ export default function OrdersView() {
                     <TableCell>{order.items?.length || 0}</TableCell>
                     <TableCell>₹{order.total_amount.toFixed(2)}</TableCell>
                     <TableCell>
+                      <Badge variant="outline">
+                        ₹{(order.gst_amount || 0).toFixed(2)}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
                       <Badge variant="secondary">
                         ₹{(order.shipping_cost || 0).toFixed(2)}
                       </Badge>
                     </TableCell>
                     <TableCell className="font-medium">
-                      ₹{(order.total_amount + (order.shipping_cost || 0)).toFixed(2)}
+                      ₹{(order.total_amount + (order.gst_amount || 0) + (order.shipping_cost || 0)).toFixed(2)}
                     </TableCell>
                     <TableCell>
                       <OrderStatusSelect
@@ -360,12 +372,16 @@ export default function OrdersView() {
                     <dd>₹{selectedOrder.total_amount.toFixed(2)}</dd>
                   </div>
                   <div className="flex justify-between text-sm">
+                    <dt className="text-muted-foreground">GST ({selectedOrder.gst_rate || 5}%):</dt>
+                    <dd>₹{(selectedOrder.gst_amount || 0).toFixed(2)}</dd>
+                  </div>
+                  <div className="flex justify-between text-sm">
                     <dt className="text-muted-foreground">Shipping Cost:</dt>
                     <dd>₹{(selectedOrder.shipping_cost || 0).toFixed(2)}</dd>
                   </div>
                   <div className="flex justify-between text-lg font-bold border-t pt-2">
                     <dt>Grand Total:</dt>
-                    <dd>₹{(selectedOrder.total_amount + (selectedOrder.shipping_cost || 0)).toFixed(2)}</dd>
+                    <dd>₹{(selectedOrder.total_amount + (selectedOrder.gst_amount || 0) + (selectedOrder.shipping_cost || 0)).toFixed(2)}</dd>
                   </div>
                 </dl>
               </div>

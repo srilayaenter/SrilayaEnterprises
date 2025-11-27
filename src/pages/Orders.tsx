@@ -99,10 +99,22 @@ export default function Orders() {
                     <span className="font-semibold">₹{(item.price * item.quantity).toFixed(2)}</span>
                   </div>
                 ))}
-                <div className="border-t pt-2 mt-2">
-                  <div className="flex justify-between font-bold">
+                <div className="border-t pt-2 mt-2 space-y-1">
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Subtotal</span>
+                    <span>₹{order.total_amount.toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">GST ({order.gst_rate || 5}%)</span>
+                    <span>₹{(order.gst_amount || 0).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span>₹{(order.shipping_cost || 0).toFixed(2)}</span>
+                  </div>
+                  <div className="flex justify-between font-bold border-t pt-2">
                     <span>Total</span>
-                    <span className="text-primary">₹{order.total_amount.toFixed(2)}</span>
+                    <span className="text-primary">₹{(order.total_amount + (order.gst_amount || 0) + (order.shipping_cost || 0)).toFixed(2)}</span>
                   </div>
                 </div>
               </div>

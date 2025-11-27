@@ -77,6 +77,8 @@ function validateCheckoutRequest(request: CheckoutRequest): void {
 }
 
 function processOrderItems(items: OrderItem[], shippingCost: number = 0) {
+  const GST_RATE = 5; // 5% GST
+  
   const formattedItems = items.map(item => ({
     name: item.name.trim(),
     price: Math.round(item.price * 100),
@@ -86,13 +88,17 @@ function processOrderItems(items: OrderItem[], shippingCost: number = 0) {
     product_id: item.product_id || "",
     variant_id: item.variant_id || "",
   }));
+  
   const subtotal = formattedItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
+  
+  const gstAmount = Math.round((subtotal * GST_RATE) / 100);
   const shippingAmount = Math.round(shippingCost * 100);
-  const totalAmount = subtotal + shippingAmount;
-  return { formattedItems, subtotal, shippingAmount, totalAmount };
+  const totalAmount = subtotal + gstAmount + shippingAmount;
+  
+  return { formattedItems, subtotal, gstAmount, shippingAmount, totalAmount };
 }
 
 async function createCheckoutSession(
@@ -106,7 +112,8 @@ async function createCheckoutSession(
   customerInfo?: any,
   shippingAddress?: string
 ) {
-  const { formattedItems, subtotal, shippingAmount, totalAmount } = processOrderItems(items, shippingCost);
+  const { formattedItems, subtotal, gstAmount, shippingAmount, totalAmount } = processOrderItems(items, shippingCost);
+  const GST_RATE = 5;
 
   const { data: order, error } = await supabase
     .from("orders")
@@ -114,6 +121,8 @@ async function createCheckoutSession(
       user_id: userId,
       items: formattedItems,
       total_amount: subtotal,
+      gst_rate: GST_RATE,
+      gst_amount: gstAmount,
       shipping_cost: shippingCost,
       currency: currency.toLowerCase(),
       status: "pending",
@@ -140,6 +149,20 @@ async function createCheckoutSession(
     },
     quantity: item.quantity,
   }));
+
+  // Add GST as a line item
+  if (gstAmount > 0) {
+    lineItems.push({
+      price_data: {
+        currency: currency.toLowerCase(),
+        product_data: {
+          name: `GST (${GST_RATE}%)`,
+        },
+        unit_amount: gstAmount,
+      },
+      quantity: 1,
+    });
+  }
 
   if (shippingCost > 0) {
     lineItems.push({
