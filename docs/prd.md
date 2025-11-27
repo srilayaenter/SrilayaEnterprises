@@ -59,7 +59,8 @@ An e-commerce platform dedicated to selling organic products including millets, 
 - MILLETS009: I Pearl - Cost: ₹38/kg, Selling: ₹47.5/kg, GST: 2.38%, Final: ₹49.88/kg
 - MILLETS010: Sorghum (white) - Cost: ₹55/kg, Selling: ₹68.75/kg, GST: 3.44%, Final: ₹72.19/kg
 - MILLETS011: Sorghum (Red) - Cost: ₹56/kg, Selling: ₹70/kg, GST: 3.5%, Final: ₹73.5/kg
-\n#### Honey Category
+
+#### Honey Category
 - HONEY001: Cave Black Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
 - HONEY002: Siru Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
 - HONEY003: Kombu Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
@@ -75,8 +76,8 @@ Each category contains multiple product variants with different packaging option
 
 ### 3.1 Product Catalog
 - Product listing with images and descriptions
-- Search functionality\n- Filter options by category, price, packaging size
-- Product detail pages with specifications and pricing information
+- Main navigation menu displaying all five categories: Rice, Flour, Flakes, Millets, and Honey
+- Search functionality\n- Filter options by category, price, packaging size\n- Product detail pages with specifications and pricing information
 
 ### 3.2 Shopping Cart and Checkout Process
 - Add to cart functionality with quantity selection
@@ -88,7 +89,8 @@ Each category contains multiple product variants with different packaging option
 ### 3.3 User Registration, Login, and Profile Management
 - User registration with email and password
 - Secure login system\n- User profile management including personal information and delivery addresses
-- Password reset functionality\n\n### 3.4 Payment Gateway Integration
+- Password reset functionality
+\n### 3.4 Payment Gateway Integration
 - Secure payment gateway integration supporting multiple payment methods
 - Support for credit/debit cards, UPI, net banking, and digital wallets
 - Payment confirmation and receipt generation
@@ -127,3 +129,4 @@ Each category contains multiple product variants with different packaging option
 - Clean, readable sans-serif fonts for easy navigation and product information display
 \n## 6. Reference Files
 1. Product list with pricing: image.png
+2. Product images: Barley Flakes.png, Finger Millet Flakes.png, Barnyard Millet Flakes.png, Greengram Flakes.png, Foxtail Millet Flakes.png
