@@ -129,7 +129,8 @@ Each category contains multiple product variants with different packaging option
 - Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
 - Packaging options selection (checkboxes for1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey)
 - Final price auto-calculation display with discount application
-- Save and Cancel buttons\n
+- Save and Cancel buttons
+
 **View Product List**
 - Table display with columns: Product ID, Product Name, Category, Cost Price, Selling Price, GST%, Final Price, Stock Status, Actions
 - Pagination with 20 products per page
@@ -170,8 +171,7 @@ Each category contains multiple product variants with different packaging option
 - Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
 - Order history table: Order ID, Date, Items Count, Total Amount, Status
 - Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
-
-**Edit Customer Information**
+\n**Edit Customer Information**
 - Pre-filled form with existing customer data
 - Editable fields: Name, Email, Phone, Addresses, Account Status
 - Update and Cancel buttons
@@ -181,7 +181,7 @@ Each category contains multiple product variants with different packaging option
 - Last login date and time
 - Recent browsing history (last 10 products viewed)
 - Cart abandonment tracking
-\n#### 3.7.3Inventory Management (Implementation Ready)
+\n#### 3.7.3 Inventory Management (Implementation Ready)
 
 **Stock Level Dashboard**
 - Overview cards: Total Products, Low Stock Items, Out of Stock Items, Total Inventory Value
@@ -345,9 +345,43 @@ Each category contains multiple product variants with different packaging option
 - Filter by handler, status, date range
 - Export shipment reports
 
+**Shipment Payment Records Table**
+- **Add Payment Entry:** Admin can record payments made to shipment handlers with the following fields:
+  + Payment ID (auto-generated)
+  + Handler Name (dropdown selection from registered handlers)
+  + Payment Date
+  + Shipment ID (optional, for linking specific shipments)
+  + Order ID (optional, for reference)
+  + Amount Paid (₹)
+  + Payment Method (Cash/Bank Transfer/UPI/Cheque/Other)
+  + Transaction Reference Number (optional)
+  + Notes (optional)
+  + Save and Cancel buttons
+
+- **View Shipment Payment Table:** Table display with columns:
+  + Payment ID
+  + Handler Name
+  + Payment Date\n  + Shipment ID\n  + Order ID
+  + Amount Paid (₹)\n  + Payment Method
+  + Transaction Reference\n  + Notes
+  + Actions (Edit/Delete/View Receipt)
+
+- **Edit Payment Entry:** Pre-filled form with existing payment data, all fields editable except Payment ID\n
+- **Delete Payment Entry:** Delete button with confirmation dialog
+
+- **Filter and Search Options:**
+  + Search by Payment ID, Handler Name, Shipment ID, or Order ID
+  + Filter by Handler, Date Range, Payment Method\n  + Sort by Payment Date, Amount Paid\n
+- **Export Options:** Export payment records to CSV/PDF for accounting\n
+- **Payment Summary Dashboard:**
+  + Total payments made (count)
+  + Total amount paid to handlers (₹)
+  + Handler-wise payment breakdown
+  + Pending payments (if any outstanding amounts exist)
+
 **Transaction Management with Handlers**
 - View all financial transactions with shipment handlers
-- Record payments made to handlers
+- Record payments made to handlers using the Shipment Payment Records Table
 - Track outstanding amounts\n- Generate handler payment reports
 - Filter by handler, date range, payment status
 - Export to CSV/PDF
@@ -367,8 +401,7 @@ Each category contains multiple product variants with different packaging option
 - Shipping handler performance reports
 - Return rate analysis
 
-## 4. Business Goals
-
+##4. Business Goals\n
 ### 4.1 Sales Objectives
 - Achieve defined sales targets\n- Customer acquisition and retention
 \n### 4.2 Marketing Strategies

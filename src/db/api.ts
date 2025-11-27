@@ -19,7 +19,9 @@ import type {
   ShipmentHandlerTransaction,
   ShipmentHandlerWithTransactions,
   Shipment,
-  ShipmentWithDetails
+  ShipmentWithDetails,
+  HandlerPayment,
+  HandlerPaymentWithDetails
 } from '@/types/types';
 
 export const productsApi = {
@@ -835,5 +837,134 @@ export const shipmentsApi = {
       .eq('id', id);
 
     if (error) throw error;
+  }
+};
+
+export const handlerPaymentsApi = {
+  async getAll(): Promise<HandlerPayment[]> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .select('*')
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string): Promise<HandlerPayment | null> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getByHandler(handlerId: string): Promise<HandlerPayment[]> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .select('*')
+      .eq('handler_id', handlerId)
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByShipment(shipmentId: string): Promise<HandlerPayment[]> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .select('*')
+      .eq('shipment_id', shipmentId)
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByPaymentStatus(status: PaymentStatus): Promise<HandlerPayment[]> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .select('*')
+      .eq('payment_status', status)
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getWithDetails(): Promise<HandlerPaymentWithDetails[]> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .select(`
+        *,
+        handler:shipment_handlers(id, name, contact_person, phone),
+        shipment:shipments(id, tracking_number, status),
+        order:orders(id, order_number, total_amount)
+      `)
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async create(payment: Omit<HandlerPayment, 'id' | 'created_at' | 'updated_at'>): Promise<HandlerPayment> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .insert(payment)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create handler payment');
+    return data;
+  },
+
+  async update(id: string, updates: Partial<HandlerPayment>): Promise<HandlerPayment> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update handler payment');
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('handler_payments')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
+  async getTotalPaidToHandler(handlerId: string): Promise<number> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .select('payment_amount')
+      .eq('handler_id', handlerId)
+      .eq('payment_status', 'paid');
+
+    if (error) throw error;
+    if (!Array.isArray(data)) return 0;
+    
+    return data.reduce((sum, payment) => sum + Number(payment.payment_amount), 0);
+  },
+
+  async getPendingPayments(): Promise<HandlerPayment[]> {
+    const { data, error } = await supabase
+      .from('handler_payments')
+      .select('*')
+      .eq('payment_status', 'pending')
+      .order('payment_date', { ascending: true });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
   }
 };

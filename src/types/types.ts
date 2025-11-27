@@ -174,6 +174,26 @@ export interface VendorSupplyWithDetails extends VendorSupply {
   receiver?: Profile;
 }
 
+export interface HandlerPayment {
+  id: string;
+  shipment_id: string;
+  handler_id: string;
+  order_id: string;
+  payment_amount: number;
+  payment_date: string | null;
+  payment_method: string | null;
+  payment_status: PaymentStatus;
+  transaction_reference: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HandlerPaymentWithDetails extends HandlerPayment {
+  handler?: ShipmentHandler;
+  shipment?: Shipment;
+  order?: Order;
+}
 
 export interface ShipmentHandler {
   id: string;
