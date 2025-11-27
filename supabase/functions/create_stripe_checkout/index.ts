@@ -79,9 +79,10 @@ function validateCheckoutRequest(request: CheckoutRequest): void {
 function processOrderItems(items: OrderItem[], shippingCost: number = 0) {
   const GST_RATE = 5; // 5% GST
   
+  // Store items with prices in rupees (not paise)
   const formattedItems = items.map(item => ({
     name: item.name.trim(),
-    price: Math.round(item.price * 100),
+    price: item.price, // Keep in rupees for database storage
     quantity: item.quantity,
     image_url: item.image_url?.trim() || "",
     packaging_size: item.packaging_size || "",
@@ -89,16 +90,35 @@ function processOrderItems(items: OrderItem[], shippingCost: number = 0) {
     variant_id: item.variant_id || "",
   }));
   
+  // Calculate subtotal in rupees
   const subtotal = formattedItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
   
-  const gstAmount = Math.round((subtotal * GST_RATE) / 100);
-  const shippingAmount = Math.round(shippingCost * 100);
-  const totalAmount = subtotal + gstAmount + shippingAmount;
+  // Calculate GST in rupees
+  const gstAmount = (subtotal * GST_RATE) / 100;
   
-  return { formattedItems, subtotal, gstAmount, shippingAmount, totalAmount };
+  // Total in rupees
+  const totalAmount = subtotal + gstAmount + shippingCost;
+  
+  // For Stripe, convert to paise (smallest currency unit)
+  const subtotalPaise = Math.round(subtotal * 100);
+  const gstAmountPaise = Math.round(gstAmount * 100);
+  const shippingAmountPaise = Math.round(shippingCost * 100);
+  const totalAmountPaise = Math.round(totalAmount * 100);
+  
+  return { 
+    formattedItems, 
+    subtotal, 
+    gstAmount, 
+    shippingCost,
+    totalAmount,
+    subtotalPaise,
+    gstAmountPaise,
+    shippingAmountPaise,
+    totalAmountPaise
+  };
 }
 
 async function createCheckoutSession(
@@ -112,18 +132,26 @@ async function createCheckoutSession(
   customerInfo?: any,
   shippingAddress?: string
 ) {
-  const { formattedItems, subtotal, gstAmount, shippingAmount, totalAmount } = processOrderItems(items, shippingCost);
+  const { 
+    formattedItems, 
+    subtotal, 
+    gstAmount, 
+    totalAmount,
+    gstAmountPaise,
+    shippingAmountPaise
+  } = processOrderItems(items, shippingCost);
   const GST_RATE = 5;
 
+  // Store all amounts in rupees in the database
   const { data: order, error } = await supabase
     .from("orders")
     .insert({
       user_id: userId,
       items: formattedItems,
-      total_amount: subtotal,
+      total_amount: subtotal, // Subtotal in rupees
       gst_rate: GST_RATE,
-      gst_amount: gstAmount,
-      shipping_cost: shippingCost,
+      gst_amount: gstAmount, // GST in rupees
+      shipping_cost: shippingCost, // Shipping in rupees
       currency: currency.toLowerCase(),
       status: "pending",
       shipping_address: shippingAddress || customerInfo?.address || null,
@@ -138,6 +166,7 @@ async function createCheckoutSession(
 
   if (error) throw new Error(`Failed to create order: ${error.message}`);
 
+  // Create Stripe line items with amounts in paise
   const lineItems = items.map(item => ({
     price_data: {
       currency: currency.toLowerCase(),
@@ -145,33 +174,34 @@ async function createCheckoutSession(
         name: item.packaging_size ? `${item.name} (${item.packaging_size})` : item.name,
         images: item.image_url ? [item.image_url] : [],
       },
-      unit_amount: Math.round(item.price * 100),
+      unit_amount: Math.round(item.price * 100), // Convert to paise for Stripe
     },
     quantity: item.quantity,
   }));
 
-  // Add GST as a line item
-  if (gstAmount > 0) {
+  // Add GST as a line item (in paise)
+  if (gstAmountPaise > 0) {
     lineItems.push({
       price_data: {
         currency: currency.toLowerCase(),
         product_data: {
           name: `GST (${GST_RATE}%)`,
         },
-        unit_amount: gstAmount,
+        unit_amount: gstAmountPaise, // Already in paise
       },
       quantity: 1,
     });
   }
 
-  if (shippingCost > 0) {
+  // Add shipping as a line item (in paise)
+  if (shippingAmountPaise > 0) {
     lineItems.push({
       price_data: {
         currency: currency.toLowerCase(),
         product_data: {
           name: 'Shipping Cost',
         },
-        unit_amount: shippingAmount,
+        unit_amount: shippingAmountPaise, // Already in paise
       },
       quantity: 1,
     });
