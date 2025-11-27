@@ -16,11 +16,13 @@ An e-commerce platform dedicated to selling organic products including millets, 
 ## 2. Product Categories and Specifications
 
 ### 2.1 Product Categories
-- Rice\n- Flour
+- Rice
+- Flour
 - Flakes
 - Millets
 - Honey
-\n### 2.2 Product List with Pricing (All prices in Indian Rupees)
+
+### 2.2 Product List with Pricing (All prices in Indian Rupees)
 
 #### Rice Category
 - RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final: ₹94.5/kg
@@ -59,8 +61,7 @@ An e-commerce platform dedicated to selling organic products including millets, 
 - MILLETS009: I Pearl - Cost: ₹38/kg, Selling: ₹47.5/kg, GST: 2.38%, Final: ₹49.88/kg
 - MILLETS010: Sorghum (white) - Cost: ₹55/kg, Selling: ₹68.75/kg, GST: 3.44%, Final: ₹72.19/kg
 - MILLETS011: Sorghum (Red) - Cost: ₹56/kg, Selling: ₹70/kg, GST: 3.5%, Final: ₹73.5/kg
-
-#### Honey Category
+\n#### Honey Category
 - HONEY001: Cave Black Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
 - HONEY002: Siru Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
 - HONEY003: Kombu Honey - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final: ₹872.81/kg
@@ -77,7 +78,8 @@ Each category contains multiple product variants with different packaging option
 ### 3.1 Product Catalog
 - Product listing with images and descriptions
 - Main navigation menu displaying all five categories: Rice, Flour, Flakes, Millets, and Honey
-- Search functionality\n- Filter options by category, price, packaging size\n- Product detail pages with specifications and pricing information
+- Search functionality\n- Filter options by category, price, packaging size
+- Product detail pages with specifications and pricing information
 
 ### 3.2 Shopping Cart and Checkout Process
 - Add to cart functionality with quantity selection
@@ -94,30 +96,67 @@ Each category contains multiple product variants with different packaging option
 - Secure payment gateway integration supporting multiple payment methods
 - Support for credit/debit cards, UPI, net banking, and digital wallets
 - Payment confirmation and receipt generation
-\n### 3.5 Order Tracking and History
+
+### 3.5 Order Tracking and History
 - Order confirmation with unique order ID
 - Real-time order status tracking (Order Placed, Processing, Shipped, Delivered)
 - Order history viewing with details of past purchases
 - Order invoice download option
 
-### 3.6 Admin Dashboard
-- Product management (add, edit, delete products)
-- Order management and processing with status updates
-- Customer management and user data viewing
-- Inventory tracking and stock management
-- Sales reports and analytics
+### 3.6 Invoice Generation with Shipping Cost Calculation
+- Automatic invoice generation upon order confirmation
+- Invoice includes order details, product list, quantities, prices, GST breakdown\n- Shipping cost calculation based on total order weight
+- Final invoice displays: subtotal, GST, shipping charges, and grand total
+
+### 3.7 Admin Dashboard
+\n#### 3.7.1 User Management
+- Add new users with role assignment (admin, staff, customer)
+- View and edit user information
+- Deactivate or delete user accounts
+- Search and filter users by role, registration date, or status
+
+#### 3.7.2 Customer Management
+- Add new customers with contact details and delivery addresses
+- View customer profiles with order history and purchase patterns
+- Edit customer information
+- Search and filter customers by name, location, or purchase activity
+
+#### 3.7.3 Product Management
+- Add new products under different categories (Rice, Flour, Flakes, Millets, Honey)\n- Edit existing product details including name, pricing, GST, packaging options
+- Delete or deactivate products
+- Upload product images
+- Assign products to specific categories
+
+#### 3.7.4 Inventory Management
+- Update stock levels for all products
+- Set low-stock alerts and notifications
+- Track inventory movements (stock in, stock out)\n- View complete inventory status with real-time updates
+- Bulk inventory update functionality
+
+#### 3.7.5 Order Management
+- View and process orders with status updates
+- Update order status (Order Placed, Processing, Shipped, Delivered)
+- Generate and download invoices with shipping cost included
+\n#### 3.7.6 Sales Reports and Analytics
+- Sales reports by product, category, and time period
+- Customer analytics and purchase trends
+- Inventory turnover reports
 
 ## 4. Business Goals\n
 ### 4.1 Sales Objectives
-- Achieve defined sales targets\n- Customer acquisition and retention
+- Achieve defined sales targets
+- Customer acquisition and retention
 \n### 4.2 Marketing Strategies
-- Discount programs\n- Loyalty rewards system
+- Discount programs
+- Loyalty rewards system
 - Promotional campaigns
-\n## 5. Design Style\n
+\n## 5. Design Style
+
 ### 5.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
 - Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
-\n### 5.2 Layout\n- Card-based layout for product display with clear visual hierarchy
+\n### 5.2 Layout
+- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
 \n### 5.3 Visual Elements

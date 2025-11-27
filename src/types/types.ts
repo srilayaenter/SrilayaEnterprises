@@ -32,6 +32,7 @@ export interface ProductVariant {
   packaging_size: string;
   price: number;
   stock: number;
+  weight_kg: number;
   created_at: string;
 }
 
@@ -54,6 +55,7 @@ export interface Order {
   user_id: string | null;
   items: OrderItem[];
   total_amount: number;
+  shipping_cost: number;
   currency: string;
   status: OrderStatus;
   stripe_session_id: string | null;
@@ -69,4 +71,15 @@ export interface Order {
 export interface CartItem extends OrderItem {
   product_id: string;
   variant_id: string;
+}
+
+export interface ShippingRate {
+  id: string;
+  min_weight_kg: number;
+  max_weight_kg: number;
+  rate_per_kg: number;
+  base_cost: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
 }
