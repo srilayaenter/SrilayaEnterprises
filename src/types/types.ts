@@ -5,6 +5,7 @@ export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
 export interface Profile {
   id: string;
   email: string | null;
+  nickname: string | null;
   full_name: string | null;
   phone: string | null;
   address: string | null;
@@ -19,6 +20,7 @@ export interface Product {
   description: string | null;
   category: ProductCategory;
   base_price: number;
+  product_code: string | null;
   image_url: string | null;
   stock: number;
   is_active: boolean;

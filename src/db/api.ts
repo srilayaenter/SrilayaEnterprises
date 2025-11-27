@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Product, ProductVariant, ProductWithVariants, Order, Profile, ProductCategory } from '@/types/types';
+import type { Product, ProductVariant, ProductWithVariants, Order, Profile, ProductCategory, ShippingRate } from '@/types/types';
 
 export const productsApi = {
   async getAll(category?: ProductCategory): Promise<Product[]> {
@@ -202,5 +202,97 @@ export const profilesApi = {
 
     if (error) throw error;
     return Array.isArray(data) ? data : [];
+  },
+
+  async promoteToAdmin(userId: string): Promise<Profile> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .update({ role: 'admin' })
+      .eq('id', userId)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to promote user');
+    return data;
+  }
+};
+
+export const shippingApi = {
+  async getRates(): Promise<ShippingRate[]> {
+    const { data, error } = await supabase
+      .from('shipping_rates')
+      .select('*')
+      .eq('is_active', true)
+      .order('min_weight_kg', { ascending: true });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async updateRate(id: string, updates: Partial<ShippingRate>): Promise<ShippingRate> {
+    const { data, error } = await supabase
+      .from('shipping_rates')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update shipping rate');
+    return data;
+  }
+};
+
+export const adminApi = {
+  async getInventoryStats() {
+    const { data, error } = await supabase
+      .rpc('get_inventory_stats');
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getLowStockProducts(threshold: number = 20): Promise<Array<{
+    product_name: string;
+    packaging_size: string;
+    stock: number;
+    category: string;
+  }>> {
+    const { data, error } = await supabase
+      .from('product_variants')
+      .select(`
+        stock,
+        packaging_size,
+        product_id,
+        products!inner(name, category)
+      `)
+      .lt('stock', threshold)
+      .order('stock', { ascending: true });
+
+    if (error) throw error;
+    
+    return Array.isArray(data) ? data.map((item: any) => ({
+      product_name: item.products.name,
+      packaging_size: item.packaging_size,
+      stock: item.stock,
+      category: item.products.category
+    })) : [];
+  },
+
+  async bulkUpdateStock(updates: Array<{ id: string; stock: number }>): Promise<void> {
+    const promises = updates.map(({ id, stock }) =>
+      supabase
+        .from('product_variants')
+        .update({ stock })
+        .eq('id', id)
+    );
+
+    const results = await Promise.all(promises);
+    const errors = results.filter(r => r.error);
+    
+    if (errors.length > 0) {
+      throw new Error(`Failed to update ${errors.length} variants`);
+    }
   }
 };

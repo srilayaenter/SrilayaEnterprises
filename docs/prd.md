@@ -16,16 +16,13 @@ An e-commerce platform dedicated to selling organic products including millets, 
 ## 2. Product Categories and Specifications
 
 ### 2.1 Product Categories
-- Rice
-- Flour
+- Rice\n- Flour
 - Flakes
 - Millets
 - Honey
+\n### 2.2 Product List with Pricing (All prices in Indian Rupees)
 
-### 2.2 Product List with Pricing (All prices in Indian Rupees)
-
-#### Rice Category
-- RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final: ₹94.5/kg
+#### Rice Category\n- RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final: ₹94.5/kg
 - RICE002: Mapillai samba - Cost: ₹75/kg, Selling: ₹93.75/kg, GST: 4.69%, Final: ₹98.44/kg
 - RICE003: Poongar rice - Cost: ₹57/kg, Selling: ₹71.25/kg, GST: 3.56%, Final: ₹74.81/kg
 - RICE004: Tooyamalli rice - Cost: ₹64/kg, Selling: ₹80/kg, GST: 4%, Final: ₹84/kg
@@ -78,8 +75,7 @@ Each category contains multiple product variants with different packaging option
 ### 3.1 Product Catalog
 - Product listing with images and descriptions
 - Main navigation menu displaying all five categories: Rice, Flour, Flakes, Millets, and Honey
-- Search functionality\n- Filter options by category, price, packaging size
-- Product detail pages with specifications and pricing information
+- Search functionality\n- Filter options by category, price, packaging size\n- Product detail pages with specifications and pricing information
 
 ### 3.2 Shopping Cart and Checkout Process
 - Add to cart functionality with quantity selection
@@ -96,8 +92,7 @@ Each category contains multiple product variants with different packaging option
 - Secure payment gateway integration supporting multiple payment methods
 - Support for credit/debit cards, UPI, net banking, and digital wallets
 - Payment confirmation and receipt generation
-
-### 3.5 Order Tracking and History
+\n### 3.5 Order Tracking and History
 - Order confirmation with unique order ID
 - Real-time order status tracking (Order Placed, Processing, Shipped, Delivered)
 - Order history viewing with details of past purchases
@@ -108,32 +103,105 @@ Each category contains multiple product variants with different packaging option
 - Invoice includes order details, product list, quantities, prices, GST breakdown\n- Shipping cost calculation based on total order weight
 - Final invoice displays: subtotal, GST, shipping charges, and grand total
 
-### 3.7 Admin Dashboard
-\n#### 3.7.1 User Management
-- Add new users with role assignment (admin, staff, customer)
+### 3.7 Admin Dashboard\n\n#### 3.7.1 Product Management (Implementation Ready)
+\n**Add New Product**
+- Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (₹/kg), GST percentage\n- Image upload functionality with preview
+- Packaging options selection (checkboxes for1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey)
+- Final price auto-calculation display
+- Save and Cancel buttons
+
+**View Product List**
+- Table display with columns: Product ID, Product Name, Category, Cost Price, Selling Price, GST%, Final Price, Stock Status, Actions
+- Pagination with 20 products per page
+- Search bar for product name or ID
+- Filter dropdowns: Category, Stock Status (In Stock/Low Stock/Out of Stock)
+- Sort options: Name (A-Z), Price (Low to High), Recently Added
+
+**Edit Product**
+- Pre-filled form with existing product data
+- All fields editable except Product ID
+- Image replacement option
+- Update and Cancel buttons
+- Confirmation prompt before saving changes
+
+**Delete/Deactivate Product**
+- Delete button with confirmation dialog
+- Option to deactivate instead of permanent deletion
+- Deactivated products hidden from customer view but retained in database
+
+**Bulk Operations**
+- Checkbox selection for multiple products
+- Bulk actions: Update prices, Change category, Deactivate, Export to CSV
+\n#### 3.7.2 Customer Management (Implementation Ready)
+
+**Add New Customer**
+- Form fields: Customer Name, Email, Phone Number, Primary Delivery Address (Street, City, State, Pincode), Secondary Address (optional)\n- Account status selection (Active/Inactive)
+- Save and Cancel buttons
+
+**View Customer List**
+- Table display with columns: Customer ID, Name, Email, Phone, Registration Date, Total Orders, Total Spent, Status, Actions
+- Pagination with 25 customers per page
+- Search bar for name, email, or phone
+- Filter options: Registration Date Range, Order Count (0, 1-5, 5+), Status (Active/Inactive)
+- Sort options: Name (A-Z), Registration Date, Total Spent
+
+**View Customer Profile**
+- Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
+- Order history table: Order ID, Date, Items Count, Total Amount, Status
+- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
+
+**Edit Customer Information**
+- Pre-filled form with existing customer data
+- Editable fields: Name, Email, Phone, Addresses, Account Status
+- Update and Cancel buttons
+- Email/Phone validation
+
+**Customer Activity Tracking**
+- Last login date and time
+- Recent browsing history (last 10 products viewed)
+- Cart abandonment tracking
+\n#### 3.7.3 Inventory Management (Implementation Ready)\n
+**Stock Level Dashboard**
+- Overview cards: Total Products, Low Stock Items, Out of Stock Items, Total Inventory Value
+- Real-time stock status for all products
+- Color-coded indicators: Green (In Stock >50units), Yellow (Low Stock 10-50 units), Red (Critical<10 units), Grey (Out of Stock)
+\n**Update Stock Levels**
+- Product search and selection
+- Current stock display
+- Stock adjustment options: Add Stock, Remove Stock, Set Exact Quantity
+- Reason dropdown: New Purchase, Sale, Damage, Return, Manual Correction
+- Adjustment notes field
+- Submit and Cancel buttons
+
+**Bulk Stock Update**
+- CSV upload functionality for bulk updates
+- Template download option
+- Validation and error reporting
+- Preview before final update
+
+**Low Stock Alerts**
+- Configurable threshold settings per product or category
+- Alert notification panel in dashboard
+- Email notifications to admin
+- Alert history log
+
+**Inventory Movement Log**
+- Table display: Date, Product, Movement Type (In/Out), Quantity, Reason, Updated By, Notes
+- Filter by date range, product, movement type
+- Export to CSV option
+
+**Stock Reports**
+- Current inventory status report
+- Stock movement report (date range selection)
+- Low stock items report
+- Inventory valuation report (cost price × quantity)
+- Export options: PDF, Excel, CSV
+
+#### 3.7.4 User Management\n- Add new users with role assignment (admin, staff, customer)
 - View and edit user information
 - Deactivate or delete user accounts
 - Search and filter users by role, registration date, or status
-
-#### 3.7.2 Customer Management
-- Add new customers with contact details and delivery addresses
-- View customer profiles with order history and purchase patterns
-- Edit customer information
-- Search and filter customers by name, location, or purchase activity
-
-#### 3.7.3 Product Management
-- Add new products under different categories (Rice, Flour, Flakes, Millets, Honey)\n- Edit existing product details including name, pricing, GST, packaging options
-- Delete or deactivate products
-- Upload product images
-- Assign products to specific categories
-
-#### 3.7.4 Inventory Management
-- Update stock levels for all products
-- Set low-stock alerts and notifications
-- Track inventory movements (stock in, stock out)\n- View complete inventory status with real-time updates
-- Bulk inventory update functionality
-
-#### 3.7.5 Order Management
+\n#### 3.7.5 Order Management
 - View and process orders with status updates
 - Update order status (Order Placed, Processing, Shipped, Delivered)
 - Generate and download invoices with shipping cost included
@@ -141,22 +209,18 @@ Each category contains multiple product variants with different packaging option
 - Sales reports by product, category, and time period
 - Customer analytics and purchase trends
 - Inventory turnover reports
+\n## 4. Business Goals
 
-## 4. Business Goals\n
 ### 4.1 Sales Objectives
-- Achieve defined sales targets
-- Customer acquisition and retention
-\n### 4.2 Marketing Strategies
-- Discount programs
-- Loyalty rewards system
+- Achieve defined sales targets\n- Customer acquisition and retention\n\n### 4.2 Marketing Strategies
+- Discount programs\n- Loyalty rewards system
 - Promotional campaigns
 \n## 5. Design Style
 
 ### 5.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
 - Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
-\n### 5.2 Layout
-- Card-based layout for product display with clear visual hierarchy
+\n### 5.2 Layout\n- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
 \n### 5.3 Visual Elements
