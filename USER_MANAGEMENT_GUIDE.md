@@ -6,6 +6,8 @@ This application implements a role-based access control (RBAC) system with two u
 - **User** (Regular user with limited privileges)
 - **Admin** (Administrator with full system access)
 
+**✅ Admin Privilege: Admins can add new regular (non-admin) users and admin users through the User Management interface.**
+
 ## How to Add New Users
 
 ### Method 1: Self-Registration (Recommended for Regular Users)
@@ -23,7 +25,9 @@ This application implements a role-based access control (RBAC) system with two u
    - All new users are automatically assigned the **"user"** role
    - Users can immediately log in and access user-level features
 
-### Method 2: Admin-Created Users (For Admin Users Only)
+### Method 2: Admin-Created Users (✅ RECOMMENDED FOR ADMINS)
+
+**Admins have full privilege to create both regular users and admin users.**
 
 1. **Access Admin Dashboard**
    - Log in as an admin user
@@ -35,13 +39,19 @@ This application implements a role-based access control (RBAC) system with two u
    
 3. **Click "Add New User" Button**
    - Fill in the required information:
-     - Email (required)
-     - Password (required, minimum 6 characters)
-     - Full Name (optional)
-     - Phone (optional)
-     - **Role** (required - choose "User" or "Admin")
+     - **Email** (required)
+     - **Password** (required, minimum 6 characters)
+     - **Full Name** (optional)
+     - **Phone** (optional)
+     - **Role** (required):
+       - **"User"** - Creates a regular user with standard privileges (DEFAULT)
+       - **"Admin"** - Creates an admin user with full system access
    
-4. **Create User**
+4. **Default Behavior**
+   - By default, the role is set to **"User"** (non-admin)
+   - This ensures regular users are created unless you explicitly choose "Admin"
+   
+5. **Create User**
    - Click "Create User" button
    - The new user will receive a confirmation email
    - They can log in immediately with the provided credentials

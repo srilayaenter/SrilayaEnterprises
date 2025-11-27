@@ -120,7 +120,7 @@ Each category contains multiple product variants with different packaging option
 - Automatic invoice generation upon order confirmation
 - Invoice includes order details, product list, quantities, prices, GST breakdown, package discount percentage\n- **Order Type Display:** Invoice clearly indicates whether it is an Online Order or In-Store Purchase\n- **For Online Orders:**
   + **Weight-based shipping cost calculation:**
-    * **Intrastate delivery (same city and state):** ₹30-50per kg
+    * **Intrastate delivery (same city and state):** ₹30-50 per kg
     * **Interstate delivery:** ₹70-100 per kg
   + **Delivery location detection:** System identifies whether delivery address is within the same state or interstate to apply appropriate shipping rates
   + Invoice displays: subtotal, package discount (with percentage), GST, shipping charges (calculated based on total order weight and delivery location), and grand total
@@ -144,8 +144,7 @@ Each category contains multiple product variants with different packaging option
 - Filter dropdowns: Category, Stock Status (In Stock/Low Stock/Out of Stock)
 - Sort options: Name (A-Z), Price (Low to High), Recently Added
 \n**Edit Product**
-- Pre-filled form with existing product data
-- All fields editable except Product ID
+- Pre-filled form with existing product data\n- All fields editable except Product ID
 - Selling price auto-updates when cost price changes (Cost + 25%)
 - Image replacement option
 - Update and Cancel buttons
@@ -182,8 +181,7 @@ Each category contains multiple product variants with different packaging option
 - Editable fields: Name, Email, Phone, Addresses, Account Status
 - Update and Cancel buttons
 - Email/Phone validation
-
-**Customer Activity Tracking**
+\n**Customer Activity Tracking**
 - Last login date and time
 - Recent browsing history (last 10 products viewed)
 - Cart abandonment tracking
@@ -227,7 +225,7 @@ Each category contains multiple product variants with different packaging option
 #### 3.7.4 User Management (Implementation Ready)
 
 **User Roles and Privileges**
-- **Admin:** Full access to all features including user management, product management, order management, inventory, vendor management, shipping management, and reports
+- **Admin:** Full access to all features including user management, product management, order management, inventory, vendor management, shipping management, and reports. **Admin users have the exclusive privilege to add new Staff and Customer users.**
 - **Staff:** Limited access with the following privileges:
   + View and process orders (both online and in-store)
   + Update order status
@@ -238,15 +236,18 @@ Each category contains multiple product variants with different packaging option
   + No access to: User management, Vendor management, Shipping handler management, Financial reports, System settings
 - **Customer:** Standard customer account with shopping and order tracking privileges only
 
-**Add New User**
-- Form fields:\n  + User ID (auto-generated)\n  + Full Name
+**Add New User (Admin Privilege Only)**
+- **Only Admin users can add new Staff and Customer users**
+- Form fields:\n  + User ID (auto-generated)
+  + Full Name
   + Email (must be unique)
   + Phone Number
-  + Role Selection (dropdown: Admin/Staff/Customer)
+  + Role Selection (dropdown: Staff/Customer only - Admin users cannot create new Admin accounts through this interface)
   + Password (auto-generated or manual input with strength indicator)
   + Account Status (Active/Inactive)
 + Assigned Permissions (checkboxes for Staff role to customize specific access rights)
-- Save and Cancel buttons\n- Email notification sent to new user with login credentials
+- Save and Cancel buttons
+- Email notification sent to new user with login credentials
 
 **View User List**
 - Table display with columns: User ID, Name, Email, Phone, Role, Registration Date, Last Login, Status, Actions
@@ -293,8 +294,7 @@ Each category contains multiple product variants with different packaging option
 - **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
 - **Shipment status tracking:** Track shipment status including received by customer or returned back for any reason
 - Generate and download invoices with shipping cost and discount percentage included
-- Order details view showing: Order ID, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total
-
+- Order details view showing: Order ID, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total\n
 **In-Store Purchases Management**
 - View and process in-store purchases\n- **Order status:** Automatically marked as Completed after payment
 - **No shipping management:** In-store purchases do not require delivery address or shipment tracking
@@ -311,8 +311,7 @@ Each category contains multiple product variants with different packaging option
 #### 3.7.6 Vendor Management (Implementation Ready)
 
 **Add New Vendor**
-- Form fields: Vendor ID (auto-generated), Vendor Name, Contact Person, Email, Phone Number, Address, Product Categories Supplied, Payment Terms, GST Number
-- Save and Cancel buttons
+- Form fields: Vendor ID (auto-generated), Vendor Name, Contact Person, Email, Phone Number, Address, Product Categories Supplied, Payment Terms, GST Number\n- Save and Cancel buttons
 
 **View Vendor List**
 - Table display with columns: Vendor ID, Vendor Name, Contact Person, Phone, Product Categories, Total Transactions, Outstanding Amount, Status, Actions
@@ -320,14 +319,14 @@ Each category contains multiple product variants with different packaging option
 - Search bar for vendor name or ID
 - Filter options: Product Category, Status (Active/Inactive)
 - Sort options: Name (A-Z), Total Transactions, Outstanding Amount
-\n**View Vendor Profile**\n- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms
-- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n
+\n**View Vendor Profile**\n- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms\n- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n
 **Edit Vendor Information**
 - Pre-filled form with existing vendor data\n- All fields editable except Vendor ID\n- Update and Cancel buttons
 \n**Record Purchase Transaction**
 - Vendor selection dropdown
 - Product selection with quantity and cost price input
-- Transaction date\n- Payment status (Paid/Pending/Partial)\n- Amount paid field
+- Transaction date\n- Payment status (Paid/Pending/Partial)
+- Amount paid field
 - Invoice upload option
 - Notes field
 - Submit button
@@ -399,8 +398,7 @@ Each category contains multiple product variants with different packaging option
 - Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n
 **View Handler Profile**
 - Handler details section: Name, Contact Person, Email, Phone, Service Areas, Rate Structure, Payment Terms
-- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status
-- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
+- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status\n- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
 
 **Edit Handler Information**
 - Pre-filled form with existing handler data
@@ -456,8 +454,7 @@ Each category contains multiple product variants with different packaging option
   + Total amount paid to handlers (₹)
   + Handler-wise payment breakdown
   + Pending payments (if any outstanding amounts exist)
-
-**Transaction Management with Handlers**
+\n**Transaction Management with Handlers**
 - View all financial transactions with shipment handlers
 - Record payments made to handlers using the Shipment Payment Records Table
 - Track outstanding amounts\n- Generate handler payment reports

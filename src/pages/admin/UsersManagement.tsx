@@ -203,7 +203,7 @@ export default function UsersManagement() {
             User Management
           </h1>
           <p className="text-muted-foreground mt-1">
-            Manage user accounts and permissions
+            Create and manage user accounts. Add regular users or assign admin privileges.
           </p>
         </div>
         <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
@@ -217,7 +217,7 @@ export default function UsersManagement() {
             <DialogHeader>
               <DialogTitle>Add New User</DialogTitle>
               <DialogDescription>
-                Create a new user account with specified role and permissions
+                Create a new user account. By default, new users are created as regular users (non-admin). You can assign admin privileges if needed.
               </DialogDescription>
             </DialogHeader>
             <form onSubmit={handleAddUser} className="space-y-4">
@@ -269,10 +269,13 @@ export default function UsersManagement() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="user">User</SelectItem>
-                    <SelectItem value="admin">Admin</SelectItem>
+                    <SelectItem value="user">User (Regular user with standard privileges)</SelectItem>
+                    <SelectItem value="admin">Admin (Full system access)</SelectItem>
                   </SelectContent>
                 </Select>
+                <p className="text-xs text-muted-foreground">
+                  Regular users can browse products, place orders, and manage their own account. Admins have full access to the admin dashboard.
+                </p>
               </div>
               <div className="flex justify-end gap-2">
                 <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
