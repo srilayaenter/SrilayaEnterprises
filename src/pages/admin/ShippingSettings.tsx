@@ -16,9 +16,9 @@ export default function ShippingSettings() {
     store_state: '',
     store_city: '',
     local_rate_min: 30,
-    local_rate_max: 50,
+    local_rate_max: 30,
     interstate_rate_min: 70,
-    interstate_rate_max: 100,
+    interstate_rate_max: 70,
   });
 
   useEffect(() => {
@@ -132,58 +132,44 @@ export default function ShippingSettings() {
           <CardContent className="space-y-4">
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-base font-semibold">Local Delivery (Same State)</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="local_rate_min">Min Rate (₹/kg)</Label>
-                    <Input
-                      id="local_rate_min"
-                      type="number"
-                      step="1"
-                      value={formData.local_rate_min}
-                      onChange={(e) => handleInputChange('local_rate_min', parseFloat(e.target.value))}
-                      placeholder="30"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="local_rate_max">Max Rate (₹/kg)</Label>
-                    <Input
-                      id="local_rate_max"
-                      type="number"
-                      step="1"
-                      value={formData.local_rate_max}
-                      onChange={(e) => handleInputChange('local_rate_max', parseFloat(e.target.value))}
-                      placeholder="50"
-                    />
-                  </div>
+                <Label className="text-base font-semibold">Intrastate Delivery (Same State)</Label>
+                <p className="text-sm text-muted-foreground">Fixed rate for deliveries within the same state</p>
+                <div className="space-y-2">
+                  <Label htmlFor="local_rate">Rate (₹/kg)</Label>
+                  <Input
+                    id="local_rate"
+                    type="number"
+                    step="1"
+                    value={formData.local_rate_min}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      handleInputChange('local_rate_min', value);
+                      handleInputChange('local_rate_max', value);
+                    }}
+                    placeholder="30"
+                  />
+                  <p className="text-xs text-muted-foreground">Current rate: ₹{formData.local_rate_min}/kg</p>
                 </div>
               </div>
 
               <div className="space-y-2">
-                <Label className="text-base font-semibold">Interstate Delivery</Label>
-                <div className="grid grid-cols-2 gap-4">
-                  <div className="space-y-2">
-                    <Label htmlFor="interstate_rate_min">Min Rate (₹/kg)</Label>
-                    <Input
-                      id="interstate_rate_min"
-                      type="number"
-                      step="1"
-                      value={formData.interstate_rate_min}
-                      onChange={(e) => handleInputChange('interstate_rate_min', parseFloat(e.target.value))}
-                      placeholder="70"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label htmlFor="interstate_rate_max">Max Rate (₹/kg)</Label>
-                    <Input
-                      id="interstate_rate_max"
-                      type="number"
-                      step="1"
-                      value={formData.interstate_rate_max}
-                      onChange={(e) => handleInputChange('interstate_rate_max', parseFloat(e.target.value))}
-                      placeholder="100"
-                    />
-                  </div>
+                <Label className="text-base font-semibold">Interstate Delivery (Different State)</Label>
+                <p className="text-sm text-muted-foreground">Fixed rate for deliveries to other states</p>
+                <div className="space-y-2">
+                  <Label htmlFor="interstate_rate">Rate (₹/kg)</Label>
+                  <Input
+                    id="interstate_rate"
+                    type="number"
+                    step="1"
+                    value={formData.interstate_rate_min}
+                    onChange={(e) => {
+                      const value = parseFloat(e.target.value);
+                      handleInputChange('interstate_rate_min', value);
+                      handleInputChange('interstate_rate_max', value);
+                    }}
+                    placeholder="70"
+                  />
+                  <p className="text-xs text-muted-foreground">Current rate: ₹{formData.interstate_rate_min}/kg</p>
                 </div>
               </div>
             </div>
@@ -200,30 +186,32 @@ export default function ShippingSettings() {
         </CardHeader>
         <CardContent className="space-y-4">
           <div className="space-y-2 text-sm">
-            <p className="font-medium">Local Delivery (Same State & City):</p>
+            <p className="font-medium">Intrastate Delivery (Same State):</p>
             <p className="text-muted-foreground">
-              Average of min and max local rates × total weight (rounded up to nearest kg)
+              Fixed rate per kg × total weight (rounded up to nearest kg)
             </p>
             <p className="font-mono bg-muted p-2 rounded">
-              Cost = ((₹{formData.local_rate_min} + ₹{formData.local_rate_max}) / 2) × weight
+              Cost = ₹{formData.local_rate_min}/kg × weight
             </p>
           </div>
 
           <div className="space-y-2 text-sm">
             <p className="font-medium">Interstate Delivery (Different State):</p>
             <p className="text-muted-foreground">
-              Average of min and max interstate rates × total weight (rounded up to nearest kg)
+              Fixed rate per kg × total weight (rounded up to nearest kg)
             </p>
             <p className="font-mono bg-muted p-2 rounded">
-              Cost = ((₹{formData.interstate_rate_min} + ₹{formData.interstate_rate_max}) / 2) × weight
+              Cost = ₹{formData.interstate_rate_min}/kg × weight
             </p>
           </div>
 
           <div className="space-y-2 text-sm">
             <p className="font-medium">Example Calculations:</p>
             <ul className="list-disc list-inside text-muted-foreground space-y-1">
-              <li>2.5kg local delivery: ₹{(((formData.local_rate_min + formData.local_rate_max) / 2) * Math.ceil(2.5)).toFixed(2)}</li>
-              <li>2.5kg interstate delivery: ₹{(((formData.interstate_rate_min + formData.interstate_rate_max) / 2) * Math.ceil(2.5)).toFixed(2)}</li>
+              <li>2.5kg intrastate delivery: ₹{(formData.local_rate_min * Math.ceil(2.5)).toFixed(2)} (3kg × ₹{formData.local_rate_min})</li>
+              <li>2.5kg interstate delivery: ₹{(formData.interstate_rate_min * Math.ceil(2.5)).toFixed(2)} (3kg × ₹{formData.interstate_rate_min})</li>
+              <li>5kg intrastate delivery: ₹{(formData.local_rate_min * 5).toFixed(2)}</li>
+              <li>5kg interstate delivery: ₹{(formData.interstate_rate_min * 5).toFixed(2)}</li>
             </ul>
           </div>
         </CardContent>
