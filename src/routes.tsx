@@ -9,10 +9,12 @@ import PaymentSuccess from './pages/PaymentSuccess';
 import Orders from './pages/Orders';
 import TrackShipment from './pages/TrackShipment';
 import AdminDashboard from './pages/admin/AdminDashboard';
+import UsersManagement from './pages/admin/UsersManagement';
 import VendorsManagement from './pages/admin/VendorsManagement';
 import VendorSupplies from './pages/admin/VendorSupplies';
 import ShipmentHandlersManagement from './pages/admin/ShipmentHandlersManagement';
 import ShipmentTracking from './pages/admin/ShipmentTracking';
+import { RequireAdmin } from './components/auth/RequireAdmin';
 
 interface RouteConfig {
   name: string;
@@ -79,31 +81,37 @@ const routes: RouteConfig[] = [
   {
     name: 'Admin',
     path: '/admin',
-    element: <AdminDashboard />,
+    element: <RequireAdmin><AdminDashboard /></RequireAdmin>,
+    visible: false
+  },
+  {
+    name: 'Users Management',
+    path: '/admin/users',
+    element: <RequireAdmin><UsersManagement /></RequireAdmin>,
     visible: false
   },
   {
     name: 'Vendors Management',
     path: '/admin/vendors',
-    element: <VendorsManagement />,
+    element: <RequireAdmin><VendorsManagement /></RequireAdmin>,
     visible: false
   },
   {
     name: 'Vendor Supplies',
     path: '/admin/vendor-supplies',
-    element: <VendorSupplies />,
+    element: <RequireAdmin><VendorSupplies /></RequireAdmin>,
     visible: false
   },
   {
     name: 'Shipment Handlers',
     path: '/admin/handlers',
-    element: <ShipmentHandlersManagement />,
+    element: <RequireAdmin><ShipmentHandlersManagement /></RequireAdmin>,
     visible: false
   },
   {
     name: 'Shipment Tracking',
     path: '/admin/shipments',
-    element: <ShipmentTracking />,
+    element: <RequireAdmin><ShipmentTracking /></RequireAdmin>,
     visible: false
   }
 ];

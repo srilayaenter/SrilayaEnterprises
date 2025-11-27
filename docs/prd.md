@@ -120,7 +120,7 @@ Each category contains multiple product variants with different packaging option
 - Automatic invoice generation upon order confirmation
 - Invoice includes order details, product list, quantities, prices, GST breakdown, package discount percentage\n- **Order Type Display:** Invoice clearly indicates whether it is an Online Order or In-Store Purchase\n- **For Online Orders:**
   + **Weight-based shipping cost calculation:**
-    * **Intrastate delivery (same city and state):** ₹30-50 per kg
+    * **Intrastate delivery (same city and state):** ₹30-50per kg
     * **Interstate delivery:** ₹70-100 per kg
   + **Delivery location detection:** System identifies whether delivery address is within the same state or interstate to apply appropriate shipping rates
   + Invoice displays: subtotal, package discount (with percentage), GST, shipping charges (calculated based on total order weight and delivery location), and grand total
@@ -144,7 +144,8 @@ Each category contains multiple product variants with different packaging option
 - Filter dropdowns: Category, Stock Status (In Stock/Low Stock/Out of Stock)
 - Sort options: Name (A-Z), Price (Low to High), Recently Added
 \n**Edit Product**
-- Pre-filled form with existing product data\n- All fields editable except Product ID
+- Pre-filled form with existing product data
+- All fields editable except Product ID
 - Selling price auto-updates when cost price changes (Cost + 25%)
 - Image replacement option
 - Update and Cancel buttons
@@ -175,12 +176,14 @@ Each category contains multiple product variants with different packaging option
 **View Customer Profile**
 - Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
 - Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status\n- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
-\n**Edit Customer Information**
+
+**Edit Customer Information**
 - Pre-filled form with existing customer data
 - Editable fields: Name, Email, Phone, Addresses, Account Status
 - Update and Cancel buttons
 - Email/Phone validation
-\n**Customer Activity Tracking**
+
+**Customer Activity Tracking**
 - Last login date and time
 - Recent browsing history (last 10 products viewed)
 - Cart abandonment tracking
@@ -221,25 +224,77 @@ Each category contains multiple product variants with different packaging option
 - Inventory valuation report (cost price × quantity)
 - Export options: PDF, Excel, CSV
 
-#### 3.7.4 User Management\n- Add new users with role assignment (admin, staff, customer)
-- View and edit user information
-- Deactivate or delete user accounts
-- Search and filter users by role, registration date, or status
-\n#### 3.7.5 Order Management
-\n**View All Orders**
+#### 3.7.4 User Management (Implementation Ready)
+
+**User Roles and Privileges**
+- **Admin:** Full access to all features including user management, product management, order management, inventory, vendor management, shipping management, and reports
+- **Staff:** Limited access with the following privileges:
+  + View and process orders (both online and in-store)
+  + Update order status
+  + View customer information (cannot edit or delete)
+  + View product catalog (cannot add, edit, or delete products)
+  + Update inventory stock levels
+  + View reports (cannot generate custom reports)
+  + No access to: User management, Vendor management, Shipping handler management, Financial reports, System settings
+- **Customer:** Standard customer account with shopping and order tracking privileges only
+
+**Add New User**
+- Form fields:\n  + User ID (auto-generated)\n  + Full Name
+  + Email (must be unique)
+  + Phone Number
+  + Role Selection (dropdown: Admin/Staff/Customer)
+  + Password (auto-generated or manual input with strength indicator)
+  + Account Status (Active/Inactive)
++ Assigned Permissions (checkboxes for Staff role to customize specific access rights)
+- Save and Cancel buttons\n- Email notification sent to new user with login credentials
+
+**View User List**
+- Table display with columns: User ID, Name, Email, Phone, Role, Registration Date, Last Login, Status, Actions
+- Pagination with 25 users per page
+- Search bar for name, email, or user ID
+- Filter options: Role (Admin/Staff/Customer), Status (Active/Inactive), Registration Date Range
+- Sort options: Name (A-Z), Registration Date, Last Login
+
+**Edit User Information**
+- Pre-filled form with existing user data
+- Editable fields: Name, Email, Phone, Role, Account Status, Permissions (for Staff role)
+- Password reset option (generates new password and sends email)
+- Update and Cancel buttons
+- Confirmation prompt before saving changes
+- **Note:** Only Admin users can change user roles and permissions
+
+**Deactivate or Delete User Account**
+- Deactivate button: Temporarily disables user access without deleting data
+- Delete button with confirmation dialog: Permanently removes user account\n- **Note:** Admin users cannot delete their own account
+- Deactivated users cannot log in but their data is retained
+
+**User Activity Log**
+- Track user login history with timestamps
+- Record of actions performed by each user (for audit purposes)
+- Filter by user, date range, action type
+- Export to CSV option
+
+**Permission Management for Staff Users**
+- Customizable permission settings for Staff role:\n  + Order Management: View Orders, Update Order Status, Generate Invoices
+  + Customer Management: View Customer Information\n  + Product Management: View Products\n  + Inventory Management: Update Stock Levels, View Stock Reports
+  + Reports: View Sales Reports\n- Checkbox-based permission assignment during user creation or editing
+- Permission changes take effect immediately upon saving
+
+#### 3.7.5 Order Management\n
+**View All Orders**
 - **Separate Tabs for Order Types:**
   + **Online Orders Tab:** Displays all online orders with delivery requirements
   + **In-Store Purchases Tab:** Displays all direct store purchases without delivery
   + **All Orders Tab:** Combined view of both order types
-
-**Online Orders Management**
+\n**Online Orders Management**
 - View and process online orders with status updates
 - **Editable order status dropdown with options:** Order Placed, Processing, Shipped, Delivered\n- **Status update functionality:** Admin can change order status directly from the order list or order detail page with immediate save
 - **Delivery location identification:** System automatically detects whether delivery is intrastate (same city and state) or interstate based on customer delivery address
 - **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
 - **Shipment status tracking:** Track shipment status including received by customer or returned back for any reason
 - Generate and download invoices with shipping cost and discount percentage included
-- Order details view showing: Order ID, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total\n
+- Order details view showing: Order ID, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total
+
 **In-Store Purchases Management**
 - View and process in-store purchases\n- **Order status:** Automatically marked as Completed after payment
 - **No shipping management:** In-store purchases do not require delivery address or shipment tracking
@@ -249,9 +304,9 @@ Each category contains multiple product variants with different packaging option
 **Order Filtering and Search**
 - Filter orders by: Order Type (Online/In-Store/All), Date Range, Status, Customer Name\n- Search by Order ID or Customer Name
 - Sort by Date, Total Amount, Status
-
-**Order Reports**
-- Separate sales reports for Online Orders and In-Store Purchases\n- Combined sales overview\n- Export options: CSV, PDF, Excel
+\n**Order Reports**
+- Separate sales reports for Online Orders and In-Store Purchases
+- Combined sales overview\n- Export options: CSV, PDF, Excel
 
 #### 3.7.6 Vendor Management (Implementation Ready)
 
@@ -285,7 +340,8 @@ Each category contains multiple product variants with different packaging option
   + Product Name (dropdown or text input)
   + Product Category (Rice/Flour/Flakes/Millets/Honey)
   + Quantity Supplied (in kg)
-  + Cost Price per kg (₹)\n  + Total Amount (auto-calculated: Quantity × Cost Price)
+  + Cost Price per kg (₹)
+  + Total Amount (auto-calculated: Quantity × Cost Price)
   + Payment Status (Paid/Pending/Partial)
   + Amount Paid (₹)
   + Balance Amount (auto-calculated: Total Amount - Amount Paid)
@@ -310,7 +366,8 @@ Each category contains multiple product variants with different packaging option
 \n- **Delete Supply Entry:** Delete button with confirmation dialog
 
 - **Filter and Search Options:**
-  + Search by Supply ID, Vendor Name, or Product Name\n  + Filter by Vendor, Date Range, Product Category, Payment Status
+  + Search by Supply ID, Vendor Name, or Product Name
+  + Filter by Vendor, Date Range, Product Category, Payment Status
   + Sort by Supply Date, Total Amount, Balance Amount
 
 - **Export Options:** Export supply details to CSV/PDF for reporting
@@ -382,7 +439,8 @@ Each category contains multiple product variants with different packaging option
   + Payment ID
   + Handler Name
   + Payment Date\n  + Shipment ID\n  + Order ID
-  + Amount Paid (₹)\n  + Payment Method
+  + Amount Paid (₹)
+  + Payment Method
   + Transaction Reference\n  + Notes
   + Actions (Edit/Delete/View Receipt)
 
@@ -392,8 +450,7 @@ Each category contains multiple product variants with different packaging option
 - **Filter and Search Options:**
   + Search by Payment ID, Handler Name, Shipment ID, or Order ID
   + Filter by Handler, Date Range, Payment Method\n  + Sort by Payment Date, Amount Paid\n
-- **Export Options:** Export payment records to CSV/PDF for accounting
-
+- **Export Options:** Export payment records to CSV/PDF for accounting\n
 - **Payment Summary Dashboard:**
   + Total payments made (count)
   + Total amount paid to handlers (₹)
@@ -414,8 +471,7 @@ Each category contains multiple product variants with different packaging option
 - Track return statistics by handler
 - Generate return analysis reports
 
-#### 3.7.8 Sales Reports and Analytics
-- Sales reports by product, category, and time period
+#### 3.7.8 Sales Reports and Analytics\n- Sales reports by product, category, and time period
 - **Separate reports for Online Orders and In-Store Purchases**
 - **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends

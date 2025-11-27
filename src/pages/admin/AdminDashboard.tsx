@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList } from 'lucide-react';
+import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList, Shield } from 'lucide-react';
 import ProductManagement from './ProductManagement';
 import CustomerManagement from './CustomerManagement';
 import InventoryManagement from './InventoryManagement';
 import OrdersView from './OrdersView';
 import ShippingSettings from './ShippingSettings';
+import UsersManagement from './UsersManagement';
 import VendorsManagement from './VendorsManagement';
 import VendorSupplies from './VendorSupplies';
 import ShipmentHandlersManagement from './ShipmentHandlersManagement';
@@ -36,6 +37,10 @@ export default function AdminDashboard() {
             <TabsTrigger value="customers" className="flex items-center gap-2 whitespace-nowrap">
               <Users className="h-4 w-4" />
               Customers
+            </TabsTrigger>
+            <TabsTrigger value="users" className="flex items-center gap-2 whitespace-nowrap">
+              <Shield className="h-4 w-4" />
+              Users
             </TabsTrigger>
             <TabsTrigger value="shipping" className="flex items-center gap-2 whitespace-nowrap">
               <Truck className="h-4 w-4" />
@@ -74,6 +79,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="customers">
           <CustomerManagement />
+        </TabsContent>
+
+        <TabsContent value="users">
+          <UsersManagement />
         </TabsContent>
 
         <TabsContent value="shipping">
