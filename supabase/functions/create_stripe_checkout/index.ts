@@ -27,6 +27,7 @@ interface CheckoutRequest {
   items: OrderItem[];
   currency?: string;
   payment_method_types?: string[];
+  order_type?: 'online' | 'instore';
   shipping_address?: string;
   shipping_cost?: number;
   customer_info?: {
@@ -130,7 +131,8 @@ async function createCheckoutSession(
   origin: string,
   shippingCost: number = 0,
   customerInfo?: any,
-  shippingAddress?: string
+  shippingAddress?: string,
+  orderType: 'online' | 'instore' = 'online'
 ) {
   const { 
     formattedItems, 
@@ -154,6 +156,7 @@ async function createCheckoutSession(
       shipping_cost: shippingCost, // Shipping in rupees
       currency: currency.toLowerCase(),
       status: "pending",
+      order_type: orderType || 'online',
       shipping_address: shippingAddress || customerInfo?.address || null,
       customer_name: customerInfo?.name || null,
       customer_email: customerInfo?.email || null,
@@ -265,7 +268,8 @@ Deno.serve(async (req) => {
       origin,
       request.shipping_cost || 0,
       request.customer_info,
-      request.shipping_address
+      request.shipping_address,
+      request.order_type || 'online'
     );
 
     return ok({

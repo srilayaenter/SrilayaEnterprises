@@ -10,8 +10,9 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/db/supabase';
 import { shippingApi, profilesApi, productsApi } from '@/db/api';
-import { ArrowLeft, Package, MapPin, Truck } from 'lucide-react';
-import type { Product } from '@/types/types';
+import { ArrowLeft, Package, MapPin, Truck, ShoppingCart, Store } from 'lucide-react';
+import type { Product, OrderType } from '@/types/types';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
@@ -24,6 +25,7 @@ export default function Checkout() {
   const [calculatingShipping, setCalculatingShipping] = useState(false);
   const [shippingCost, setShippingCost] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
+  const [orderType, setOrderType] = useState<OrderType>('online');
   const [shippingInfo, setShippingInfo] = useState({
     name: '',
     email: '',
@@ -38,7 +40,8 @@ export default function Checkout() {
   };
 
   const calculateFinalTotal = () => {
-    return totalPrice + calculateGST() + shippingCost;
+    const shipping = orderType === 'online' ? shippingCost : 0;
+    return totalPrice + calculateGST() + shipping;
   };
 
   useEffect(() => {
@@ -144,22 +147,33 @@ export default function Checkout() {
   };
 
   const handleCheckout = async () => {
-    if (!shippingInfo.name || !shippingInfo.email || !shippingInfo.address || !shippingInfo.city || !shippingInfo.state) {
+    if (!shippingInfo.name || !shippingInfo.email || !shippingInfo.phone) {
       toast({
         title: 'Incomplete information',
-        description: 'Please fill in all required fields',
+        description: 'Please fill in name, email, and phone',
         variant: 'destructive',
       });
       return;
     }
 
-    if (shippingCost === 0) {
-      toast({
-        title: 'Calculate shipping',
-        description: 'Please calculate shipping cost before proceeding',
-        variant: 'destructive',
-      });
-      return;
+    if (orderType === 'online') {
+      if (!shippingInfo.address || !shippingInfo.city || !shippingInfo.state) {
+        toast({
+          title: 'Incomplete shipping information',
+          description: 'Please fill in all shipping address fields for online orders',
+          variant: 'destructive',
+        });
+        return;
+      }
+
+      if (shippingCost === 0) {
+        toast({
+          title: 'Calculate shipping',
+          description: 'Please calculate shipping cost before proceeding',
+          variant: 'destructive',
+        });
+        return;
+      }
     }
 
     setLoading(true);
@@ -184,7 +198,8 @@ export default function Checkout() {
             product_id: item.product_id,
             variant_id: item.variant_id,
           })),
-          shipping_cost: shippingCost,
+          order_type: orderType,
+          shipping_cost: orderType === 'online' ? shippingCost : 0,
           customer_info: shippingInfo,
           currency: 'inr',
           payment_method_types: ['card'],
@@ -231,9 +246,52 @@ export default function Checkout() {
         <div className="xl:col-span-2 space-y-6">
           <Card>
             <CardHeader>
+              <CardTitle>Order Type</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RadioGroup value={orderType} onValueChange={(value: OrderType) => setOrderType(value)}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <Label
+                    htmlFor="online"
+                    className={`flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      orderType === 'online' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <RadioGroupItem value="online" id="online" />
+                    <div className="flex items-center gap-2 flex-1">
+                      <ShoppingCart className="h-5 w-5" />
+                      <div>
+                        <div className="font-semibold">Online Order</div>
+                        <div className="text-sm text-muted-foreground">Delivery to your address</div>
+                      </div>
+                    </div>
+                  </Label>
+                  
+                  <Label
+                    htmlFor="instore"
+                    className={`flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      orderType === 'instore' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <RadioGroupItem value="instore" id="instore" />
+                    <div className="flex items-center gap-2 flex-1">
+                      <Store className="h-5 w-5" />
+                      <div>
+                        <div className="font-semibold">In-Store Purchase</div>
+                        <div className="text-sm text-muted-foreground">Pick up at store</div>
+                      </div>
+                    </div>
+                  </Label>
+                </div>
+              </RadioGroup>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
               <CardTitle className="flex items-center gap-2">
                 <MapPin className="h-5 w-5" />
-                Shipping Information
+                {orderType === 'online' ? 'Shipping Information' : 'Contact Information'}
               </CardTitle>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -260,7 +318,7 @@ export default function Checkout() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
+                <Label htmlFor="phone">Phone Number *</Label>
                 <Input
                   id="phone"
                   value={shippingInfo.phone}
@@ -269,46 +327,52 @@ export default function Checkout() {
                 />
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="address">Address *</Label>
-                <Input
-                  id="address"
-                  value={shippingInfo.address}
-                  onChange={(e) => handleInputChange('address', e.target.value)}
-                  placeholder="Street address, apartment, etc."
-                />
-              </div>
+              {orderType === 'online' && (
+                <>
+                  <div className="space-y-2">
+                    <Label htmlFor="address">Address *</Label>
+                    <Input
+                      id="address"
+                      value={shippingInfo.address}
+                      onChange={(e) => handleInputChange('address', e.target.value)}
+                      placeholder="Street address, apartment, etc."
+                    />
+                  </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="city">City *</Label>
-                  <Input
-                    id="city"
-                    value={shippingInfo.city}
-                    onChange={(e) => handleInputChange('city', e.target.value)}
-                    placeholder="Enter your city"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="state">State *</Label>
-                  <Input
-                    id="state"
-                    value={shippingInfo.state}
-                    onChange={(e) => handleInputChange('state', e.target.value)}
-                    placeholder="Enter your state"
-                  />
-                </div>
-              </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="city">City *</Label>
+                      <Input
+                        id="city"
+                        value={shippingInfo.city}
+                        onChange={(e) => handleInputChange('city', e.target.value)}
+                        placeholder="Enter your city"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="state">State *</Label>
+                      <Input
+                        id="state"
+                        value={shippingInfo.state}
+                        onChange={(e) => handleInputChange('state', e.target.value)}
+                        placeholder="Enter your state"
+                      />
+                    </div>
+                  </div>
+                </>
+              )}
 
-              <Button
-                onClick={handleCalculateShipping}
-                disabled={calculatingShipping || !shippingInfo.city || !shippingInfo.state}
-                className="w-full"
-                variant="outline"
-              >
-                <Truck className="h-4 w-4 mr-2" />
-                {calculatingShipping ? 'Calculating...' : 'Calculate Shipping Cost'}
-              </Button>
+              {orderType === 'online' && (
+                <Button
+                  onClick={handleCalculateShipping}
+                  disabled={calculatingShipping || !shippingInfo.city || !shippingInfo.state}
+                  className="w-full"
+                  variant="outline"
+                >
+                  <Truck className="h-4 w-4 mr-2" />
+                  {calculatingShipping ? 'Calculating...' : 'Calculate Shipping Cost'}
+                </Button>
+              )}
             </CardContent>
           </Card>
         </div>
@@ -361,23 +425,33 @@ export default function Checkout() {
                   <span className="text-muted-foreground">GST ({GST_RATE}%)</span>
                   <span className="font-medium">₹{calculateGST().toFixed(2)}</span>
                 </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Total Weight</span>
-                  <span className="font-medium">{calculateTotalWeight().toFixed(2)}kg</span>
-                </div>
-                <div className="flex justify-between text-sm">
-                  <span className="text-muted-foreground">Shipping</span>
-                  <span className="font-medium">
-                    {shippingCost > 0 ? `₹${shippingCost.toFixed(2)}` : 'Calculate'}
-                  </span>
-                </div>
+                {orderType === 'online' && (
+                  <>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Total Weight</span>
+                      <span className="font-medium">{calculateTotalWeight().toFixed(2)}kg</span>
+                    </div>
+                    <div className="flex justify-between text-sm">
+                      <span className="text-muted-foreground">Shipping</span>
+                      <span className="font-medium">
+                        {shippingCost > 0 ? `₹${shippingCost.toFixed(2)}` : 'Calculate'}
+                      </span>
+                    </div>
+                  </>
+                )}
+                {orderType === 'instore' && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Shipping</span>
+                    <span className="font-medium text-green-600">Free (In-Store Pickup)</span>
+                  </div>
+                )}
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total</span>
                   <span>₹{calculateFinalTotal().toFixed(2)}</span>
                 </div>
               </div>
 
-              {shippingCost > 0 && (
+              {orderType === 'online' && shippingCost > 0 && (
                 <div className="bg-muted p-3 rounded text-sm">
                   <p className="text-muted-foreground">
                     {shippingInfo.state.toLowerCase() === 'karnataka' 

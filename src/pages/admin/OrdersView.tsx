@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { ordersApi, profilesApi } from '@/db/api';
-import type { Order, Profile, OrderStatus } from '@/types/types';
+import type { Order, Profile, OrderStatus, OrderType } from '@/types/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, TrendingUp, Package, DollarSign } from 'lucide-react';
+import { Eye, TrendingUp, Package, DollarSign, ShoppingCart, Store } from 'lucide-react';
 
 interface OrderStatusSelectProps {
   orderId: string;
@@ -59,6 +59,7 @@ export default function OrdersView() {
   const [selectedOrder, setSelectedOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [orderTypeFilter, setOrderTypeFilter] = useState<'all' | OrderType>('all');
   const { toast } = useToast();
 
   useEffect(() => {
@@ -99,26 +100,30 @@ export default function OrdersView() {
     return profile?.nickname || profile?.email || 'Unknown';
   };
 
+  const filteredOrders = orderTypeFilter === 'all' 
+    ? orders 
+    : orders.filter(o => o.order_type === orderTypeFilter);
+
   const getTotalRevenue = () => {
-    return orders
+    return filteredOrders
       .filter(o => o.status === 'completed')
       .reduce((sum, o) => sum + o.total_amount + (o.gst_amount || 0) + (o.shipping_cost || 0), 0);
   };
 
   const getTotalShippingRevenue = () => {
-    return orders
+    return filteredOrders
       .filter(o => o.status === 'completed')
       .reduce((sum, o) => sum + (o.shipping_cost || 0), 0);
   };
 
   const getTotalGSTRevenue = () => {
-    return orders
+    return filteredOrders
       .filter(o => o.status === 'completed')
       .reduce((sum, o) => sum + (o.gst_amount || 0), 0);
   };
 
   const getAverageOrderValue = () => {
-    const completed = orders.filter(o => o.status === 'completed');
+    const completed = filteredOrders.filter(o => o.status === 'completed');
     if (completed.length === 0) return 0;
     return getTotalRevenue() / completed.length;
   };
@@ -144,6 +149,26 @@ export default function OrdersView() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Orders Management</h2>
+        <Select value={orderTypeFilter} onValueChange={(value: any) => setOrderTypeFilter(value)}>
+          <SelectTrigger className="w-48">
+            <SelectValue />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="all">All Orders</SelectItem>
+            <SelectItem value="online">
+              <div className="flex items-center gap-2">
+                <ShoppingCart className="h-4 w-4" />
+                Online Orders
+              </div>
+            </SelectItem>
+            <SelectItem value="instore">
+              <div className="flex items-center gap-2">
+                <Store className="h-4 w-4" />
+                In-Store Purchases
+              </div>
+            </SelectItem>
+          </SelectContent>
+        </Select>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -153,9 +178,9 @@ export default function OrdersView() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{orders.length}</div>
+            <div className="text-2xl font-bold">{filteredOrders.length}</div>
             <p className="text-xs text-muted-foreground mt-1">
-              {orders.filter(o => o.status === 'completed').length} completed
+              {filteredOrders.filter(o => o.status === 'completed').length} completed
             </p>
           </CardContent>
         </Card>
@@ -214,6 +239,7 @@ export default function OrdersView() {
                   <TableHead>Order ID</TableHead>
                   <TableHead>Customer</TableHead>
                   <TableHead>Date</TableHead>
+                  <TableHead>Type</TableHead>
                   <TableHead>Items</TableHead>
                   <TableHead>Subtotal</TableHead>
                   <TableHead>GST</TableHead>
@@ -224,7 +250,7 @@ export default function OrdersView() {
                 </TableRow>
               </TableHeader>
               <TableBody>
-                {orders.map((order) => (
+                {filteredOrders.map((order) => (
                   <TableRow key={order.id}>
                     <TableCell className="font-mono text-xs">
                       {order.id.slice(0, 8)}...
@@ -232,6 +258,21 @@ export default function OrdersView() {
                     <TableCell>{getCustomerName(order)}</TableCell>
                     <TableCell>
                       {new Date(order.created_at).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={order.order_type === 'online' ? 'default' : 'secondary'}>
+                        {order.order_type === 'online' ? (
+                          <div className="flex items-center gap-1">
+                            <ShoppingCart className="h-3 w-3" />
+                            Online
+                          </div>
+                        ) : (
+                          <div className="flex items-center gap-1">
+                            <Store className="h-3 w-3" />
+                            In-Store
+                          </div>
+                        )}
+                      </Badge>
                     </TableCell>
                     <TableCell>{order.items?.length || 0}</TableCell>
                     <TableCell>₹{order.total_amount.toFixed(2)}</TableCell>
@@ -294,6 +335,24 @@ export default function OrdersView() {
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Date:</dt>
                       <dd>{new Date(selectedOrder.created_at).toLocaleString()}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">Type:</dt>
+                      <dd>
+                        <Badge variant={selectedOrder.order_type === 'online' ? 'default' : 'secondary'}>
+                          {selectedOrder.order_type === 'online' ? (
+                            <div className="flex items-center gap-1">
+                              <ShoppingCart className="h-3 w-3" />
+                              Online Order
+                            </div>
+                          ) : (
+                            <div className="flex items-center gap-1">
+                              <Store className="h-3 w-3" />
+                              In-Store Purchase
+                            </div>
+                          )}
+                        </Badge>
+                      </dd>
                     </div>
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Status:</dt>

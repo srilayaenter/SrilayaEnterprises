@@ -180,6 +180,25 @@ export const ordersApi = {
     return Array.isArray(data) ? data : [];
   },
 
+  async getByType(orderType: 'online' | 'instore'): Promise<Order[]> {
+    const { data, error } = await supabase
+      .from('orders')
+      .select('*')
+      .eq('order_type', orderType)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getOnlineOrders(): Promise<Order[]> {
+    return ordersApi.getByType('online');
+  },
+
+  async getInstoreOrders(): Promise<Order[]> {
+    return ordersApi.getByType('instore');
+  },
+
   async getById(id: string): Promise<Order | null> {
     const { data, error } = await supabase
       .from('orders')

@@ -6,14 +6,13 @@
 Srilaya Enterprises Organic Store
 
 ### 1.2 Website Description
-An e-commerce platform dedicated to selling organic products including millets, rice, flakes, flour, honey, and related items. The website targets health-conscious individuals and families seeking ready-to-cook organic items with convenient packaging options.
+An e-commerce platform dedicated to selling organic products including millets, rice, flakes, flour, honey, and related items. The website targets health-conscious individuals and families seeking ready-to-cook organic items with convenient packaging options. The platform supports both online orders with delivery and direct in-store purchases.
 
 ### 1.3 Target Audience
 - Health-conscious individuals\n- Families looking for organic food options
 - Local organic food buyers
 - Customers seeking ready-to-cook essential items
-
-## 2. Product Categories and Specifications
+\n## 2. Product Categories and Specifications
 
 ### 2.1 Product Categories
 - Rice\n- Flour
@@ -33,8 +32,7 @@ Selling Price = Cost Price + 25%
 \n- **Honey Products:**
   + 200g package: No discount
   + 500g package: 2% discount
-  + 1kg package: 3% discount
-\n### 2.3 Product List with Updated Pricing (All prices in Indian Rupees)
+  + 1kg package: 3% discount\n\n### 2.3 Product List with Updated Pricing (All prices in Indian Rupees)
 
 #### Rice Category
 - RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final (1kg): ₹94.5/kg
@@ -82,8 +80,7 @@ Selling Price = Cost Price + 25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg
-- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -97,8 +94,10 @@ Each category contains multiple product variants with different packaging option
 - Add to cart functionality with quantity selection
 - Cart summary showing items, quantities, and total price
 - Ability to update or remove items from cart
+- **Order Type Selection:** Checkbox to select order type (Online Order / In-Store Purchase)
 - Checkout process with order summary and final price calculation including GST and package discounts
-- Delivery address input and validation
+- **For Online Orders:** Delivery address input and validation, shipping charges calculation
+- **For In-Store Purchases:** No delivery address or shipping charges required
 
 ### 3.3 User Registration, Login, and Profile Management
 - User registration with email and password
@@ -108,23 +107,30 @@ Each category contains multiple product variants with different packaging option
 - Secure payment gateway integration supporting multiple payment methods
 - Support for credit/debit cards, UPI, net banking, and digital wallets
 - Payment confirmation and receipt generation
-\n### 3.5 Order Tracking and History
+
+### 3.5 Order Tracking and History
 - Order confirmation with unique order ID
-- Real-time order status tracking (Order Placed, Processing, Shipped, Delivered)
-- Order history viewing with details of past purchases
+- **Order Type Indicator:** Display whether order is Online Order or In-Store Purchase
+- **For Online Orders:** Real-time order status tracking (Order Placed, Processing, Shipped, Delivered)
+- **For In-Store Purchases:** Status shows as Completed immediately after payment
+- Order history viewing with details of past purchases, separated by order type
 - Order invoice download option
 
 ### 3.6 Invoice Generation with Shipping Cost Calculation
 - Automatic invoice generation upon order confirmation
-- Invoice includes order details, product list, quantities, prices, GST breakdown, package discount percentage\n- **Weight-based shipping cost calculation:**
-  + **Intrastate delivery (same city and state):** ₹30-50per kg
-  + **Interstate delivery:** ₹70-100 per kg
-- **Delivery location detection:** System identifies whether delivery address is within the same state or interstate to apply appropriate shipping rates
+- Invoice includes order details, product list, quantities, prices, GST breakdown, package discount percentage\n- **Order Type Display:** Invoice clearly indicates whether it is an Online Order or In-Store Purchase\n- **For Online Orders:**
+  + **Weight-based shipping cost calculation:**
+    * **Intrastate delivery (same city and state):** ₹30-50 per kg
+    * **Interstate delivery:** ₹70-100 per kg
+  + **Delivery location detection:** System identifies whether delivery address is within the same state or interstate to apply appropriate shipping rates
+  + Invoice displays: subtotal, package discount (with percentage), GST, shipping charges (calculated based on total order weight and delivery location), and grand total
+- **For In-Store Purchases:**
+  + No shipping charges applied
+  + Invoice displays: subtotal, package discount (with percentage), GST, and grand total
 - **Invoice line item display:** Each product line shows base price, applicable discount percentage (if any), discounted price, GST, and final price
-- Final invoice displays: subtotal, package discount (with percentage), GST, shipping charges (calculated based on total order weight and delivery location), and grand total
 
 ### 3.7 Admin Dashboard
-\n#### 3.7.1 Product Management (Implementation Ready)
+\n####3.7.1 Product Management (Implementation Ready)
 \n**Add New Product**
 - Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
 - Packaging options selection (checkboxes for1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey)
@@ -138,8 +144,7 @@ Each category contains multiple product variants with different packaging option
 - Filter dropdowns: Category, Stock Status (In Stock/Low Stock/Out of Stock)
 - Sort options: Name (A-Z), Price (Low to High), Recently Added
 \n**Edit Product**
-- Pre-filled form with existing product data
-- All fields editable except Product ID
+- Pre-filled form with existing product data\n- All fields editable except Product ID
 - Selling price auto-updates when cost price changes (Cost + 25%)
 - Image replacement option
 - Update and Cancel buttons
@@ -169,21 +174,18 @@ Each category contains multiple product variants with different packaging option
 
 **View Customer Profile**
 - Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
-- Order history table: Order ID, Date, Items Count, Total Amount, Status
-- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
+- Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status\n- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
 \n**Edit Customer Information**
 - Pre-filled form with existing customer data
 - Editable fields: Name, Email, Phone, Addresses, Account Status
 - Update and Cancel buttons
 - Email/Phone validation
-
-**Customer Activity Tracking**
+\n**Customer Activity Tracking**
 - Last login date and time
 - Recent browsing history (last 10 products viewed)
 - Cart abandonment tracking
-\n#### 3.7.3 Inventory Management (Implementation Ready)
-
-**Stock Level Dashboard**
+\n#### 3.7.3Inventory Management (Implementation Ready)
+\n**Stock Level Dashboard**
 - Overview cards: Total Products, Low Stock Items, Out of Stock Items, Total Inventory Value
 - Real-time stock status for all products
 - Color-coded indicators: Green (In Stock >50units), Yellow (Low Stock 10-50 units), Red (Critical<10 units), Grey (Out of Stock)
@@ -224,13 +226,32 @@ Each category contains multiple product variants with different packaging option
 - Deactivate or delete user accounts
 - Search and filter users by role, registration date, or status
 \n#### 3.7.5 Order Management
-- View and process orders with status updates
+\n**View All Orders**
+- **Separate Tabs for Order Types:**
+  + **Online Orders Tab:** Displays all online orders with delivery requirements
+  + **In-Store Purchases Tab:** Displays all direct store purchases without delivery
+  + **All Orders Tab:** Combined view of both order types
+
+**Online Orders Management**
+- View and process online orders with status updates
 - **Editable order status dropdown with options:** Order Placed, Processing, Shipped, Delivered\n- **Status update functionality:** Admin can change order status directly from the order list or order detail page with immediate save
 - **Delivery location identification:** System automatically detects whether delivery is intrastate (same city and state) or interstate based on customer delivery address
 - **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
 - **Shipment status tracking:** Track shipment status including received by customer or returned back for any reason
 - Generate and download invoices with shipping cost and discount percentage included
-- Order details view showing: Order ID, Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total
+- Order details view showing: Order ID, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total\n
+**In-Store Purchases Management**
+- View and process in-store purchases\n- **Order status:** Automatically marked as Completed after payment
+- **No shipping management:** In-store purchases do not require delivery address or shipment tracking
+- Generate and download invoices without shipping charges
+- Order details view showing: Order ID, Order Type (In-Store Purchase), Customer information (if registered), Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Grand total (no shipping charges)
+
+**Order Filtering and Search**
+- Filter orders by: Order Type (Online/In-Store/All), Date Range, Status, Customer Name\n- Search by Order ID or Customer Name
+- Sort by Date, Total Amount, Status
+
+**Order Reports**
+- Separate sales reports for Online Orders and In-Store Purchases\n- Combined sales overview\n- Export options: CSV, PDF, Excel
 
 #### 3.7.6 Vendor Management (Implementation Ready)
 
@@ -241,15 +262,13 @@ Each category contains multiple product variants with different packaging option
 **View Vendor List**
 - Table display with columns: Vendor ID, Vendor Name, Contact Person, Phone, Product Categories, Total Transactions, Outstanding Amount, Status, Actions
 - Pagination with 20 vendors per page
-- Search bar for vendor name or ID\n- Filter options: Product Category, Status (Active/Inactive)
+- Search bar for vendor name or ID
+- Filter options: Product Category, Status (Active/Inactive)
 - Sort options: Name (A-Z), Total Transactions, Outstanding Amount
-\n**View Vendor Profile**
-- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms
-- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status
-- Financial summary: Total purchases, Total paid, Outstanding amount\n
+\n**View Vendor Profile**\n- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms
+- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n
 **Edit Vendor Information**
-- Pre-filled form with existing vendor data
-- All fields editable except Vendor ID\n- Update and Cancel buttons
+- Pre-filled form with existing vendor data\n- All fields editable except Vendor ID\n- Update and Cancel buttons
 \n**Record Purchase Transaction**
 - Vendor selection dropdown
 - Product selection with quantity and cost price input
@@ -266,13 +285,13 @@ Each category contains multiple product variants with different packaging option
   + Product Name (dropdown or text input)
   + Product Category (Rice/Flour/Flakes/Millets/Honey)
   + Quantity Supplied (in kg)
-  + Cost Price per kg (₹)
-  + Total Amount (auto-calculated: Quantity × Cost Price)
+  + Cost Price per kg (₹)\n  + Total Amount (auto-calculated: Quantity × Cost Price)
   + Payment Status (Paid/Pending/Partial)
   + Amount Paid (₹)
   + Balance Amount (auto-calculated: Total Amount - Amount Paid)
   + Invoice Number (optional)
-  + Notes (optional)\n  + Save and Cancel buttons
+  + Notes (optional)
+  + Save and Cancel buttons
 
 - **View Supply Details Table:** Table display with columns:\n  + Supply ID
   + Vendor Name
@@ -291,8 +310,7 @@ Each category contains multiple product variants with different packaging option
 \n- **Delete Supply Entry:** Delete button with confirmation dialog
 
 - **Filter and Search Options:**
-  + Search by Supply ID, Vendor Name, or Product Name
-  + Filter by Vendor, Date Range, Product Category, Payment Status
+  + Search by Supply ID, Vendor Name, or Product Name\n  + Filter by Vendor, Date Range, Product Category, Payment Status
   + Sort by Supply Date, Total Amount, Balance Amount
 
 - **Export Options:** Export supply details to CSV/PDF for reporting
@@ -313,6 +331,8 @@ Each category contains multiple product variants with different packaging option
 
 #### 3.7.7 Shipping Management (Implementation Ready)
 
+**Note:** Shipping management applies only to Online Orders. In-Store Purchases do not require shipment handling.
+
 **Add Shipment Handler**
 - Form fields: Handler ID (auto-generated), Handler Name, Contact Person, Email, Phone Number, Service Areas (Intrastate/Interstate/Both), Rate per kg (Intrastate), Rate per kg (Interstate), Payment Terms\n- Save and Cancel buttons
 
@@ -330,7 +350,7 @@ Each category contains multiple product variants with different packaging option
 - All fields editable except Handler ID\n- Update and Cancel buttons
 
 **Assign Shipment**
-- Order selection dropdown (shows orders with 'Shipped' status)
+- Order selection dropdown (shows only Online Orders with Shipped status)
 - Handler selection based on delivery location (intrastate/interstate)
 - Automatic calculation of shipping charges based on order weight and handler rates
 - Expected delivery date input
@@ -338,7 +358,7 @@ Each category contains multiple product variants with different packaging option
 - Assign button
 
 **Shipment Tracking**
-- View all shipments with status: Assigned, In Transit, Out for Delivery, Delivered, Returned
+- View all shipments for Online Orders with status: Assigned, In Transit, Out for Delivery, Delivered, Returned
 - Update shipment status with timestamp
 - Record delivery confirmation or return reason
 - Customer notification on status updates
@@ -372,7 +392,8 @@ Each category contains multiple product variants with different packaging option
 - **Filter and Search Options:**
   + Search by Payment ID, Handler Name, Shipment ID, or Order ID
   + Filter by Handler, Date Range, Payment Method\n  + Sort by Payment Date, Amount Paid\n
-- **Export Options:** Export payment records to CSV/PDF for accounting\n
+- **Export Options:** Export payment records to CSV/PDF for accounting
+
 - **Payment Summary Dashboard:**
   + Total payments made (count)
   + Total amount paid to handlers (₹)
@@ -395,10 +416,12 @@ Each category contains multiple product variants with different packaging option
 
 #### 3.7.8 Sales Reports and Analytics
 - Sales reports by product, category, and time period
+- **Separate reports for Online Orders and In-Store Purchases**
+- **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends
 - Inventory turnover reports
 - Vendor performance reports
-- Shipping handler performance reports
+- Shipping handler performance reports (for Online Orders only)
 - Return rate analysis
 
 ##4. Business Goals\n

@@ -1,6 +1,7 @@
 export type UserRole = 'user' | 'admin';
 export type ProductCategory = 'millets' | 'rice' | 'flour' | 'flakes' | 'sugar' | 'honey' | 'laddus';
 export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
+export type OrderType = 'online' | 'instore';
 
 export interface Profile {
   id: string;
@@ -69,6 +70,7 @@ export interface Order {
   gst_amount: number;
   currency: string;
   status: OrderStatus;
+  order_type: OrderType;
   stripe_session_id: string | null;
   stripe_payment_intent_id: string | null;
   customer_email: string | null;
