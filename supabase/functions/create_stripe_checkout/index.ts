@@ -28,6 +28,15 @@ interface CheckoutRequest {
   currency?: string;
   payment_method_types?: string[];
   shipping_address?: string;
+  shipping_cost?: number;
+  customer_info?: {
+    name?: string;
+    email?: string;
+    phone?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+  };
 }
 
 function ok(data: any): Response {
@@ -67,7 +76,7 @@ function validateCheckoutRequest(request: CheckoutRequest): void {
   }
 }
 
-function processOrderItems(items: OrderItem[]) {
+function processOrderItems(items: OrderItem[], shippingCost: number = 0) {
   const formattedItems = items.map(item => ({
     name: item.name.trim(),
     price: Math.round(item.price * 100),
@@ -77,11 +86,13 @@ function processOrderItems(items: OrderItem[]) {
     product_id: item.product_id || "",
     variant_id: item.variant_id || "",
   }));
-  const totalAmount = formattedItems.reduce(
+  const subtotal = formattedItems.reduce(
     (sum, item) => sum + item.price * item.quantity,
     0
   );
-  return { formattedItems, totalAmount };
+  const shippingAmount = Math.round(shippingCost * 100);
+  const totalAmount = subtotal + shippingAmount;
+  return { formattedItems, subtotal, shippingAmount, totalAmount };
 }
 
 async function createCheckoutSession(
@@ -91,37 +102,60 @@ async function createCheckoutSession(
   currency: string,
   paymentMethods: string[],
   origin: string,
+  shippingCost: number = 0,
+  customerInfo?: any,
   shippingAddress?: string
 ) {
-  const { formattedItems, totalAmount } = processOrderItems(items);
+  const { formattedItems, subtotal, shippingAmount, totalAmount } = processOrderItems(items, shippingCost);
 
   const { data: order, error } = await supabase
     .from("orders")
     .insert({
       user_id: userId,
       items: formattedItems,
-      total_amount: totalAmount,
+      total_amount: subtotal,
+      shipping_cost: shippingCost,
       currency: currency.toLowerCase(),
       status: "pending",
-      shipping_address: shippingAddress || null,
+      shipping_address: shippingAddress || customerInfo?.address || null,
+      customer_name: customerInfo?.name || null,
+      customer_email: customerInfo?.email || null,
+      customer_phone: customerInfo?.phone || null,
+      customer_city: customerInfo?.city || null,
+      customer_state: customerInfo?.state || null,
     })
     .select()
     .single();
 
   if (error) throw new Error(`Failed to create order: ${error.message}`);
 
-  const session = await stripe.checkout.sessions.create({
-    line_items: items.map(item => ({
+  const lineItems = items.map(item => ({
+    price_data: {
+      currency: currency.toLowerCase(),
+      product_data: {
+        name: item.packaging_size ? `${item.name} (${item.packaging_size})` : item.name,
+        images: item.image_url ? [item.image_url] : [],
+      },
+      unit_amount: Math.round(item.price * 100),
+    },
+    quantity: item.quantity,
+  }));
+
+  if (shippingCost > 0) {
+    lineItems.push({
       price_data: {
         currency: currency.toLowerCase(),
         product_data: {
-          name: item.packaging_size ? `${item.name} (${item.packaging_size})` : item.name,
-          images: item.image_url ? [item.image_url] : [],
+          name: 'Shipping Cost',
         },
-        unit_amount: Math.round(item.price * 100),
+        unit_amount: shippingAmount,
       },
-      quantity: item.quantity,
-    })),
+      quantity: 1,
+    });
+  }
+
+  const session = await stripe.checkout.sessions.create({
+    line_items: lineItems,
     mode: "payment",
     success_url: `${origin}${successUrlPath}`,
     cancel_url: `${origin}${cancelUrlPath}`,
@@ -176,6 +210,8 @@ Deno.serve(async (req) => {
       request.currency || 'usd',
       request.payment_method_types || ['card'],
       origin,
+      request.shipping_cost || 0,
+      request.customer_info,
       request.shipping_address
     );
 

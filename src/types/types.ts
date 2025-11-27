@@ -67,6 +67,9 @@ export interface Order {
   stripe_payment_intent_id: string | null;
   customer_email: string | null;
   customer_name: string | null;
+  customer_phone: string | null;
+  customer_city: string | null;
+  customer_state: string | null;
   shipping_address: string | null;
   completed_at: string | null;
   created_at: string;

@@ -10,6 +10,49 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, TrendingUp, Package, DollarSign } from 'lucide-react';
 
+interface OrderStatusSelectProps {
+  orderId: string;
+  initialStatus: OrderStatus;
+  onStatusChange: (orderId: string, newStatus: OrderStatus) => Promise<void>;
+}
+
+function OrderStatusSelect({ orderId, initialStatus, onStatusChange }: OrderStatusSelectProps) {
+  const [status, setStatus] = useState<OrderStatus>(initialStatus);
+  const [isUpdating, setIsUpdating] = useState(false);
+
+  useEffect(() => {
+    setStatus(initialStatus);
+  }, [initialStatus]);
+
+  const handleChange = async (newStatus: OrderStatus) => {
+    setIsUpdating(true);
+    try {
+      await onStatusChange(orderId, newStatus);
+      setStatus(newStatus);
+    } finally {
+      setIsUpdating(false);
+    }
+  };
+
+  return (
+    <Select
+      value={status}
+      onValueChange={(value) => handleChange(value as OrderStatus)}
+      disabled={isUpdating}
+    >
+      <SelectTrigger className="w-32">
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="pending">Pending</SelectItem>
+        <SelectItem value="completed">Completed</SelectItem>
+        <SelectItem value="cancelled">Cancelled</SelectItem>
+        <SelectItem value="refunded">Refunded</SelectItem>
+      </SelectContent>
+    </Select>
+  );
+}
+
 export default function OrdersView() {
   const [orders, setOrders] = useState<Order[]>([]);
   const [profiles, setProfiles] = useState<Map<string, Profile>>(new Map());
@@ -49,9 +92,10 @@ export default function OrdersView() {
     }
   };
 
-  const getCustomerName = (userId: string | null) => {
-    if (!userId) return 'Guest';
-    const profile = profiles.get(userId);
+  const getCustomerName = (order: Order) => {
+    if (order.customer_name) return order.customer_name;
+    if (!order.user_id) return 'Guest';
+    const profile = profiles.get(order.user_id);
     return profile?.nickname || profile?.email || 'Unknown';
   };
 
@@ -178,7 +222,7 @@ export default function OrdersView() {
                     <TableCell className="font-mono text-xs">
                       {order.id.slice(0, 8)}...
                     </TableCell>
-                    <TableCell>{getCustomerName(order.user_id)}</TableCell>
+                    <TableCell>{getCustomerName(order)}</TableCell>
                     <TableCell>
                       {new Date(order.created_at).toLocaleDateString()}
                     </TableCell>
@@ -193,21 +237,11 @@ export default function OrdersView() {
                       ₹{(order.total_amount + (order.shipping_cost || 0)).toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <Select
-                        key={`${order.id}-${order.status}`}
-                        value={order.status}
-                        onValueChange={(value) => handleStatusChange(order.id, value as OrderStatus)}
-                      >
-                        <SelectTrigger className="w-32">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="completed">Completed</SelectItem>
-                          <SelectItem value="cancelled">Cancelled</SelectItem>
-                          <SelectItem value="refunded">Refunded</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <OrderStatusSelect
+                        orderId={order.id}
+                        initialStatus={order.status}
+                        onStatusChange={handleStatusChange}
+                      />
                     </TableCell>
                     <TableCell className="text-right">
                       <Button
@@ -265,11 +299,23 @@ export default function OrdersView() {
                   <dl className="space-y-1 text-sm">
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Name:</dt>
-                      <dd>{selectedOrder.customer_name || getCustomerName(selectedOrder.user_id)}</dd>
+                      <dd>{selectedOrder.customer_name || getCustomerName(selectedOrder)}</dd>
                     </div>
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Email:</dt>
                       <dd>{selectedOrder.customer_email || '-'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">Phone:</dt>
+                      <dd>{selectedOrder.customer_phone || '-'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">City:</dt>
+                      <dd>{selectedOrder.customer_city || '-'}</dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">State:</dt>
+                      <dd>{selectedOrder.customer_state || '-'}</dd>
                     </div>
                     <div className="flex justify-between">
                       <dt className="text-muted-foreground">Address:</dt>
