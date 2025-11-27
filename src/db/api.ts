@@ -11,6 +11,10 @@ import type {
   Vendor,
   VendorTransaction,
   VendorWithTransactions,
+  VendorSupply,
+  VendorSupplyWithDetails,
+  PaymentStatus,
+  QualityCheckStatus,
   ShipmentHandler,
   ShipmentHandlerTransaction,
   ShipmentHandlerWithTransactions,
@@ -508,6 +512,111 @@ export const vendorTransactionsApi = {
       .eq('id', id);
 
     if (error) throw error;
+  }
+};
+
+// Vendor Supplies Management API
+export const vendorSuppliesApi = {
+  async getAll(): Promise<VendorSupply[]> {
+    const { data, error } = await supabase
+      .from('vendor_supplies')
+      .select('*')
+      .order('supply_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string): Promise<VendorSupply | null> {
+    const { data, error } = await supabase
+      .from('vendor_supplies')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getByVendor(vendorId: string): Promise<VendorSupply[]> {
+    const { data, error } = await supabase
+      .from('vendor_supplies')
+      .select('*')
+      .eq('vendor_id', vendorId)
+      .order('supply_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByPaymentStatus(status: PaymentStatus): Promise<VendorSupply[]> {
+    const { data, error } = await supabase
+      .from('vendor_supplies')
+      .select('*')
+      .eq('payment_status', status)
+      .order('supply_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByQualityStatus(status: QualityCheckStatus): Promise<VendorSupply[]> {
+    const { data, error } = await supabase
+      .from('vendor_supplies')
+      .select('*')
+      .eq('quality_check_status', status)
+      .order('supply_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async create(supply: Omit<VendorSupply, 'id' | 'created_at' | 'updated_at'>): Promise<VendorSupply> {
+    const { data, error } = await supabase
+      .from('vendor_supplies')
+      .insert(supply)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create vendor supply');
+    return data;
+  },
+
+  async update(id: string, updates: Partial<VendorSupply>): Promise<VendorSupply> {
+    const { data, error } = await supabase
+      .from('vendor_supplies')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update vendor supply');
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('vendor_supplies')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
+  async getSuppliesWithDetails(): Promise<VendorSupplyWithDetails[]> {
+    const { data, error } = await supabase
+      .from('vendor_supplies')
+      .select(`
+        *,
+        vendor:vendors(*),
+        receiver:profiles(*)
+      `)
+      .order('supply_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
   }
 };
 

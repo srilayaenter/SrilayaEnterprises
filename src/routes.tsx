@@ -10,6 +10,7 @@ import Orders from './pages/Orders';
 import TrackShipment from './pages/TrackShipment';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import VendorsManagement from './pages/admin/VendorsManagement';
+import VendorSupplies from './pages/admin/VendorSupplies';
 import ShipmentHandlersManagement from './pages/admin/ShipmentHandlersManagement';
 import ShipmentTracking from './pages/admin/ShipmentTracking';
 
@@ -85,6 +86,12 @@ const routes: RouteConfig[] = [
     name: 'Vendors Management',
     path: '/admin/vendors',
     element: <VendorsManagement />,
+    visible: false
+  },
+  {
+    name: 'Vendor Supplies',
+    path: '/admin/vendor-supplies',
+    element: <VendorSupplies />,
     visible: false
   },
   {

@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck } from 'lucide-react';
+import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList } from 'lucide-react';
 import ProductManagement from './ProductManagement';
 import CustomerManagement from './CustomerManagement';
 import InventoryManagement from './InventoryManagement';
 import OrdersView from './OrdersView';
 import ShippingSettings from './ShippingSettings';
 import VendorsManagement from './VendorsManagement';
+import VendorSupplies from './VendorSupplies';
 import ShipmentHandlersManagement from './ShipmentHandlersManagement';
 import ShipmentTracking from './ShipmentTracking';
 
@@ -18,7 +19,7 @@ export default function AdminDashboard() {
       <h1 className="text-3xl font-bold mb-8">Admin Dashboard</h1>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
-        <TabsList className="grid w-full grid-cols-4 xl:grid-cols-8">
+        <TabsList className="grid w-full grid-cols-3 xl:grid-cols-9">
           <TabsTrigger value="products" className="flex items-center gap-2">
             <Package className="h-4 w-4" />
             Products
@@ -42,6 +43,10 @@ export default function AdminDashboard() {
           <TabsTrigger value="vendors" className="flex items-center gap-2">
             <UserCog className="h-4 w-4" />
             Vendors
+          </TabsTrigger>
+          <TabsTrigger value="supplies" className="flex items-center gap-2">
+            <ClipboardList className="h-4 w-4" />
+            Supplies
           </TabsTrigger>
           <TabsTrigger value="handlers" className="flex items-center gap-2">
             <Truck className="h-4 w-4" />
@@ -75,6 +80,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="vendors">
           <VendorsManagement />
+        </TabsContent>
+
+        <TabsContent value="supplies">
+          <VendorSupplies />
         </TabsContent>
 
         <TabsContent value="handlers">

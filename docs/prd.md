@@ -33,7 +33,8 @@ Selling Price = Cost Price + 25%
 \n- **Honey Products:**
   + 200g package: No discount
   + 500g package: 2% discount
-  + 1kg package: 3% discount\n\n### 2.3 Product List with Updated Pricing (All prices in Indian Rupees)
+  + 1kg package: 3% discount
+\n### 2.3 Product List with Updated Pricing (All prices in Indian Rupees)
 
 #### Rice Category
 - RICE001: Parboiled rice - Cost: ₹72/kg, Selling: ₹90/kg, GST: 4.5%, Final (1kg): ₹94.5/kg
@@ -123,7 +124,7 @@ Each category contains multiple product variants with different packaging option
 - Final invoice displays: subtotal, package discount (with percentage), GST, shipping charges (calculated based on total order weight and delivery location), and grand total
 
 ### 3.7 Admin Dashboard
-\n####3.7.1 Product Management (Implementation Ready)
+\n#### 3.7.1 Product Management (Implementation Ready)
 \n**Add New Product**
 - Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
 - Packaging options selection (checkboxes for1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey)
@@ -135,8 +136,7 @@ Each category contains multiple product variants with different packaging option
 - Search bar for product name or ID
 - Filter dropdowns: Category, Stock Status (In Stock/Low Stock/Out of Stock)
 - Sort options: Name (A-Z), Price (Low to High), Recently Added
-
-**Edit Product**
+\n**Edit Product**
 - Pre-filled form with existing product data
 - All fields editable except Product ID
 - Selling price auto-updates when cost price changes (Cost + 25%)
@@ -258,20 +258,66 @@ Each category contains multiple product variants with different packaging option
 - Notes field
 - Submit button
 
+**Vendor Supply Details Table**
+- **Add Supply Entry:** Admin can manually enter supply details with the following fields:
+  + Supply ID (auto-generated)
+  + Vendor Name (dropdown selection from registered vendors)
+  + Supply Date
+  + Product Name (dropdown or text input)
+  + Product Category (Rice/Flour/Flakes/Millets/Honey)
+  + Quantity Supplied (in kg)
+  + Cost Price per kg (₹)
+  + Total Amount (auto-calculated: Quantity × Cost Price)
+  + Payment Status (Paid/Pending/Partial)
+  + Amount Paid (₹)
+  + Balance Amount (auto-calculated: Total Amount - Amount Paid)
+  + Invoice Number (optional)
+  + Notes (optional)\n  + Save and Cancel buttons
+
+- **View Supply Details Table:** Table display with columns:\n  + Supply ID
+  + Vendor Name
+  + Supply Date
+  + Product Name
+  + Category
+  + Quantity (kg)
+  + Cost Price (₹/kg)
+  + Total Amount (₹)
+  + Payment Status
+  + Amount Paid (₹)
+  + Balance (₹)
+  + Actions (Edit/Delete/View Invoice)
+
+- **Edit Supply Entry:** Pre-filled form with existing supply data, all fields editable except Supply ID
+\n- **Delete Supply Entry:** Delete button with confirmation dialog
+
+- **Filter and Search Options:**
+  + Search by Supply ID, Vendor Name, or Product Name
+  + Filter by Vendor, Date Range, Product Category, Payment Status
+  + Sort by Supply Date, Total Amount, Balance Amount
+
+- **Export Options:** Export supply details to CSV/PDF for reporting
+
+- **Supply Summary Dashboard:**
+  + Total supplies received (count)
+  + Total purchase value (₹)
+  + Total amount paid (₹)
+  + Total outstanding balance (₹)
+  + Category-wise supply breakdown
+
 **Transaction Management**
 - View all transactions between vendor and buyer
 - Filter by vendor, date range, payment status
 - Update payment status and record payments
 - Generate purchase reports
-- Export to CSV/PDF\n
+- Export to CSV/PDF
+
 #### 3.7.7 Shipping Management (Implementation Ready)
 
 **Add Shipment Handler**
 - Form fields: Handler ID (auto-generated), Handler Name, Contact Person, Email, Phone Number, Service Areas (Intrastate/Interstate/Both), Rate per kg (Intrastate), Rate per kg (Interstate), Payment Terms\n- Save and Cancel buttons
 
 **View Shipment Handler List**
-- Table display with columns: Handler ID, Handler Name, Contact Person, Phone, Service Areas, Intrastate Rate, Interstate Rate, Total Shipments, Status, Actions
-- Pagination with 20 handlers per page
+- Table display with columns: Handler ID, Handler Name, Contact Person, Phone, Service Areas, Intrastate Rate, Interstate Rate, Total Shipments, Status, Actions\n- Pagination with 20 handlers per page
 - Search bar for handler name or ID
 - Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n
 **View Handler Profile**
@@ -302,8 +348,7 @@ Each category contains multiple product variants with different packaging option
 **Transaction Management with Handlers**
 - View all financial transactions with shipment handlers
 - Record payments made to handlers
-- Track outstanding amounts
-- Generate handler payment reports
+- Track outstanding amounts\n- Generate handler payment reports
 - Filter by handler, date range, payment status
 - Export to CSV/PDF
 
@@ -313,7 +358,8 @@ Each category contains multiple product variants with different packaging option
 - Notify customer and initiate refund process
 - Track return statistics by handler
 - Generate return analysis reports
-\n#### 3.7.8 Sales Reports and Analytics
+
+#### 3.7.8 Sales Reports and Analytics
 - Sales reports by product, category, and time period
 - Customer analytics and purchase trends
 - Inventory turnover reports
@@ -332,7 +378,8 @@ Each category contains multiple product variants with different packaging option
 
 ### 5.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
-- Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons\n\n### 5.2 Layout\n- Card-based layout for product display with clear visual hierarchy
+- Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
+\n### 5.2 Layout\n- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
 \n### 5.3 Visual Elements

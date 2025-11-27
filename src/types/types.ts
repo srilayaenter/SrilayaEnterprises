@@ -139,6 +139,42 @@ export interface VendorWithTransactions extends Vendor {
   balance?: number;
 }
 
+export type PaymentStatus = 'pending' | 'partial' | 'paid';
+export type QualityCheckStatus = 'pending' | 'passed' | 'failed';
+
+export interface VendorSupplyItem {
+  product_id: string;
+  product_name: string;
+  variant_id?: string;
+  packaging_size: string;
+  quantity: number;
+  unit_cost: number;
+  total_cost: number;
+}
+
+export interface VendorSupply {
+  id: string;
+  vendor_id: string;
+  supply_date: string;
+  invoice_number: string | null;
+  items: VendorSupplyItem[];
+  total_amount: number;
+  payment_status: PaymentStatus;
+  payment_date: string | null;
+  quality_check_status: QualityCheckStatus;
+  quality_notes: string | null;
+  delivery_notes: string | null;
+  received_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface VendorSupplyWithDetails extends VendorSupply {
+  vendor?: Vendor;
+  receiver?: Profile;
+}
+
+
 export interface ShipmentHandler {
   id: string;
   name: string;
