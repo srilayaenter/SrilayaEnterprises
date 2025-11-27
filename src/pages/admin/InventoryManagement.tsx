@@ -1,21 +1,35 @@
 import { useState, useEffect } from 'react';
 import { productsApi, variantsApi, adminApi } from '@/db/api';
-import type { Product, ProductVariant } from '@/types/types';
+import type { Product, ProductVariant, ProductCategory } from '@/types/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { AlertTriangle, Package, TrendingUp, TrendingDown, Save } from 'lucide-react';
+import { AlertTriangle, Package, TrendingUp, TrendingDown, Save, Filter } from 'lucide-react';
 
 interface ProductWithVariants extends Product {
   variants: ProductVariant[];
 }
 
+const categories: { value: ProductCategory | 'all'; label: string }[] = [
+  { value: 'all', label: 'All Categories' },
+  { value: 'millets', label: 'Millets' },
+  { value: 'rice', label: 'Rice' },
+  { value: 'flour', label: 'Flour' },
+  { value: 'flakes', label: 'Flakes' },
+  { value: 'sugar', label: 'Sugar' },
+  { value: 'honey', label: 'Honey' },
+  { value: 'laddus', label: 'Laddus' },
+];
+
 export default function InventoryManagement() {
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
+  const [filteredProducts, setFilteredProducts] = useState<ProductWithVariants[]>([]);
+  const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'all'>('all');
   const [lowStockProducts, setLowStockProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [stockUpdates, setStockUpdates] = useState<Map<string, number>>(new Map());
@@ -25,6 +39,14 @@ export default function InventoryManagement() {
     loadInventory();
     loadLowStock();
   }, []);
+
+  useEffect(() => {
+    if (selectedCategory === 'all') {
+      setFilteredProducts(products);
+    } else {
+      setFilteredProducts(products.filter(p => p.category === selectedCategory));
+    }
+  }, [selectedCategory, products]);
 
   const loadInventory = async () => {
     setLoading(true);
@@ -137,6 +159,21 @@ export default function InventoryManagement() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Inventory Management</h2>
+        <div className="flex items-center gap-2">
+          <Filter className="h-4 w-4 text-muted-foreground" />
+          <Select value={selectedCategory} onValueChange={(value) => setSelectedCategory(value as ProductCategory | 'all')}>
+            <SelectTrigger className="w-48">
+              <SelectValue placeholder="Select category" />
+            </SelectTrigger>
+            <SelectContent>
+              {categories.map((cat) => (
+                <SelectItem key={cat.value} value={cat.value}>
+                  {cat.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -194,7 +231,14 @@ export default function InventoryManagement() {
         <div className="text-center py-8">Loading inventory...</div>
       ) : (
         <div className="space-y-6">
-          {products.map((product) => (
+          {filteredProducts.length === 0 ? (
+            <Card>
+              <CardContent className="py-8 text-center text-muted-foreground">
+                No products found in this category
+              </CardContent>
+            </Card>
+          ) : (
+            filteredProducts.map((product) => (
             <Card key={product.id}>
               <CardHeader>
                 <div className="flex items-center justify-between">
@@ -296,7 +340,8 @@ export default function InventoryManagement() {
                 </Table>
               </CardContent>
             </Card>
-          ))}
+          ))
+          )}
         </div>
       )}
     </div>

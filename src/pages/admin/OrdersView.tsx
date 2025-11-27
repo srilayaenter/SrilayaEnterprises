@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { ordersApi, profilesApi } from '@/db/api';
-import type { Order, Profile } from '@/types/types';
+import type { Order, Profile, OrderStatus } from '@/types/types';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Eye, TrendingUp, Package, DollarSign } from 'lucide-react';
@@ -70,6 +71,23 @@ export default function OrdersView() {
     const completed = orders.filter(o => o.status === 'completed');
     if (completed.length === 0) return 0;
     return getTotalRevenue() / completed.length;
+  };
+
+  const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
+    try {
+      await ordersApi.updateStatus(orderId, newStatus);
+      toast({
+        title: 'Status updated',
+        description: 'Order status has been updated successfully'
+      });
+      loadOrders();
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
   };
 
   return (
@@ -175,15 +193,20 @@ export default function OrdersView() {
                       ₹{(order.total_amount + (order.shipping_cost || 0)).toFixed(2)}
                     </TableCell>
                     <TableCell>
-                      <Badge
-                        variant={
-                          order.status === 'completed' ? 'default' :
-                          order.status === 'pending' ? 'secondary' :
-                          'destructive'
-                        }
+                      <Select
+                        value={order.status}
+                        onValueChange={(value) => handleStatusChange(order.id, value as OrderStatus)}
                       >
-                        {order.status}
-                      </Badge>
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="completed">Completed</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                          <SelectItem value="refunded">Refunded</SelectItem>
+                        </SelectContent>
+                      </Select>
                     </TableCell>
                     <TableCell className="text-right">
                       <Button

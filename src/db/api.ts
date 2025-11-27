@@ -1,5 +1,5 @@
 import { supabase } from './supabase';
-import type { Product, ProductVariant, ProductWithVariants, Order, Profile, ProductCategory, ShippingRate } from '@/types/types';
+import type { Product, ProductVariant, ProductWithVariants, Order, Profile, ProductCategory, ShippingRate, OrderStatus } from '@/types/types';
 
 export const productsApi = {
   async getAll(category?: ProductCategory): Promise<Product[]> {
@@ -165,6 +165,22 @@ export const ordersApi = {
       .maybeSingle();
 
     if (error) throw error;
+    return data;
+  },
+
+  async updateStatus(orderId: string, status: OrderStatus): Promise<Order> {
+    const { data, error } = await supabase
+      .from('orders')
+      .update({ 
+        status,
+        completed_at: status === 'completed' ? new Date().toISOString() : null
+      })
+      .eq('id', orderId)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update order status');
     return data;
   }
 };

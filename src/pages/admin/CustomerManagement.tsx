@@ -2,12 +2,21 @@ import { useState, useEffect } from 'react';
 import { profilesApi, ordersApi } from '@/db/api';
 import type { Profile, Order } from '@/types/types';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { useToast } from '@/hooks/use-toast';
-import { UserCog, ShoppingBag } from 'lucide-react';
+import { useForm } from 'react-hook-form';
+import { UserCog, ShoppingBag, Edit } from 'lucide-react';
+
+interface CustomerFormData {
+  nickname: string;
+  phone: string;
+  address: string;
+}
 
 export default function CustomerManagement() {
   const [customers, setCustomers] = useState<Profile[]>([]);
@@ -15,7 +24,16 @@ export default function CustomerManagement() {
   const [customerOrders, setCustomerOrders] = useState<Order[]>([]);
   const [loading, setLoading] = useState(true);
   const [ordersDialogOpen, setOrdersDialogOpen] = useState(false);
+  const [editDialogOpen, setEditDialogOpen] = useState(false);
   const { toast } = useToast();
+
+  const customerForm = useForm<CustomerFormData>({
+    defaultValues: {
+      nickname: '',
+      phone: '',
+      address: ''
+    }
+  });
 
   useEffect(() => {
     loadCustomers();
@@ -78,6 +96,38 @@ export default function CustomerManagement() {
     }
   };
 
+  const handleEditCustomer = (customer: Profile) => {
+    setSelectedCustomer(customer);
+    customerForm.reset({
+      nickname: customer.nickname || '',
+      phone: customer.phone || '',
+      address: customer.address || ''
+    });
+    setEditDialogOpen(true);
+  };
+
+  const onSubmitCustomer = async (data: CustomerFormData) => {
+    if (!selectedCustomer) return;
+
+    try {
+      await profilesApi.updateProfile(selectedCustomer.id, data);
+      toast({
+        title: 'Customer updated',
+        description: 'Customer details have been updated successfully'
+      });
+      setEditDialogOpen(false);
+      customerForm.reset();
+      setSelectedCustomer(null);
+      loadCustomers();
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
   const calculateTotalSpent = (orders: Order[]) => {
     return orders
       .filter(order => order.status === 'completed')
@@ -125,6 +175,13 @@ export default function CustomerManagement() {
                     </TableCell>
                     <TableCell className="text-right">
                       <div className="flex justify-end gap-2">
+                        <Button
+                          size="sm"
+                          variant="outline"
+                          onClick={() => handleEditCustomer(customer)}
+                        >
+                          <Edit className="h-4 w-4" />
+                        </Button>
                         <Button
                           size="sm"
                           variant="outline"
@@ -240,6 +297,72 @@ export default function CustomerManagement() {
               </Table>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      <Dialog open={editDialogOpen} onOpenChange={(open) => {
+        setEditDialogOpen(open);
+        if (!open) {
+          setSelectedCustomer(null);
+          customerForm.reset();
+        }
+      }}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Edit Customer Details</DialogTitle>
+          </DialogHeader>
+          <Form {...customerForm}>
+            <form onSubmit={customerForm.handleSubmit(onSubmitCustomer)} className="space-y-4">
+              <FormField
+                control={customerForm.control}
+                name="nickname"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Nickname</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter nickname" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={customerForm.control}
+                name="phone"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Phone Number</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter phone number" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <FormField
+                control={customerForm.control}
+                name="address"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Address</FormLabel>
+                    <FormControl>
+                      <Input {...field} placeholder="Enter address" />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-end gap-2">
+                <Button type="button" variant="outline" onClick={() => setEditDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button type="submit">Update Customer</Button>
+              </div>
+            </form>
+          </Form>
         </DialogContent>
       </Dialog>
     </div>
