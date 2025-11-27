@@ -13,10 +13,10 @@ const App = () => {
       <AuthProvider client={supabase}>
         <CartProvider>
           <Toaster />
-          <RequireAuth whiteList={["/", "/login", "/register", "/products/*", "/cart", "/payment-success"]}>
-            <div className="flex flex-col min-h-screen">
-              <Header />
-              <main className="flex-grow">
+          <div className="flex flex-col min-h-screen">
+            <Header />
+            <main className="flex-grow">
+              <RequireAuth whiteList={["/", "/login", "/register", "/products/*", "/cart", "/payment-success"]}>
                 <Routes>
                   {routes.map((route, index) => (
                     <Route
@@ -27,9 +27,9 @@ const App = () => {
                   ))}
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
-              </main>
-            </div>
-          </RequireAuth>
+              </RequireAuth>
+            </main>
+          </div>
         </CartProvider>
       </AuthProvider>
     </Router>
