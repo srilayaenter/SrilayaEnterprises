@@ -1,5 +1,4 @@
 import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { Plus, Edit, Trash2, Package, CheckCircle, XCircle, Clock, DollarSign, FileText } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -25,7 +24,6 @@ import {
 } from '@/components/ui/select';
 
 export default function VendorSupplies() {
-  const navigate = useNavigate();
   const { toast } = useToast();
   const [supplies, setSupplies] = useState<VendorSupply[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
@@ -136,15 +134,12 @@ export default function VendorSupplies() {
     .reduce((sum, s) => sum + Number(s.total_amount), 0);
 
   return (
-    <div className="container mx-auto p-6 space-y-6">
+    <div className="space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Vendor Supplies</h1>
+          <h2 className="text-2xl font-bold">Vendor Supplies</h2>
           <p className="text-muted-foreground">Track all inventory supplies from vendors</p>
         </div>
-        <Button onClick={() => navigate('/admin')}>
-          Back to Dashboard
-        </Button>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4">

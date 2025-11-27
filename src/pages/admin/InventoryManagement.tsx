@@ -144,7 +144,7 @@ export default function InventoryManagement() {
   };
 
   const calculateTotalValue = (variants: ProductVariant[]) => {
-    return variants.reduce((sum, v) => sum + (v.stock * v.price), 0);
+    return variants.reduce((sum, v) => sum + (v.stock * v.cost_price), 0);
   };
 
   const getTotalInventoryValue = () => {
