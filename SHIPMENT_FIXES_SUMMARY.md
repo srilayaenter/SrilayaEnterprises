@@ -56,7 +56,7 @@ This document summarizes all fixes applied to the Shipment Tracking system to re
 
 ---
 
-### 4. ✅ Failed to Update Shipment
+### 4. ✅ Failed to Update Shipment (RLS Policy Issue)
 **Issue:** Clicking "Update Shipment" resulted in "Failed to update shipment" error.
 
 **Root Cause:** RLS policy on `shipments` table was missing the `WITH CHECK` clause, blocking UPDATE operations.
@@ -68,6 +68,30 @@ This document summarizes all fixes applied to the Shipment Tracking system to re
 
 **Files Modified:**
 - `supabase/migrations/*_fix_shipments_update_policy.sql`
+
+**Status:** ✅ Applied
+
+---
+
+### 5. ✅ Failed to Update Shipment (Trigger Enum Error)
+**Issue:** Clicking "Update Shipment" resulted in error: "invalid input value for enum order_status: 'delivered'"
+
+**Root Cause:** Database trigger `update_order_status_from_shipment()` was trying to set invalid enum values:
+- Tried to set order status to `'delivered'` (not a valid order_status value)
+- Tried to set order status to `'shipped'` (not a valid order_status value)
+- The `order_status` enum only has: `pending`, `completed`, `cancelled`, `refunded`
+
+**Solution:**
+- Created migration `fix_order_status_sync_trigger`
+- Updated trigger function to map shipment statuses to valid order statuses:
+  - `delivered` → `completed` ✅
+  - `picked_up`, `in_transit`, `out_for_delivery` → `completed` ✅
+  - `returned`, `cancelled` → `cancelled` ✅
+
+**Files Modified:**
+- `supabase/migrations/*_fix_order_status_sync_trigger.sql`
+- `src/db/api.ts` (enhanced error logging)
+- `src/pages/admin/ShipmentTracking.tsx` (enhanced error handling and data cleaning)
 
 **Status:** ✅ Applied
 
@@ -251,7 +275,8 @@ CREATE TABLE shipments (
 
 1. **create_shipments_table** - Initial shipments table creation
 2. **create_shipments_for_existing_online_orders** - Backfill shipments for existing orders
-3. **fix_shipments_update_policy** - Fix RLS policy to allow updates
+3. **fix_shipments_update_policy** - Fix RLS policy to allow updates (added WITH CHECK clause)
+4. **fix_order_status_sync_trigger** - Fix trigger to use valid order_status enum values
 
 ## Next Steps
 
@@ -299,6 +324,7 @@ If you encounter any issues not covered in this documentation:
 - **v1.2** - Backfilled existing orders
 - **v1.3** - Fixed blank form fields
 - **v1.4** - Fixed update operation (RLS policy)
+- **v1.5** - Fixed trigger enum error (order status sync)
 
 ---
 
