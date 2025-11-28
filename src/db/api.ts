@@ -823,6 +823,7 @@ export const shipmentsApi = {
   },
 
   async update(id: string, shipment: Partial<Shipment>): Promise<Shipment> {
+    console.log('Updating shipment:', id, 'with data:', shipment);
     const { data, error } = await supabase
       .from('shipments')
       .update(shipment)
@@ -830,8 +831,15 @@ export const shipmentsApi = {
       .select()
       .maybeSingle();
 
-    if (error) throw error;
-    if (!data) throw new Error('Failed to update shipment');
+    if (error) {
+      console.error('Supabase update error:', error);
+      throw new Error(`Failed to update shipment: ${error.message}`);
+    }
+    if (!data) {
+      console.error('No data returned from update');
+      throw new Error('Failed to update shipment: No data returned');
+    }
+    console.log('Shipment updated successfully:', data);
     return data;
   },
 

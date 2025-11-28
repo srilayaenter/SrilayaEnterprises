@@ -148,12 +148,13 @@ export default function ShipmentTracking() {
     if (!selectedShipment) return;
 
     try {
+      // Clean up the data - convert empty strings to null
       const updateData: any = {
-        handler_id: data.handler_id && data.handler_id !== 'none' ? data.handler_id : null,
+        handler_id: data.handler_id && data.handler_id !== 'none' && data.handler_id !== '' ? data.handler_id : null,
         status: data.status,
-        shipped_date: data.shipped_date || null,
-        expected_delivery_date: data.expected_delivery_date || null,
-        notes: data.notes
+        shipped_date: data.shipped_date && data.shipped_date !== '' ? data.shipped_date : null,
+        expected_delivery_date: data.expected_delivery_date && data.expected_delivery_date !== '' ? data.expected_delivery_date : null,
+        notes: data.notes || null
       };
 
       if (data.status === 'returned' && data.return_reason) {
@@ -164,8 +165,11 @@ export default function ShipmentTracking() {
         updateData.actual_delivery_date = new Date().toISOString();
       }
 
-      console.log('Updating shipment with data:', updateData);
+      console.log('Updating shipment ID:', selectedShipment.id);
+      console.log('Update data:', JSON.stringify(updateData, null, 2));
+      
       await shipmentsApi.update(selectedShipment.id, updateData);
+      
       toast({
         title: 'Success',
         description: 'Shipment updated successfully',
