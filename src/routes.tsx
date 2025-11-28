@@ -8,6 +8,9 @@ import Checkout from './pages/Checkout';
 import PaymentSuccess from './pages/PaymentSuccess';
 import Orders from './pages/Orders';
 import TrackShipment from './pages/TrackShipment';
+import Wishlist from './pages/Wishlist';
+import LoyaltyPoints from './pages/LoyaltyPoints';
+import Notifications from './pages/Notifications';
 import AdminDashboard from './pages/admin/AdminDashboard';
 import UsersManagement from './pages/admin/UsersManagement';
 import VendorsManagement from './pages/admin/VendorsManagement';
@@ -16,6 +19,7 @@ import ShipmentHandlersManagement from './pages/admin/ShipmentHandlersManagement
 import ShipmentTracking from './pages/admin/ShipmentTracking';
 import VendorPayments from './pages/admin/VendorPayments';
 import PurchaseOrders from './pages/admin/PurchaseOrders';
+import ChatManagement from './pages/admin/ChatManagement';
 import { RequireAdmin } from './components/auth/RequireAdmin';
 
 interface RouteConfig {
@@ -55,6 +59,24 @@ const routes: RouteConfig[] = [
     path: '/track-shipment',
     element: <TrackShipment />,
     visible: true
+  },
+  {
+    name: 'Wishlist',
+    path: '/wishlist',
+    element: <Wishlist />,
+    visible: false
+  },
+  {
+    name: 'Loyalty Points',
+    path: '/loyalty-points',
+    element: <LoyaltyPoints />,
+    visible: false
+  },
+  {
+    name: 'Notifications',
+    path: '/notifications',
+    element: <Notifications />,
+    visible: false
   },
   {
     name: 'Product Detail',
@@ -126,6 +148,12 @@ const routes: RouteConfig[] = [
     name: 'Purchase Orders',
     path: '/admin/purchase-orders',
     element: <RequireAdmin><PurchaseOrders /></RequireAdmin>,
+    visible: false
+  },
+  {
+    name: 'Chat Management',
+    path: '/admin/chat',
+    element: <RequireAdmin><ChatManagement /></RequireAdmin>,
     visible: false
   }
 ];

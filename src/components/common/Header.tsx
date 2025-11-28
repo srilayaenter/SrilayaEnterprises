@@ -1,9 +1,12 @@
+import { useState, useEffect } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Leaf, ShoppingCart, User, LogOut } from "lucide-react";
+import { Leaf, ShoppingCart, User, LogOut, Heart, Award } from "lucide-react";
 import { useAuth } from "@/components/auth/AuthProvider";
 import { useCart } from "@/contexts/CartContext";
+import { wishlistApi, loyaltyPointsApi } from "@/db/api";
+import NotificationBell from "@/components/notifications/NotificationBell";
 import routes from "../../routes";
 
 const Header = () => {
@@ -11,6 +14,32 @@ const Header = () => {
   const { user, profile, signOut } = useAuth();
   const { totalItems } = useCart();
   const navigation = routes.filter((route) => route.visible !== false);
+  
+  const [wishlistCount, setWishlistCount] = useState(0);
+  const [pointsBalance, setPointsBalance] = useState(0);
+
+  useEffect(() => {
+    if (user) {
+      loadUserData();
+      const interval = setInterval(loadUserData, 30000);
+      return () => clearInterval(interval);
+    }
+  }, [user]);
+
+  const loadUserData = async () => {
+    if (!user) return;
+    
+    try {
+      const [wishlist, points] = await Promise.all([
+        wishlistApi.getWishlistCount(user.id),
+        loyaltyPointsApi.getPointsBalance(user.id)
+      ]);
+      setWishlistCount(wishlist);
+      setPointsBalance(points);
+    } catch (error) {
+      console.error('Error loading user data:', error);
+    }
+  };
 
   return (
     <header className="bg-card border-b border-border sticky top-0 z-50 shadow-sm">
@@ -42,6 +71,21 @@ const Header = () => {
           </div>
 
           <div className="flex items-center gap-2">
+            {/* Wishlist */}
+            {user && (
+              <Link to="/wishlist">
+                <Button variant="ghost" size="icon" className="relative">
+                  <Heart className="w-5 h-5" />
+                  {wishlistCount > 0 && (
+                    <Badge className="absolute -top-1 -right-1 h-5 w-5 flex items-center justify-center p-0 text-xs">
+                      {wishlistCount}
+                    </Badge>
+                  )}
+                </Button>
+              </Link>
+            )}
+
+            {/* Cart */}
             <Link to="/cart">
               <Button variant="ghost" size="icon" className="relative">
                 <ShoppingCart className="w-5 h-5" />
@@ -52,6 +96,19 @@ const Header = () => {
                 )}
               </Button>
             </Link>
+
+            {/* Notifications */}
+            {user && <NotificationBell userId={user.id} />}
+
+            {/* Points Balance */}
+            {user && pointsBalance > 0 && (
+              <Link to="/loyalty-points">
+                <Button variant="ghost" className="gap-2">
+                  <Award className="w-4 h-4 text-primary" />
+                  <span className="text-sm font-semibold">{pointsBalance}</span>
+                </Button>
+              </Link>
+            )}
 
             {user ? (
               <>

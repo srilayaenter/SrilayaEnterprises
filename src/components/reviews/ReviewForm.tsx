@@ -25,7 +25,7 @@ export default function ReviewForm({ productId, userId, onReviewSubmitted }: Rev
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    if (rating === 0) {
+    if (rating < 1 || rating > 5) {
       toast({
         title: 'Rating Required',
         description: 'Please select a star rating',

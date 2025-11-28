@@ -5,6 +5,7 @@ import { CartProvider } from '@/contexts/CartContext';
 import { Toaster } from '@/components/ui/toaster';
 import { supabase } from '@/db/supabase';
 import Header from '@/components/common/Header';
+import ChatWidget from '@/components/chat/ChatWidget';
 import routes from './routes';
 
 const App = () => {
@@ -29,6 +30,7 @@ const App = () => {
                 </Routes>
               </RequireAuth>
             </main>
+            <ChatWidget />
           </div>
         </CartProvider>
       </AuthProvider>

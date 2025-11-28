@@ -9,6 +9,8 @@ import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Search, ShoppingCart, Leaf } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
+import { useAuth } from '@/components/auth/AuthProvider';
+import WishlistButton from '@/components/wishlist/WishlistButton';
 
 const categories: { value: ProductCategory | 'all'; label: string }[] = [
   { value: 'all', label: 'All Products' },
@@ -27,6 +29,7 @@ export default function Home() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'all'>('all');
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     loadProducts();
@@ -122,10 +125,15 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6">
               {filteredProducts.map((product) => (
                 <Card key={product.id} className="overflow-hidden hover:shadow-elegant transition-smooth">
-                  <CardHeader className="p-0">
+                  <CardHeader className="p-0 relative">
                     <div className="aspect-square bg-muted flex items-center justify-center">
                       <Leaf className="w-16 h-16 text-muted-foreground/30" />
                     </div>
+                    {user && (
+                      <div className="absolute top-2 right-2">
+                        <WishlistButton productId={product.id} />
+                      </div>
+                    )}
                   </CardHeader>
                   <CardContent className="p-4">
                     <div className="flex items-start justify-between mb-2">

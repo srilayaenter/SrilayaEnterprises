@@ -6,9 +6,13 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
 import { ArrowLeft, Leaf, ShoppingCart, Package } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/components/auth/AuthProvider';
+import WishlistButton from '@/components/wishlist/WishlistButton';
+import ReviewsList from '@/components/reviews/ReviewsList';
 
 export default function ProductDetail() {
   const { id } = useParams<{ id: string }>();
@@ -19,6 +23,7 @@ export default function ProductDetail() {
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { addItem } = useCart();
+  const { user } = useAuth();
 
   useEffect(() => {
     if (id) {
@@ -114,9 +119,12 @@ export default function ProductDetail() {
           <div>
             <div className="flex items-start justify-between mb-2">
               <h1 className="text-3xl xl:text-4xl font-bold">{product.name}</h1>
-              <Badge variant="secondary" className="capitalize">
-                {product.category}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Badge variant="secondary" className="capitalize">
+                  {product.category}
+                </Badge>
+                {user && <WishlistButton productId={product.id} />}
+              </div>
             </div>
             <p className="text-muted-foreground">{product.description}</p>
           </div>
@@ -194,6 +202,13 @@ export default function ProductDetail() {
             </CardContent>
           </Card>
         </div>
+      </div>
+
+      {/* Reviews Section */}
+      <Separator className="my-12" />
+      <div className="max-w-4xl mx-auto">
+        <h2 className="text-2xl font-bold mb-6">Customer Reviews</h2>
+        <ReviewsList productId={product.id} />
       </div>
     </div>
   );

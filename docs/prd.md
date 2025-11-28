@@ -129,22 +129,139 @@ Each category contains multiple product variants with different packaging option
   + Invoice displays: subtotal, package discount (with percentage), GST, and grand total
 - **Invoice line item display:** Each product line shows base price, applicable discount percentage (if any), discounted price, GST, and final price
 
-### 3.7 Admin Dashboard
-\n####3.7.1 Product Management (Implementation Ready)
+### 3.7 Loyalty Points System (New Feature)
+\n####3.7.1 Points Earning Mechanism
+- Customers earn 1 loyalty point for every ₹100 spent on purchases
+- Points are credited to customer account after order completion
+- Bonus points for first purchase, referrals, and special promotions
+- Points accumulation displayed in user profile dashboard
+
+#### 3.7.2 Points Redemption\n- Customers can redeem points during checkout\n- Redemption rate: 100 points = ₹10 discount
+- Minimum redemption threshold: 500 points
+- Maximum redemption per order: 50% of order value
+- Points balance updated in real-time after redemption
+
+#### 3.7.3 Points History and Tracking
+- Detailed transaction history showing points earned and redeemed
+- Display columns: Date, Transaction Type (Earned/Redeemed), Order ID, Points, Balance
+- Filter options by date range and transaction type
+- Points expiry notification (points valid for 12 months from earning date)
+
+#### 3.7.4 Loyalty Tier System
+- Bronze Tier: 0-999 points (1x earning rate)
+- Silver Tier: 1000-2499 points (1.2x earning rate)
+- Gold Tier: 2500+ points (1.5x earning rate)
+- Tier benefits displayed in user profile
+- Tier upgrade notifications
+
+### 3.8 Notification System (New Feature)
+
+#### 3.8.1 Notification Types
+- Order status updates (Order Placed, Processing, Shipped, Delivered)
+- Payment confirmations
+- Loyalty points earned and redeemed
+- Promotional offers and discounts
+- Low stock alerts for wishlist items
+- Product review requests
+- Account security alerts
+
+#### 3.8.2 Notification Delivery Channels
+- In-app notifications with badge counter in header
+- Email notifications
+- SMS notifications for critical updates (order shipped, delivered)
+\n#### 3.8.3 Notification Center
+- Centralized notification panel accessible from header icon
+- Notification list with timestamp and read/unread status
+- Mark as read/unread functionality
+- Delete individual or bulk notifications
+- Filter by notification type (Orders, Promotions, Account, Loyalty)
+- Notification preferences settings (enable/disable by type and channel)
+
+#### 3.8.4 Real-time Notifications
+- Push notifications for time-sensitive updates
+- Sound and visual alerts for new notifications
+- Auto-refresh notification count without page reload
+\n### 3.9 Customer Support Chat System (New Feature)
+
+#### 3.9.1 Live Chat Widget
+- Floating chat icon visible on all pages (bottom-right corner)
+- Click to expand chat window
+- Minimizable and closable chat interface
+- Unread message badge indicator
+\n#### 3.9.2 Chat Features
+- Real-time messaging between customer and support staff
+- Message history retention for ongoing conversations
+- Typing indicators showing when support agent is typing
+- File attachment support (images, documents up to 5MB)
+- Quick reply templates for common queries
+- Emoji support for friendly communication
+
+#### 3.9.3 Chat Availability
+- Display support hours (e.g., Mon-Sat9AM-6PM)
+- Offline message form when support is unavailable
+- Auto-reply with expected response time
+- Queue position indicator during high traffic\n
+#### 3.9.4 Chat History
+- Access to previous chat conversations in user profile
+- Search functionality within chat history
+- Download chat transcript option
+\n#### 3.9.5 Admin Chat Management
+- Admin dashboard for managing customer chat requests
+- Queue management with priority assignment
+- Assign chats to specific support staff
+- Canned responses library for quick replies
+- Chat analytics (response time, resolution rate, customer satisfaction)
+
+### 3.10 Product Review and Rating System (Enhanced)\n
+#### 3.10.1 Review Submission\n- Customers can submit reviews after order delivery
+- Star rating (1-5 stars) with written review
+- Photo upload option (up to 3 images per review)
+- Review submission form integrated in Product Detail page
+- Verified purchase badge for authenticated reviews
+
+#### 3.10.2 Review Display on Product Detail Page
+- Average rating score with star visualization
+- Total review count
+- Rating distribution chart (5-star to 1-star breakdown)
+- Review list with sorting options (Most Recent, Highest Rating, Lowest Rating, Most Helpful)
+- Helpful/Not Helpful voting buttons
+- Report inappropriate review option
+
+#### 3.10.3 Review Moderation
+- Admin approval required before review publication
+- Filter and flag system for inappropriate content
+- Edit or delete reviews from admin dashboard
+\n### 3.11 Updated Header Navigation (Enhanced)
+
+#### 3.11.1 Header Components
+- Logo and website name (left-aligned)
+- Main navigation menu (Categories dropdown, About Us, Contact)\n- Search bar with autocomplete suggestions
+- **Notification icon with unread count badge**
+- **Loyalty points display showing current balance**
+- **Chat widget icon with unread message indicator**
+- Shopping cart icon with item count
+- User account dropdown (Profile, Orders, Loyalty Points, Notifications, Logout)
+
+#### 3.11.2 Responsive Design
+- Mobile-friendly hamburger menu
+- Collapsible navigation for smaller screens
+- Touch-optimized icons and buttons
+\n### 3.12 Admin Dashboard\n
+#### 3.12.1 Product Management (Implementation Ready)
 \n**Add New Product**
 - Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
 - Packaging options selection (checkboxes for1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey)
 - Final price auto-calculation display with discount application
 - Save and Cancel buttons
-
-**View Product List**
+\n**View Product List**
 - Table display with columns: Product ID, Product Name, Category, Cost Price, Selling Price, GST%, Final Price, Stock Status, Actions
 - Pagination with 20 products per page
 - Search bar for product name or ID
 - Filter dropdowns: Category, Stock Status (In Stock/Low Stock/Out of Stock)
 - Sort options: Name (A-Z), Price (Low to High), Recently Added
 \n**Edit Product**
-- Pre-filled form with existing product data\n- All fields editable except Product ID
+- Pre-filled form with existing product data
+- All fields editable except Product ID
 - Selling price auto-updates when cost price changes (Cost + 25%)
 - Image replacement option
 - Update and Cancel buttons
@@ -154,11 +271,10 @@ Each category contains multiple product variants with different packaging option
 - Delete button with confirmation dialog
 - Option to deactivate instead of permanent deletion
 - Deactivated products hidden from customer view but retained in database
-
-**Bulk Operations**
+\n**Bulk Operations**
 - Checkbox selection for multiple products
 - Bulk actions: Update prices, Change category, Deactivate, Export to CSV
-\n#### 3.7.2 Customer Management (Implementation Ready)
+\n#### 3.12.2 Customer Management (Implementation Ready)
 
 **Add New Customer**
 - Form fields: Customer Name, Email, Phone Number, Primary Delivery Address (Street, City, State, Pincode), Secondary Address (optional)
@@ -166,30 +282,30 @@ Each category contains multiple product variants with different packaging option
 - Save and Cancel buttons
 
 **View Customer List**
-- Table display with columns: Customer ID, Name, Email, Phone, Registration Date, Total Orders, Total Spent, Status, Actions
+- Table display with columns: Customer ID, Name, Email, Phone, Registration Date, Total Orders, Total Spent, Loyalty Points, Status, Actions
 - Pagination with 25 customers per page
 - Search bar for name, email, or phone
-- Filter options: Registration Date Range, Order Count (0, 1-5, 5+), Status (Active/Inactive)
-- Sort options: Name (A-Z), Registration Date, Total Spent
+- Filter options: Registration Date Range, Order Count (0, 1-5, 5+), Loyalty Tier, Status (Active/Inactive)
+- Sort options: Name (A-Z), Registration Date, Total Spent, Loyalty Points
 
 **View Customer Profile**
-- Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
+- Customer details section: Name, Email, Phone, Registration Date, Account Status, Loyalty Tier, Points Balance
+- Delivery addresses list with edit/delete options
 - Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status
 - Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
+- Loyalty points transaction history
 
 **Edit Customer Information**
 - Pre-filled form with existing customer data
-- Editable fields: Name, Email, Phone, Addresses, Account Status
-- Update and Cancel buttons
+- Editable fields: Name, Email, Phone, Addresses, Account Status\n- Update and Cancel buttons
 - Email/Phone validation
-
-**Customer Activity Tracking**
+\n**Customer Activity Tracking**
 - Last login date and time
 - Recent browsing history (last 10 products viewed)
 - Cart abandonment tracking
+\n#### 3.12.3Inventory Management (Implementation Ready)
 
-#### 3.7.3 Inventory Management (Implementation Ready)
-\n**Stock Level Dashboard**
+**Stock Level Dashboard**
 - Overview cards: Total Products, Low Stock Items, Out of Stock Items, Total Inventory Value
 - Real-time stock status for all products
 - Color-coded indicators: Green (In Stock >50units), Yellow (Low Stock 10-50 units), Red (Critical<10 units), Grey (Out of Stock)
@@ -225,7 +341,7 @@ Each category contains multiple product variants with different packaging option
 - Inventory valuation report (cost price × quantity)
 - Export options: PDF, Excel, CSV
 
-#### 3.7.4 User Management (Implementation Ready)
+#### 3.12.4 User Management (Implementation Ready)
 
 **User Roles and Privileges**
 - **Admin:** Full access to all features including user management, product management, order management, inventory, vendor management, shipping management, and reports. **Admin users have the exclusive privilege to add new Staff and Customer users.**
@@ -236,12 +352,14 @@ Each category contains multiple product variants with different packaging option
   + View product catalog (cannot add, edit, or delete products)
   + Update inventory stock levels
   + View reports (cannot generate custom reports)
+  + Respond to customer chat inquiries
   + No access to: User management, Vendor management, Shipping handler management, Financial reports, System settings
 - **Customer:** Standard customer account with shopping and order tracking privileges only
 
 **Add New User (Admin Privilege Only)**
 - **Only Admin users can add new Staff and Customer users**
-- Form fields:\n  + User ID (auto-generated)\n  + Full Name
+- Form fields:\n  + User ID (auto-generated)
+  + Full Name
   + Email (must be unique)
   + Phone Number
   + Role Selection (dropdown: Staff/Customer only - Admin users cannot create new Admin accounts through this interface)
@@ -280,10 +398,11 @@ Each category contains multiple product variants with different packaging option
 **Permission Management for Staff Users**
 - Customizable permission settings for Staff role:\n  + Order Management: View Orders, Update Order Status, Generate Invoices
   + Customer Management: View Customer Information\n  + Product Management: View Products\n  + Inventory Management: Update Stock Levels, View Stock Reports
-  + Reports: View Sales Reports\n- Checkbox-based permission assignment during user creation or editing
+  + Reports: View Sales Reports\n  + Customer Support: Respond to Chat Inquiries
+- Checkbox-based permission assignment during user creation or editing
 - Permission changes take effect immediately upon saving
 
-#### 3.7.5 Order Management\n
+#### 3.12.5 Order Management\n
 **View All Orders**
 - **Separate Tabs for Order Types:**
   + **Online Orders Tab:** Displays all online orders with delivery requirements
@@ -309,7 +428,7 @@ Each category contains multiple product variants with different packaging option
 - Separate sales reports for Online Orders and In-Store Purchases
 - Combined sales overview\n- Export options: CSV, PDF, Excel
 
-#### 3.7.6 Vendor Management (Implementation Ready)
+#### 3.12.6 Vendor Management (Implementation Ready)
 
 **Add New Vendor**
 - Form fields: Vendor ID (auto-generated), Vendor Name, Contact Person, Email, Phone Number, Address, Product Categories Supplied, Payment Terms, GST Number\n- Save and Cancel buttons
@@ -322,11 +441,9 @@ Each category contains multiple product variants with different packaging option
 - Sort options: Name (A-Z), Total Transactions, Outstanding Amount
 
 **View Vendor Profile**
-- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms
-- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n
-**Edit Vendor Information**
+- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms\n- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n\n**Edit Vendor Information**
 - Pre-filled form with existing vendor data\n- All fields editable except Vendor ID\n- Update and Cancel buttons
-\n**Purchase Order Management (New Feature)**
+\n**Purchase Order Management**
 \n**Create Purchase Order to Vendor**
 - **Form fields:**
   + Purchase Order ID (auto-generated with format: PO-YYYYMMDD-XXX)
@@ -345,7 +462,7 @@ Each category contains multiple product variants with different packaging option
   + Notes (optional)\n- **Add Product Row button:** Allows adding multiple products to a single purchase order
 - **Remove Product Row button:** Removes selected product from order
 - **Save as Draft button:** Saves order without sending to vendor
-- **Send Order button:** Finalizes and sends order to vendor (changes status to 'Sent to Vendor')\n- **Cancel button:** Discards order creation
+- **Send Order button:** Finalizes and sends order to vendor (changes status to Sent to Vendor)\n- **Cancel button:** Discards order creation
 \n**View Purchase Orders List**
 - **Table display with columns:**
   + Purchase Order ID\n  + Vendor Name
@@ -392,10 +509,9 @@ Each category contains multiple product variants with different packaging option
 **Edit Purchase Order**
 - Pre-filled form with existing order data
 - All fields editable except Purchase Order ID
-- Can add or remove products
-- Can update quantities and prices
+- Can add or remove products\n- Can update quantities and prices
 - Update button saves changes
-- **Note:** Orders with status 'Confirmed', 'Partially Received', or 'Fully Received' have limited editing (only notes and expected delivery date can be modified)
+- **Note:** Orders with status Confirmed, Partially Received, or Fully Received have limited editing (only notes and expected delivery date can be modified)
 
 **Mark Products as Received**
 - **Receive Products Dialog:**
@@ -405,10 +521,11 @@ Each category contains multiple product variants with different packaging option
   + Quality Check Status (dropdown: Approved/Rejected/Partial Approval)\n  + Received By (auto-filled with logged-in admin name)
   + Notes (optional, for recording any discrepancies or issues)
 - **Partial Receipt Handling:**
-  + If received quantity is less than ordered quantity, order status changes to 'Partially Received'\n  + System tracks remaining quantity to be received
+  + If received quantity is less than ordered quantity, order status changes to Partially Received
+  + System tracks remaining quantity to be received
   + Admin can mark remaining products as received in subsequent transactions
 - **Full Receipt:**
-  + When all products are received in full quantity, order status changes to 'Fully Received'
+  + When all products are received in full quantity, order status changes to Fully Received
 - **Inventory Update:**
   + Upon marking products as received, system automatically updates inventory stock levels
   + Inventory movement log records the stock addition with reference to Purchase Order ID
@@ -417,12 +534,12 @@ Each category contains multiple product variants with different packaging option
 - Cancel button with confirmation dialog
 - Cancellation reason dropdown: Vendor Unavailable/Price Change/Order Error/Other
 - Notes field for additional details
-- Order status changes to 'Cancelled'
+- Order status changes to Cancelled
 - Cancelled orders retained in database for record-keeping
 
 **Purchase Order Reports**
-- **Pending Orders Report:** Lists all orders with status 'Sent to Vendor' or 'Confirmed' that are awaiting delivery
-- **Overdue Orders Report:** Lists orders where Expected Delivery Date has passed but status is not 'Fully Received'
+- **Pending Orders Report:** Lists all orders with status Sent to Vendor or Confirmed that are awaiting delivery
+- **Overdue Orders Report:** Lists orders where Expected Delivery Date has passed but status is not Fully Received
 - **Vendor-wise Purchase Summary:** Total orders placed, total amount, pending deliveries per vendor
 - **Product-wise Purchase Summary:** Total quantity ordered and received per product
 - **Filter options:** Date range, Vendor, Product Category, Order Status
@@ -433,7 +550,8 @@ Each category contains multiple product variants with different packaging option
 - Product selection with quantity and cost price input
 - Transaction date\n- Payment status (Paid/Pending/Partial)\n- Amount paid field
 - Invoice upload option
-- Notes field\n- Submit button\n\n**Vendor Supply Details Table**
+- Notes field
+- Submit button\n\n**Vendor Supply Details Table**
 - **Add Supply Entry:** Admin can manually enter supply details with the following fields:
   + Supply ID (auto-generated)
   + Vendor Name (dropdown selection from registered vendors)
@@ -476,7 +594,8 @@ Each category contains multiple product variants with different packaging option
   + Total amount paid (₹)
   + Total outstanding balance (₹)
   + Category-wise supply breakdown
-\n**Vendor Payment Summary Report**
+
+**Vendor Payment Summary Report**
 - **Report displays total amount paid to each vendor with the following details:**
   + Vendor Name
   + Total Supplies Received (count)
@@ -495,7 +614,7 @@ Each category contains multiple product variants with different packaging option
 - Generate purchase reports
 - Export to CSV/PDF
 
-#### 3.7.7 Shipping Management (Implementation Ready)
+#### 3.12.7 Shipping Management (Implementation Ready)
 
 **Note:** Shipping management applies only to Online Orders. In-Store Purchases do not require shipment handling.
 
@@ -533,13 +652,12 @@ Each category contains multiple product variants with different packaging option
 \n- **Assign Shipment Functionality:**
   + **Handler Selection:** Dropdown to select shipment handler from registered handlers
   + **Shipped Date:** Calendar picker to select the date when order is shipped
-    * **Date Validation:** System validates that Shipped Date cannot be earlier than Order Created Date. If user attempts to select a date prior to order creation, an error message is displayed:'Shipment date cannot be earlier than order created date'
+    * **Date Validation:** System validates that Shipped Date cannot be earlier than Order Created Date. If user attempts to select a date prior to order creation, an error message is displayed: Shipment date cannot be earlier than order created date
   + **Expected Delivery Date:** Calendar picker to select expected delivery date
     * **Date Validation:** System validates that Expected Delivery Date cannot be earlier than Shipped Date\n  + **Assign Button:** Save shipment assignment with selected handler and dates
   + **Automatic Shipping Charges Calculation:** System automatically calculates shipping charges based on order weight and handler rates (intrastate/interstate)\n\n- **Edit Shipment Details:**
   + Modify assigned handler\n  + Update shipped date (with validation to ensure it is not earlier than order created date)
-  + Update expected delivery date (with validation to ensure it is not earlier than shipped date)
-  + Save changes button
+  + Update expected delivery date (with validation to ensure it is not earlier than shipped date)\n  + Save changes button
 
 - **Shipment Status Tracking:**
   + Status options: Assigned, In Transit, Out for Delivery, Delivered, Returned
@@ -614,33 +732,123 @@ Each category contains multiple product variants with different packaging option
 - Track return statistics by handler
 - Generate return analysis reports
 
-#### 3.7.8 Sales Reports and Analytics\n- Sales reports by product, category, and time period
+#### 3.12.8 Sales Reports and Analytics\n- Sales reports by product, category, and time period
 - **Separate reports for Online Orders and In-Store Purchases**\n- **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends
 - Inventory turnover reports
 - **Vendor payment summary reports showing total amount paid to each vendor**
 - **Shipping handler payment summary reports showing total amount paid to each handler**
+- **Loyalty points analytics: Total points issued, redeemed, and outstanding**
 - Return rate analysis
-\n## 4. Business Goals\n
+\n#### 3.12.9 Notification Management (New Feature)
+- View all system notifications sent to customers
+- Filter by notification type, date range, delivery status
+- Resend failed notifications
+- Create and schedule promotional notifications
+- Notification templates management
+- Delivery statistics and open rates
+
+#### 3.12.10 Chat Management Dashboard (New Feature)
+- Real-time chat queue with pending customer inquiries
+- Assign chats to available support staff
+- Monitor active chat sessions
+- View chat history and transcripts
+- Canned responses library for quick replies
+- Chat performance metrics: Average response time, resolution rate, customer satisfaction scores
+- Export chat logs for quality assurance
+
+## 4. Business Goals\n
 ### 4.1 Sales Objectives
-- Achieve defined sales targets\n- Customer acquisition and retention
+- Achieve defined sales targets\n- Customer acquisition and retention\n- Increase customer lifetime value through loyalty program
 \n### 4.2 Marketing Strategies
 - Package-based discount programs to encourage bulk purchases
-- Promotional campaigns\n\n## 5. Design Style
+- Promotional campaigns\n- Loyalty points incentives for repeat purchases
+- Referral rewards program
+\n### 4.3 Customer Engagement
+- Real-time customer support through chat system
+- Proactive notifications for order updates and promotions
+- Product review and rating system to build trust
+- Personalized recommendations based on purchase history
 
-### 5.1 Color Scheme
+## 5. Technical Implementation Requirements
+
+### 5.1 Frontend Components Development
+
+#### 5.1.1 Loyalty Points Components
+- **PointsBalance Component:** Display current points balance in header and user profile
+- **PointsHistory Component:** Transaction history table with filters\n- **PointsRedemption Component:** Redemption interface during checkout
+- **TierBadge Component:** Visual display of customer loyalty tier
+- **PointsEarningCalculator Component:** Real-time calculation of points to be earned on current order
+\n#### 5.1.2 Notification Components
+- **NotificationIcon Component:** Header icon with unread count badge
+- **NotificationPanel Component:** Dropdown panel with notification list
+- **NotificationItem Component:** Individual notification display with read/unread status
+- **NotificationPreferences Component:** Settings page for notification preferences
+- **NotificationToast Component:** Pop-up alerts for real-time notifications
+
+#### 5.1.3 Chat Components
+- **ChatWidget Component:** Floating chat icon and expandable chat window
+- **ChatWindow Component:** Main chat interface with message list and input\n- **ChatMessage Component:** Individual message bubble with timestamp
+- **ChatInput Component:** Text input with file attachment and emoji picker
+- **ChatHistory Component:** Previous conversations list in user profile
+- **ChatAvailability Component:** Display support hours and offline message form
+
+#### 5.1.4 Review Components
+- **ReviewForm Component:** Review submission form with star rating and photo upload
+- **ReviewList Component:** Display reviews with sorting and filtering
+- **ReviewItem Component:** Individual review display with helpful voting\n- **RatingDistribution Component:** Visual chart showing rating breakdown
+- **AverageRating Component:** Star visualization with average score
+
+### 5.2 Header Integration
+- Update header navigation to include notification icon, loyalty points display, and chat widget icon
+- Implement responsive design for mobile devices
+- Add real-time update functionality for notification count and points balance
+
+### 5.3 Routes Configuration
+- Add routes for loyalty points pages: /loyalty, /loyalty/history, /loyalty/redeem
+- Add routes for notification pages: /notifications, /notifications/preferences\n- Add routes for chat pages: /chat, /chat/history\n- Update product detail route to include review section: /product/:id#reviews
+
+### 5.4 Integration Requirements
+- Integrate review components into ProductDetail page
+- Add chat widget to all customer-facing pages
+- Connect notification system with order status updates
+- Link loyalty points calculation with checkout process
+
+### 5.5 Testing Requirements
+- End-to-end testing of loyalty points earning and redemption flow
+- Notification delivery testing across all channels (in-app, email, SMS)
+- Chat functionality testing including real-time messaging and file attachments
+- Review submission and moderation workflow testing
+- Cross-browser and device compatibility testing
+- Performance testing for real-time features
+
+### 5.6 Documentation Requirements
+- User guide for loyalty points system
+- Customer support chat usage instructions
+- Notification preferences configuration guide
+- Product review submission guidelines
+- Admin dashboard user manual for new features
+- API documentation for chat and notification systems
+
+## 6. Design Style\n
+### 6.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
 - Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
-\n### 5.2 Layout\n- Card-based layout for product display with clear visual hierarchy
+- Accent colors: Gold (#FFD700) for loyalty tier badges, blue (#2196F3) for notification badges
+\n### 6.2 Layout\n- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
-\n### 5.3 Visual Elements
+- Floating chat widget positioned at bottom-right corner
+- Notification panel as dropdown from header icon
+\n### 6.3 Visual Elements
 - Rounded corners (8px radius) for cards and buttons for a friendly, approachable feel
 - Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth\n- Nature-inspired icons with line-style design
 - Smooth hover transitions (0.3s ease) for interactive elements
-
-### 5.4 Typography
+- Badge indicators for notifications and loyalty tiers with contrasting colors
+- Star rating visualization with gold color (#FFD700)\n
+### 6.4 Typography
 - Clean, readable sans-serif fonts for easy navigation and product information display
-\n## 6. Reference Files
+- Font hierarchy: Headings (18-24px bold), body text (14-16px regular), small text (12px for timestamps and metadata)
+\n## 7. Reference Files
 1. Product list with pricing: image.png
 2. Product images: Barley Flakes.png, Finger Millet Flakes.png, Barnyard Millet Flakes.png, Greengram Flakes.png, Foxtail Millet Flakes.png

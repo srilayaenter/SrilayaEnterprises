@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList, Shield, Banknote, FileText } from 'lucide-react';
+import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList, Shield, Banknote, FileText, MessageCircle } from 'lucide-react';
 import ProductManagement from './ProductManagement';
 import CustomerManagement from './CustomerManagement';
 import InventoryManagement from './InventoryManagement';
@@ -13,6 +13,7 @@ import ShipmentHandlersManagement from './ShipmentHandlersManagement';
 import ShipmentTracking from './ShipmentTracking';
 import VendorPayments from './VendorPayments';
 import PurchaseOrders from './PurchaseOrders';
+import ChatManagement from './ChatManagement';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('products');
@@ -72,6 +73,10 @@ export default function AdminDashboard() {
               <FileText className="h-4 w-4" />
               Purchase Orders
             </TabsTrigger>
+            <TabsTrigger value="chat" className="flex items-center gap-2 whitespace-nowrap">
+              <MessageCircle className="h-4 w-4" />
+              Chat Support
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -121,6 +126,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="purchase-orders">
           <PurchaseOrders />
+        </TabsContent>
+
+        <TabsContent value="chat">
+          <ChatManagement />
         </TabsContent>
       </Tabs>
     </div>
