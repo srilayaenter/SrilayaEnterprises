@@ -148,6 +148,9 @@ export default function ShipmentTracking() {
     if (!selectedShipment) return;
 
     try {
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+
       // Validate dates
       if (data.shipped_date && selectedShipment.order?.created_at) {
         const orderDate = new Date(selectedShipment.order.created_at);
@@ -157,6 +160,21 @@ export default function ShipmentTracking() {
           toast({
             title: 'Invalid Date',
             description: `Shipped date cannot be before order date (${orderDate.toLocaleDateString()})`,
+            variant: 'destructive',
+          });
+          return;
+        }
+      }
+
+      // Prevent future dates for picked_up status
+      if (data.status === 'picked_up' && data.shipped_date) {
+        const shippedDate = new Date(data.shipped_date);
+        shippedDate.setHours(0, 0, 0, 0);
+        
+        if (shippedDate > today) {
+          toast({
+            title: 'Invalid Date',
+            description: 'Shipped date cannot be a future date when status is "Picked Up"',
             variant: 'destructive',
           });
           return;
@@ -251,6 +269,16 @@ export default function ShipmentTracking() {
     if (!selectedShipment?.order?.created_at) return undefined;
     const orderDate = new Date(selectedShipment.order.created_at);
     return orderDate.toISOString().split('T')[0];
+  };
+
+  // Get maximum date for shipped_date (today for picked_up status)
+  const getMaxShippedDate = () => {
+    const status = statusForm.watch('status');
+    if (status === 'picked_up') {
+      const today = new Date();
+      return today.toISOString().split('T')[0];
+    }
+    return undefined;
   };
 
   // Get minimum date for expected_delivery_date (shipped date or order date)
@@ -605,11 +633,13 @@ export default function ShipmentTracking() {
                           type="date" 
                           {...field} 
                           min={getMinShippedDate()}
+                          max={getMaxShippedDate()}
                         />
                       </FormControl>
                       {selectedShipment?.order?.created_at && (
                         <p className="text-xs text-muted-foreground">
                           Order date: {new Date(selectedShipment.order.created_at).toLocaleDateString()}
+                          {statusForm.watch('status') === 'picked_up' && ' • Cannot be a future date for picked up status'}
                         </p>
                       )}
                       <FormMessage />
