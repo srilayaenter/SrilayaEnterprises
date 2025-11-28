@@ -80,7 +80,7 @@ Selling Price = Cost Price + 25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -174,14 +174,16 @@ Each category contains multiple product variants with different packaging option
 
 **View Customer Profile**
 - Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
-- Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status\n- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
+- Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status
+- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
 
 **Edit Customer Information**
 - Pre-filled form with existing customer data
 - Editable fields: Name, Email, Phone, Addresses, Account Status
 - Update and Cancel buttons
 - Email/Phone validation
-\n**Customer Activity Tracking**
+
+**Customer Activity Tracking**
 - Last login date and time
 - Recent browsing history (last 10 products viewed)
 - Cart abandonment tracking
@@ -239,7 +241,8 @@ Each category contains multiple product variants with different packaging option
 
 **Add New User (Admin Privilege Only)**
 - **Only Admin users can add new Staff and Customer users**
-- Form fields:\n  + User ID (auto-generated)\n  + Full Name
+- Form fields:\n  + User ID (auto-generated)
+  + Full Name
   + Email (must be unique)
   + Phone Number
   + Role Selection (dropdown: Staff/Customer only - Admin users cannot create new Admin accounts through this interface)
@@ -324,23 +327,119 @@ Each category contains multiple product variants with different packaging option
 - Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n
 **Edit Vendor Information**
 - Pre-filled form with existing vendor data\n- All fields editable except Vendor ID\n- Update and Cancel buttons
-\n**Record Purchase Transaction**
+\n**Purchase Order Management (New Feature)**
+\n**Create Purchase Order to Vendor**
+- **Form fields:**
+  + Purchase Order ID (auto-generated with format: PO-YYYYMMDD-XXX)
+  + Vendor Name (dropdown selection from registered vendors)
+  + Order Date (calendar picker, defaults to current date)
+  + Expected Delivery Date (calendar picker)\n  + Product Selection (multi-select dropdown or add multiple product rows)
+    * Product Name (dropdown from product catalog)
+    * Product Category (auto-filled based on product selection)
+    * Quantity Ordered (in kg)
+    * Cost Price per kg (₹)\n    * Total Amount (auto-calculated: Quantity × Cost Price)
+  + Order Total Amount (₹) (auto-calculated sum of all product totals)
+  + Payment Terms (dropdown: Advance Payment/Payment on Delivery/Credit/Other)
+  + Delivery Address (text field for vendor delivery location)
+  + Special Instructions (optional text area)
+  + Order Status (dropdown: Draft/Sent to Vendor/Confirmed/Partially Received/Fully Received/Cancelled)
+  + Notes (optional)\n- **Add Product Row button:** Allows adding multiple products to a single purchase order
+- **Remove Product Row button:** Removes selected product from order
+- **Save as Draft button:** Saves order without sending to vendor
+- **Send Order button:** Finalizes and sends order to vendor (changes status to 'Sent to Vendor')\n- **Cancel button:** Discards order creation
+\n**View Purchase Orders List**
+- **Table display with columns:**
+  + Purchase Order ID\n  + Vendor Name
+  + Order Date
+  + Expected Delivery Date
+  + Total Products (count)
+  + Order Total Amount (₹)
+  + Order Status
+  + Actions (View/Edit/Mark as Received/Cancel)
+- **Pagination:** 20 orders per page
+- **Search bar:** Search by Purchase Order ID or Vendor Name
+- **Filter options:**
+  + Vendor (dropdown)
+  + Order Status (Draft/Sent to Vendor/Confirmed/Partially Received/Fully Received/Cancelled)
++ Date Range (Order Date or Expected Delivery Date)
+- **Sort options:** Order Date, Expected Delivery Date, Total Amount, Vendor Name
+
+**View Purchase Order Details**
+- **Order Information Section:**
+  + Purchase Order ID
+  + Vendor Name with contact details
+  + Order Date
+  + Expected Delivery Date
+  + Actual Received Date (if status is Partially Received or Fully Received)
+  + Order Status
+  + Payment Terms
+  + Delivery Address
+  + Special Instructions
+- **Product Details Table:**
+  + Product Name\n  + Category
+  + Quantity Ordered (kg)
+  + Quantity Received (kg) (editable when marking as received)
+  + Cost Price per kg (₹)
+  + Total Amount (₹)
+- **Order Summary:**
+  + Total Products Ordered
+  + Total Quantity Ordered (kg)
+  + Total Quantity Received (kg)
+  + Order Total Amount (₹)
+- **Action Buttons:**
+  + Edit Order (available for Draft and Sent to Vendor status)
+  + Mark as Received (opens receive products dialog)
+  + Cancel Order (with confirmation)\n  + Print/Download Purchase Order\n
+**Edit Purchase Order**
+- Pre-filled form with existing order data
+- All fields editable except Purchase Order ID
+- Can add or remove products
+- Can update quantities and prices
+- Update button saves changes
+- **Note:** Orders with status 'Confirmed', 'Partially Received', or 'Fully Received' have limited editing (only notes and expected delivery date can be modified)
+
+**Mark Products as Received**
+- **Receive Products Dialog:**
+  + Product list with checkboxes for selection
+  + Quantity Received input field for each product (defaults to ordered quantity)
+  + Actual Received Date (calendar picker, defaults to current date)
+  + Quality Check Status (dropdown: Approved/Rejected/Partial Approval)\n  + Received By (auto-filled with logged-in admin name)
+  + Notes (optional, for recording any discrepancies or issues)
+- **Partial Receipt Handling:**
+  + If received quantity is less than ordered quantity, order status changes to 'Partially Received'\n  + System tracks remaining quantity to be received
+  + Admin can mark remaining products as received in subsequent transactions
+- **Full Receipt:**
+  + When all products are received in full quantity, order status changes to 'Fully Received'
+- **Inventory Update:**
+  + Upon marking products as received, system automatically updates inventory stock levels
+  + Inventory movement log records the stock addition with reference to Purchase Order ID
+- **Confirm Receipt button:** Saves received quantities and updates order status\n- **Cancel button:** Closes dialog without saving\n
+**Cancel Purchase Order**
+- Cancel button with confirmation dialog
+- Cancellation reason dropdown: Vendor Unavailable/Price Change/Order Error/Other
+- Notes field for additional details
+- Order status changes to 'Cancelled'
+- Cancelled orders retained in database for record-keeping
+
+**Purchase Order Reports**
+- **Pending Orders Report:** Lists all orders with status 'Sent to Vendor' or 'Confirmed' that are awaiting delivery
+- **Overdue Orders Report:** Lists orders where Expected Delivery Date has passed but status is not 'Fully Received'
+- **Vendor-wise Purchase Summary:** Total orders placed, total amount, pending deliveries per vendor
+- **Product-wise Purchase Summary:** Total quantity ordered and received per product
+- **Filter options:** Date range, Vendor, Product Category, Order Status
+- **Export options:** CSV, PDF, Excel
+
+**Record Purchase Transaction**
 - Vendor selection dropdown
 - Product selection with quantity and cost price input
-- Transaction date\n- Payment status (Paid/Pending/Partial)
-- Amount paid field
+- Transaction date\n- Payment status (Paid/Pending/Partial)\n- Amount paid field
 - Invoice upload option
-- Notes field
-- Submit button
-
-**Vendor Supply Details Table**
+- Notes field\n- Submit button\n\n**Vendor Supply Details Table**
 - **Add Supply Entry:** Admin can manually enter supply details with the following fields:
   + Supply ID (auto-generated)
   + Vendor Name (dropdown selection from registered vendors)
-  + Supply Date
-  + Product Name (dropdown or text input)
-  + Product Category (Rice/Flour/Flakes/Millets/Honey)
-  + Quantity Supplied (in kg)
+  + Supply Date\n  + Product Name (dropdown or text input)
+  + Product Category (Rice/Flour/Flakes/Millets/Honey)\n  + Quantity Supplied (in kg)
   + Cost Price per kg (₹)
   + Total Amount (auto-calculated: Quantity × Cost Price)
   + Payment Status (Paid/Pending/Partial)
@@ -350,7 +449,8 @@ Each category contains multiple product variants with different packaging option
   + Notes (optional)
   + Save and Cancel buttons
 
-- **View Supply Details Table:** Table display with columns:\n  + Supply ID
+- **View Supply Details Table:** Table display with columns:
+  + Supply ID
   + Vendor Name
   + Supply Date
   + Product Name
@@ -362,13 +462,11 @@ Each category contains multiple product variants with different packaging option
   + Amount Paid (₹)
   + Balance (₹)
   + Actions (Edit/Delete/View Invoice)
-
-- **Edit Supply Entry:** Pre-filled form with existing supply data, all fields editable except Supply ID
+\n- **Edit Supply Entry:** Pre-filled form with existing supply data, all fields editable except Supply ID
 \n- **Delete Supply Entry:** Delete button with confirmation dialog
 
 - **Filter and Search Options:**
-  + Search by Supply ID, Vendor Name, or Product Name
-  + Filter by Vendor, Date Range, Product Category, Payment Status
+  + Search by Supply ID, Vendor Name, or Product Name\n  + Filter by Vendor, Date Range, Product Category, Payment Status
   + Sort by Supply Date, Total Amount, Balance Amount
 
 - **Export Options:** Export supply details to CSV/PDF for reporting
@@ -379,8 +477,7 @@ Each category contains multiple product variants with different packaging option
   + Total amount paid (₹)
   + Total outstanding balance (₹)
   + Category-wise supply breakdown
-
-**Vendor Payment Summary Report**
+\n**Vendor Payment Summary Report**
 - **Report displays total amount paid to each vendor with the following details:**
   + Vendor Name
   + Total Supplies Received (count)
@@ -413,7 +510,8 @@ Each category contains multiple product variants with different packaging option
 - Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n
 **View Handler Profile**
 - Handler details section: Name, Contact Person, Email, Phone, Service Areas, Rate Structure, Payment Terms
-- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status\n- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
+- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status
+- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
 
 **Edit Handler Information**
 - Pre-filled form with existing handler data
@@ -433,14 +531,13 @@ Each category contains multiple product variants with different packaging option
   + Expected Delivery Date
   + Shipment Status
   + Actions (Assign/Edit/View Details)
-
-- **Assign Shipment Functionality:**
+\n- **Assign Shipment Functionality:**
   + **Handler Selection:** Dropdown to select shipment handler from registered handlers
   + **Shipped Date:** Calendar picker to select the date when order is shipped
-    * **Date Validation:** System validates that Shipped Date cannot be earlier than Order Created Date. If user attempts to select a date prior to order creation, an error message is displayed:'Shipment date cannot be earlier than order created date'\n  + **Expected Delivery Date:** Calendar picker to select expected delivery date
+    * **Date Validation:** System validates that Shipped Date cannot be earlier than Order Created Date. If user attempts to select a date prior to order creation, an error message is displayed:'Shipment date cannot be earlier than order created date'
+  + **Expected Delivery Date:** Calendar picker to select expected delivery date
     * **Date Validation:** System validates that Expected Delivery Date cannot be earlier than Shipped Date\n  + **Assign Button:** Save shipment assignment with selected handler and dates
-  + **Automatic Shipping Charges Calculation:** System automatically calculates shipping charges based on order weight and handler rates (intrastate/interstate)
-\n- **Edit Shipment Details:**
+  + **Automatic Shipping Charges Calculation:** System automatically calculates shipping charges based on order weight and handler rates (intrastate/interstate)\n\n- **Edit Shipment Details:**
   + Modify assigned handler\n  + Update shipped date (with validation to ensure it is not earlier than order created date)
   + Update expected delivery date (with validation to ensure it is not earlier than shipped date)\n  + Save changes button
 
@@ -517,10 +614,8 @@ Each category contains multiple product variants with different packaging option
 - Track return statistics by handler
 - Generate return analysis reports
 
-#### 3.7.8 Sales Reports and Analytics
-- Sales reports by product, category, and time period
-- **Separate reports for Online Orders and In-Store Purchases**
-- **Combined sales overview with order type breakdown**
+#### 3.7.8 Sales Reports and Analytics\n- Sales reports by product, category, and time period
+- **Separate reports for Online Orders and In-Store Purchases**\n- **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends
 - Inventory turnover reports
 - **Vendor payment summary reports showing total amount paid to each vendor**
