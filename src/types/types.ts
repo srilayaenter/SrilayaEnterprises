@@ -246,3 +246,36 @@ export interface ShipmentWithDetails extends Shipment {
   order?: Order;
   handler?: ShipmentHandler;
 }
+
+export interface VendorPayment {
+  id: string;
+  vendor_name: string;
+  vendor_contact: string | null;
+  amount: number;
+  payment_date: string;
+  payment_method: PaymentMethod;
+  reference_number: string | null;
+  purpose: string | null;
+  notes: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface HandlerPaymentSummary {
+  handler_id: string;
+  handler_name: string;
+  service_type: string;
+  total_payments: number;
+  total_amount_paid: number;
+  last_payment_date: string | null;
+}
+
+export interface VendorPaymentSummary {
+  vendor_name: string;
+  vendor_contact: string | null;
+  total_payments: number;
+  total_amount_paid: number;
+  last_payment_date: string | null;
+}
+
+

@@ -148,6 +148,35 @@ export default function ShipmentTracking() {
     if (!selectedShipment) return;
 
     try {
+      // Validate dates
+      if (data.shipped_date && selectedShipment.order?.created_at) {
+        const orderDate = new Date(selectedShipment.order.created_at);
+        const shippedDate = new Date(data.shipped_date);
+        
+        if (shippedDate < orderDate) {
+          toast({
+            title: 'Invalid Date',
+            description: `Shipped date cannot be before order date (${orderDate.toLocaleDateString()})`,
+            variant: 'destructive',
+          });
+          return;
+        }
+      }
+
+      if (data.shipped_date && data.expected_delivery_date) {
+        const shippedDate = new Date(data.shipped_date);
+        const deliveryDate = new Date(data.expected_delivery_date);
+        
+        if (deliveryDate < shippedDate) {
+          toast({
+            title: 'Invalid Date',
+            description: 'Expected delivery date cannot be before shipped date',
+            variant: 'destructive',
+          });
+          return;
+        }
+      }
+
       // Clean up the data - convert empty strings to null
       const updateData: any = {
         handler_id: data.handler_id && data.handler_id !== 'none' && data.handler_id !== '' ? data.handler_id : null,
@@ -180,11 +209,22 @@ export default function ShipmentTracking() {
       loadData();
     } catch (error) {
       console.error('Error updating shipment:', error);
-      toast({
-        title: 'Error',
-        description: error instanceof Error ? error.message : 'Failed to update shipment',
-        variant: 'destructive',
-      });
+      const errorMessage = error instanceof Error ? error.message : 'Failed to update shipment';
+      
+      // Check if it's a date validation error from the database
+      if (errorMessage.includes('cannot be before')) {
+        toast({
+          title: 'Date Validation Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      } else {
+        toast({
+          title: 'Error',
+          description: errorMessage,
+          variant: 'destructive',
+        });
+      }
     }
   };
 
@@ -201,8 +241,23 @@ export default function ShipmentTracking() {
       notes: shipment.notes || ''
     };
     console.log('Form data:', formData);
+    console.log('Order created date:', shipment.order?.created_at);
     statusForm.reset(formData);
     setStatusDialogOpen(true);
+  };
+
+  // Get minimum date for shipped_date (order creation date)
+  const getMinShippedDate = () => {
+    if (!selectedShipment?.order?.created_at) return undefined;
+    const orderDate = new Date(selectedShipment.order.created_at);
+    return orderDate.toISOString().split('T')[0];
+  };
+
+  // Get minimum date for expected_delivery_date (shipped date or order date)
+  const getMinDeliveryDate = () => {
+    const shippedDate = statusForm.watch('shipped_date');
+    if (shippedDate) return shippedDate;
+    return getMinShippedDate();
   };
 
   const getStatusIcon = (status: ShipmentStatus) => {
@@ -546,8 +601,17 @@ export default function ShipmentTracking() {
                     <FormItem>
                       <FormLabel>Shipped Date</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input 
+                          type="date" 
+                          {...field} 
+                          min={getMinShippedDate()}
+                        />
                       </FormControl>
+                      {selectedShipment?.order?.created_at && (
+                        <p className="text-xs text-muted-foreground">
+                          Order date: {new Date(selectedShipment.order.created_at).toLocaleDateString()}
+                        </p>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}
@@ -560,8 +624,17 @@ export default function ShipmentTracking() {
                     <FormItem>
                       <FormLabel>Expected Delivery Date</FormLabel>
                       <FormControl>
-                        <Input type="date" {...field} />
+                        <Input 
+                          type="date" 
+                          {...field} 
+                          min={getMinDeliveryDate()}
+                        />
                       </FormControl>
+                      {statusForm.watch('shipped_date') && (
+                        <p className="text-xs text-muted-foreground">
+                          Must be after shipped date
+                        </p>
+                      )}
                       <FormMessage />
                     </FormItem>
                   )}

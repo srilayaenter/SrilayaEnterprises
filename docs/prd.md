@@ -80,8 +80,7 @@ Selling Price = Cost Price + 25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg
-- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -175,8 +174,7 @@ Each category contains multiple product variants with different packaging option
 
 **View Customer Profile**
 - Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
-- Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status
-- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
+- Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status\n- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
 
 **Edit Customer Information**
 - Pre-filled form with existing customer data
@@ -189,8 +187,7 @@ Each category contains multiple product variants with different packaging option
 - Cart abandonment tracking
 
 #### 3.7.3 Inventory Management (Implementation Ready)
-
-**Stock Level Dashboard**
+\n**Stock Level Dashboard**
 - Overview cards: Total Products, Low Stock Items, Out of Stock Items, Total Inventory Value
 - Real-time stock status for all products
 - Color-coded indicators: Green (In Stock >50units), Yellow (Low Stock 10-50 units), Red (Critical<10 units), Grey (Out of Stock)
@@ -296,17 +293,15 @@ Each category contains multiple product variants with different packaging option
 - **Delivery location identification:** System automatically detects whether delivery is intrastate (same city and state) or interstate based on customer delivery address
 - **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
 - Generate and download invoices with shipping cost and discount percentage included
-- Order details view showing: Order ID, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total
-
+- Order details view showing: Order ID, Order Created Date, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total\n
 **In-Store Purchases Management**
 - View and process in-store purchases\n- **Order status:** Automatically marked as Completed after payment
 - **No shipping management:** In-store purchases do not require delivery address or shipment tracking
 - Generate and download invoices without shipping charges
-- Order details view showing: Order ID, Order Type (In-Store Purchase), Customer information (if registered), Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Grand total (no shipping charges)
+- Order details view showing: Order ID, Order Created Date, Order Type (In-Store Purchase), Customer information (if registered), Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Grand total (no shipping charges)
 
 **Order Filtering and Search**
-- Filter orders by: Order Type (Online/In-Store/All), Date Range, Status, Customer Name
-- Search by Order ID or Customer Name
+- Filter orders by: Order Type (Online/In-Store/All), Date Range, Status, Customer Name\n- Search by Order ID or Customer Name
 - Sort by Date, Total Amount, Status
 \n**Order Reports**
 - Separate sales reports for Online Orders and In-Store Purchases
@@ -318,12 +313,14 @@ Each category contains multiple product variants with different packaging option
 - Form fields: Vendor ID (auto-generated), Vendor Name, Contact Person, Email, Phone Number, Address, Product Categories Supplied, Payment Terms, GST Number\n- Save and Cancel buttons
 
 **View Vendor List**
-- Table display with columns: Vendor ID, Vendor Name, Contact Person, Phone, Product Categories, Total Transactions, Outstanding Amount, Status, Actions
+- Table display with columns: Vendor ID, Vendor Name, Contact Person, Phone, Product Categories, Total Transactions, Total Amount Paid, Outstanding Amount, Status, Actions
 - Pagination with 20 vendors per page
 - Search bar for vendor name or ID
 - Filter options: Product Category, Status (Active/Inactive)
 - Sort options: Name (A-Z), Total Transactions, Outstanding Amount
-\n**View Vendor Profile**\n- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms
+
+**View Vendor Profile**
+- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms
 - Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n
 **Edit Vendor Information**
 - Pre-filled form with existing vendor data\n- All fields editable except Vendor ID\n- Update and Cancel buttons
@@ -383,6 +380,18 @@ Each category contains multiple product variants with different packaging option
   + Total outstanding balance (₹)
   + Category-wise supply breakdown
 
+**Vendor Payment Summary Report**
+- **Report displays total amount paid to each vendor with the following details:**
+  + Vendor Name
+  + Total Supplies Received (count)
+  + Total Purchase Value (₹)
+  + Total Amount Paid (₹)
+  + Outstanding Balance (₹)
+  + Payment Status (Fully Paid/Partially Paid/Pending)
+- **Filter Options:** Filter by Vendor, Date Range, Payment Status
+- **Sort Options:** Sort by Vendor Name, Total Amount Paid, Outstanding Balance
+- **Export Options:** Export to CSV/PDF for accounting and financial reporting
+
 **Transaction Management**
 - View all transactions between vendor and buyer
 - Filter by vendor, date range, payment status
@@ -398,7 +407,8 @@ Each category contains multiple product variants with different packaging option
 - Form fields: Handler ID (auto-generated), Handler Name, Contact Person, Email, Phone Number, Service Areas (Intrastate/Interstate/Both), Rate per kg (Intrastate), Rate per kg (Interstate), Payment Terms\n- Save and Cancel buttons
 
 **View Shipment Handler List**
-- Table display with columns: Handler ID, Handler Name, Contact Person, Phone, Service Areas, Intrastate Rate, Interstate Rate, Total Shipments, Status, Actions\n- Pagination with 20 handlers per page
+- Table display with columns: Handler ID, Handler Name, Contact Person, Phone, Service Areas, Intrastate Rate, Interstate Rate, Total Shipments, Total Amount Paid, Status, Actions
+- Pagination with 20 handlers per page
 - Search bar for handler name or ID
 - Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n
 **View Handler Profile**
@@ -413,6 +423,7 @@ Each category contains multiple product variants with different packaging option
 - **Shipment List View:** Displays all online orders that require shipment handling
 - **Table display with columns:**
   + Order ID
+  + Order Created Date
   + Customer Name
   + Delivery Address
   + Order Weight (kg)
@@ -426,13 +437,12 @@ Each category contains multiple product variants with different packaging option
 - **Assign Shipment Functionality:**
   + **Handler Selection:** Dropdown to select shipment handler from registered handlers
   + **Shipped Date:** Calendar picker to select the date when order is shipped
-  + **Expected Delivery Date:** Calendar picker to select expected delivery date
-  + **Assign Button:** Save shipment assignment with selected handler and dates
+    * **Date Validation:** System validates that Shipped Date cannot be earlier than Order Created Date. If user attempts to select a date prior to order creation, an error message is displayed:'Shipment date cannot be earlier than order created date'\n  + **Expected Delivery Date:** Calendar picker to select expected delivery date
+    * **Date Validation:** System validates that Expected Delivery Date cannot be earlier than Shipped Date\n  + **Assign Button:** Save shipment assignment with selected handler and dates
   + **Automatic Shipping Charges Calculation:** System automatically calculates shipping charges based on order weight and handler rates (intrastate/interstate)
 \n- **Edit Shipment Details:**
-  + Modify assigned handler\n  + Update shipped date
-  + Update expected delivery date
-  + Save changes button
+  + Modify assigned handler\n  + Update shipped date (with validation to ensure it is not earlier than order created date)
+  + Update expected delivery date (with validation to ensure it is not earlier than shipped date)\n  + Save changes button
 
 - **Shipment Status Tracking:**
   + Status options: Assigned, In Transit, Out for Delivery, Delivered, Returned
@@ -444,7 +454,7 @@ Each category contains multiple product variants with different packaging option
   + Sort by Shipped Date, Expected Delivery Date, Order ID
 
 - **Shipment Details View:**
-  + Order information: Order ID, Customer details, Delivery address\n  + Product list with weights\n  + Assigned handler details
+  + Order information: Order ID, Order Created Date, Customer details, Delivery address\n  + Product list with weights\n  + Assigned handler details
   + Shipped date and expected delivery date
   + Shipping charges breakdown
   + Current shipment status with history log
@@ -470,7 +480,8 @@ Each category contains multiple product variants with different packaging option
   + Notes
   + Actions (Edit/Delete/View Receipt)
 
-- **Edit Payment Entry:** Pre-filled form with existing payment data, all fields editable except Payment ID\n
+- **Edit Payment Entry:** Pre-filled form with existing payment data, all fields editable except Payment ID
+
 - **Delete Payment Entry:** Delete button with confirmation dialog
 
 - **Filter and Search Options:**
@@ -483,13 +494,22 @@ Each category contains multiple product variants with different packaging option
   + Total amount paid to handlers (₹)
   + Handler-wise payment breakdown
   + Pending payments (if any outstanding amounts exist)
+\n**Handler Payment Summary Report**
+- **Report displays total amount paid to each shipment handler with the following details:**\n  + Handler Name
+  + Total Shipments Handled (count)
+  + Total Shipping Charges (₹)
+  + Total Amount Paid (₹)
+  + Outstanding Balance (₹)
+  + Payment Status (Fully Paid/Partially Paid/Pending)
+- **Filter Options:** Filter by Handler, Date Range, Payment Status
+- **Sort Options:** Sort by Handler Name, Total Amount Paid, Outstanding Balance
+- **Export Options:** Export to CSV/PDF for accounting and financial reporting
 
 **Transaction Management with Handlers**
 - View all financial transactions with shipment handlers
 - Record payments made to handlers using the Shipment Payment Records Table
 - Track outstanding amounts\n- Generate handler payment reports
-- Filter by handler, date range, payment status
-- Export to CSV/PDF
+- Filter by handler, date range, payment status\n- Export to CSV/PDF
 \n**Return Management**
 - Record returned shipments with reason (Customer Refused, Wrong Address, Damaged, Other)
 - Update order status to reflect return
@@ -503,17 +523,17 @@ Each category contains multiple product variants with different packaging option
 - **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends
 - Inventory turnover reports
-- Vendor performance reports
-- Shipping handler performance reports (for Online Orders only)
+- **Vendor payment summary reports showing total amount paid to each vendor**
+- **Shipping handler payment summary reports showing total amount paid to each handler**
 - Return rate analysis
-
-## 4. Business Goals\n
+\n## 4. Business Goals\n
 ### 4.1 Sales Objectives
 - Achieve defined sales targets\n- Customer acquisition and retention
 \n### 4.2 Marketing Strategies
 - Package-based discount programs to encourage bulk purchases
 - Loyalty rewards system
-- Promotional campaigns\n\n## 5. Design Style
+- Promotional campaigns\n
+## 5. Design Style
 
 ### 5.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme

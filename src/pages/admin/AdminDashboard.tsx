@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList, Shield } from 'lucide-react';
+import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList, Shield, Banknote } from 'lucide-react';
 import ProductManagement from './ProductManagement';
 import CustomerManagement from './CustomerManagement';
 import InventoryManagement from './InventoryManagement';
@@ -11,6 +11,7 @@ import VendorsManagement from './VendorsManagement';
 import VendorSupplies from './VendorSupplies';
 import ShipmentHandlersManagement from './ShipmentHandlersManagement';
 import ShipmentTracking from './ShipmentTracking';
+import VendorPayments from './VendorPayments';
 
 export default function AdminDashboard() {
   const [activeTab, setActiveTab] = useState('products');
@@ -62,6 +63,10 @@ export default function AdminDashboard() {
               <PackageCheck className="h-4 w-4" />
               Shipments
             </TabsTrigger>
+            <TabsTrigger value="vendor-payments" className="flex items-center gap-2 whitespace-nowrap">
+              <Banknote className="h-4 w-4" />
+              Vendor Payments
+            </TabsTrigger>
           </TabsList>
         </div>
 
@@ -103,6 +108,10 @@ export default function AdminDashboard() {
 
         <TabsContent value="shipments">
           <ShipmentTracking />
+        </TabsContent>
+
+        <TabsContent value="vendor-payments">
+          <VendorPayments />
         </TabsContent>
       </Tabs>
     </div>

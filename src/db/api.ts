@@ -21,7 +21,9 @@ import type {
   Shipment,
   ShipmentWithDetails,
   HandlerPayment,
-  HandlerPaymentWithDetails
+  HandlerPaymentWithDetails,
+  VendorPayment,
+  VendorPaymentSummary
 } from '@/types/types';
 
 export const productsApi = {
@@ -995,3 +997,107 @@ export const handlerPaymentsApi = {
     return Array.isArray(data) ? data : [];
   }
 };
+
+export const vendorPaymentsApi = {
+  async getAll(): Promise<VendorPayment[]> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .select('*')
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string): Promise<VendorPayment | null> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getByVendor(vendorName: string): Promise<VendorPayment[]> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .select('*')
+      .eq('vendor_name', vendorName)
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getSummary(): Promise<VendorPaymentSummary[]> {
+    const { data, error } = await supabase
+      .from('vendor_payment_summary')
+      .select('*')
+      .order('total_amount_paid', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async create(payment: Omit<VendorPayment, 'id' | 'created_at' | 'updated_at'>): Promise<VendorPayment> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .insert(payment)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create vendor payment');
+    return data;
+  },
+
+  async update(id: string, updates: Partial<VendorPayment>): Promise<VendorPayment> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .update(updates)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update vendor payment');
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('vendor_payments')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
+  async getTotalPaidToVendor(vendorName: string): Promise<number> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .select('amount')
+      .eq('vendor_name', vendorName);
+
+    if (error) throw error;
+    if (!Array.isArray(data)) return 0;
+    
+    return data.reduce((sum, payment) => sum + Number(payment.amount), 0);
+  },
+
+  async getUniqueVendors(): Promise<string[]> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .select('vendor_name')
+      .order('vendor_name', { ascending: true });
+
+    if (error) throw error;
+    if (!Array.isArray(data)) return [];
+    
+    const uniqueVendors = [...new Set(data.map(v => v.vendor_name))];
+    return uniqueVendors;
+  }
+};
+
