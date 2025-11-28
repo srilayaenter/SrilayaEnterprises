@@ -98,17 +98,20 @@ export default function ShipmentTracking() {
   const loadData = async () => {
     try {
       setLoading(true);
+      console.log('Loading shipments data...');
       const [shipmentsData, handlersData] = await Promise.all([
         shipmentsApi.getAll(),
         shipmentHandlersApi.getAll()
       ]);
+      console.log('Shipments loaded:', shipmentsData.length);
+      console.log('Handlers loaded:', handlersData.length);
       setShipments(shipmentsData);
       setHandlers(handlersData.filter(h => h.status === 'active'));
     } catch (error) {
       console.error('Error loading data:', error);
       toast({
         title: 'Error',
-        description: 'Failed to load shipment data',
+        description: error instanceof Error ? error.message : 'Failed to load shipment data',
         variant: 'destructive',
       });
     } finally {
@@ -423,51 +426,66 @@ export default function ShipmentTracking() {
           <CardTitle>All Shipments</CardTitle>
         </CardHeader>
         <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Order ID</TableHead>
-                <TableHead>Tracking Number</TableHead>
-                <TableHead>Handler</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Shipped Date</TableHead>
-                <TableHead>Expected Delivery</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {shipments.map((shipment) => (
-                <TableRow key={shipment.id}>
-                  <TableCell className="font-medium">{shipment.order_id.substring(0, 8)}...</TableCell>
-                  <TableCell>{shipment.tracking_number || '-'}</TableCell>
-                  <TableCell>{shipment.handler?.name || '-'}</TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      {getStatusIcon(shipment.status)}
-                      <Badge variant={getStatusVariant(shipment.status)}>
-                        {shipment.status.replace('_', ' ')}
-                      </Badge>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {shipment.shipped_date 
-                      ? new Date(shipment.shipped_date).toLocaleDateString() 
-                      : '-'}
-                  </TableCell>
-                  <TableCell>
-                    {shipment.expected_delivery_date 
-                      ? new Date(shipment.expected_delivery_date).toLocaleDateString() 
-                      : '-'}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <Button size="sm" variant="outline" onClick={() => openStatusDialog(shipment)}>
-                      Edit Details
-                    </Button>
-                  </TableCell>
+          {loading ? (
+            <div className="flex items-center justify-center py-8">
+              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
+              <span className="ml-3 text-muted-foreground">Loading shipments...</span>
+            </div>
+          ) : shipments.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-12 text-center">
+              <Package className="h-12 w-12 text-muted-foreground mb-4" />
+              <h3 className="text-lg font-semibold mb-2">No Shipments Found</h3>
+              <p className="text-muted-foreground mb-4">
+                Shipments will appear here automatically when customers place online orders.
+              </p>
+            </div>
+          ) : (
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Order ID</TableHead>
+                  <TableHead>Tracking Number</TableHead>
+                  <TableHead>Handler</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Shipped Date</TableHead>
+                  <TableHead>Expected Delivery</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
                 </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+              </TableHeader>
+              <TableBody>
+                {shipments.map((shipment) => (
+                  <TableRow key={shipment.id}>
+                    <TableCell className="font-medium">{shipment.order_id.substring(0, 8)}...</TableCell>
+                    <TableCell>{shipment.tracking_number || '-'}</TableCell>
+                    <TableCell>{shipment.handler?.name || '-'}</TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        {getStatusIcon(shipment.status)}
+                        <Badge variant={getStatusVariant(shipment.status)}>
+                          {shipment.status.replace('_', ' ')}
+                        </Badge>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {shipment.shipped_date 
+                        ? new Date(shipment.shipped_date).toLocaleDateString() 
+                        : '-'}
+                    </TableCell>
+                    <TableCell>
+                      {shipment.expected_delivery_date 
+                        ? new Date(shipment.expected_delivery_date).toLocaleDateString() 
+                        : '-'}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <Button size="sm" variant="outline" onClick={() => openStatusDialog(shipment)}>
+                        Edit Details
+                      </Button>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </CardContent>
       </Card>
 
