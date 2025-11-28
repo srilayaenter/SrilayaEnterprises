@@ -51,7 +51,10 @@ interface ShipmentFormData {
 }
 
 interface StatusUpdateFormData {
+  handler_id: string;
   status: ShipmentStatus;
+  shipped_date: string;
+  expected_delivery_date: string;
   return_reason: string;
   notes: string;
 }
@@ -79,7 +82,10 @@ export default function ShipmentTracking() {
 
   const statusForm = useForm<StatusUpdateFormData>({
     defaultValues: {
+      handler_id: '',
       status: 'pending',
+      shipped_date: '',
+      expected_delivery_date: '',
       return_reason: '',
       notes: ''
     }
@@ -139,7 +145,10 @@ export default function ShipmentTracking() {
 
     try {
       const updateData: any = {
+        handler_id: data.handler_id || null,
         status: data.status,
+        shipped_date: data.shipped_date || null,
+        expected_delivery_date: data.expected_delivery_date || null,
         notes: data.notes
       };
 
@@ -154,17 +163,17 @@ export default function ShipmentTracking() {
       await shipmentsApi.update(selectedShipment.id, updateData);
       toast({
         title: 'Success',
-        description: 'Shipment status updated successfully',
+        description: 'Shipment updated successfully',
       });
       setStatusDialogOpen(false);
       setSelectedShipment(null);
       statusForm.reset();
       loadData();
     } catch (error) {
-      console.error('Error updating status:', error);
+      console.error('Error updating shipment:', error);
       toast({
         title: 'Error',
-        description: 'Failed to update shipment status',
+        description: 'Failed to update shipment',
         variant: 'destructive',
       });
     }
@@ -173,7 +182,10 @@ export default function ShipmentTracking() {
   const openStatusDialog = (shipment: ShipmentWithDetails) => {
     setSelectedShipment(shipment);
     statusForm.reset({
+      handler_id: shipment.handler_id || '',
       status: shipment.status,
+      shipped_date: shipment.shipped_date ? shipment.shipped_date.split('T')[0] : '',
+      expected_delivery_date: shipment.expected_delivery_date || '',
       return_reason: shipment.return_reason || '',
       notes: shipment.notes || ''
     });
@@ -449,7 +461,7 @@ export default function ShipmentTracking() {
                   </TableCell>
                   <TableCell className="text-right">
                     <Button size="sm" variant="outline" onClick={() => openStatusDialog(shipment)}>
-                      Update Status
+                      Edit Details
                     </Button>
                   </TableCell>
                 </TableRow>
@@ -460,12 +472,67 @@ export default function ShipmentTracking() {
       </Card>
 
       <Dialog open={statusDialogOpen} onOpenChange={setStatusDialogOpen}>
-        <DialogContent>
+        <DialogContent className="max-w-2xl">
           <DialogHeader>
-            <DialogTitle>Update Shipment Status</DialogTitle>
+            <DialogTitle>Update Shipment Details</DialogTitle>
           </DialogHeader>
           <Form {...statusForm}>
             <form onSubmit={statusForm.handleSubmit(handleStatusUpdate)} className="space-y-4">
+              <FormField
+                control={statusForm.control}
+                name="handler_id"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Shipment Handler</FormLabel>
+                    <Select onValueChange={field.onChange} value={field.value}>
+                      <FormControl>
+                        <SelectTrigger>
+                          <SelectValue placeholder="Select a handler" />
+                        </SelectTrigger>
+                      </FormControl>
+                      <SelectContent>
+                        {handlers.map((handler) => (
+                          <SelectItem key={handler.id} value={handler.id}>
+                            {handler.name} - {handler.service_type}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <FormField
+                  control={statusForm.control}
+                  name="shipped_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Shipped Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={statusForm.control}
+                  name="expected_delivery_date"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Expected Delivery Date</FormLabel>
+                      <FormControl>
+                        <Input type="date" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
               <FormField
                 control={statusForm.control}
                 name="status"
@@ -527,7 +594,7 @@ export default function ShipmentTracking() {
                 <Button type="button" variant="outline" onClick={() => setStatusDialogOpen(false)}>
                   Cancel
                 </Button>
-                <Button type="submit">Update Status</Button>
+                <Button type="submit">Update Shipment</Button>
               </div>
             </form>
           </Form>

@@ -42,7 +42,7 @@ async function updateOrderStatus(
 ): Promise<boolean> {
   const { data: order, error: fetchError } = await supabase
     .from("orders")
-    .select("id, status")
+    .select("id, status, order_type")
     .eq("stripe_session_id", sessionId)
     .single();
 
@@ -75,6 +75,24 @@ async function updateOrderStatus(
   if (error) {
     console.error("Failed to update order:", error);
     return false;
+  }
+
+  // Automatically create shipment entry for online orders
+  if (order.order_type === "online") {
+    const { error: shipmentError } = await supabase
+      .from("shipments")
+      .insert({
+        order_id: order.id,
+        status: "pending",
+        tracking_number: `SHIP-${order.id.substring(0, 8).toUpperCase()}`,
+      });
+
+    if (shipmentError) {
+      console.error("Failed to create shipment:", shipmentError);
+      // Don't fail the entire operation if shipment creation fails
+    } else {
+      console.log(`Shipment created for order ${order.id}`);
+    }
   }
 
   return true;

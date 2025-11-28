@@ -80,7 +80,8 @@ Selling Price = Cost Price + 25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg
+- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -120,7 +121,7 @@ Each category contains multiple product variants with different packaging option
 - Automatic invoice generation upon order confirmation
 - Invoice includes order details, product list, quantities, prices, GST breakdown, package discount percentage\n- **Order Type Display:** Invoice clearly indicates whether it is an Online Order or In-Store Purchase\n- **For Online Orders:**
   + **Weight-based shipping cost calculation:**
-    * **Intrastate delivery (same city and state):** ₹30-50 per kg
+    * **Intrastate delivery (same city and state):** ₹30-50per kg
     * **Interstate delivery:** ₹70-100 per kg
   + **Delivery location detection:** System identifies whether delivery address is within the same state or interstate to apply appropriate shipping rates
   + Invoice displays: subtotal, package discount (with percentage), GST, shipping charges (calculated based on total order weight and delivery location), and grand total
@@ -174,7 +175,8 @@ Each category contains multiple product variants with different packaging option
 
 **View Customer Profile**
 - Customer details section: Name, Email, Phone, Registration Date, Account Status\n- Delivery addresses list with edit/delete options
-- Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status\n- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
+- Order history table: Order ID, Date, Order Type (Online/In-Store), Items Count, Total Amount, Status
+- Purchase analytics: Total orders, Total spent, Average order value, Favorite categories
 
 **Edit Customer Information**
 - Pre-filled form with existing customer data
@@ -185,8 +187,10 @@ Each category contains multiple product variants with different packaging option
 - Last login date and time
 - Recent browsing history (last 10 products viewed)
 - Cart abandonment tracking
-\n#### 3.7.3Inventory Management (Implementation Ready)
-\n**Stock Level Dashboard**
+
+#### 3.7.3 Inventory Management (Implementation Ready)
+
+**Stock Level Dashboard**
 - Overview cards: Total Products, Low Stock Items, Out of Stock Items, Total Inventory Value
 - Real-time stock status for all products
 - Color-coded indicators: Green (In Stock >50units), Yellow (Low Stock 10-50 units), Red (Critical<10 units), Grey (Out of Stock)
@@ -238,14 +242,13 @@ Each category contains multiple product variants with different packaging option
 
 **Add New User (Admin Privilege Only)**
 - **Only Admin users can add new Staff and Customer users**
-- Form fields:\n  + User ID (auto-generated)
-  + Full Name
+- Form fields:\n  + User ID (auto-generated)\n  + Full Name
   + Email (must be unique)
   + Phone Number
   + Role Selection (dropdown: Staff/Customer only - Admin users cannot create new Admin accounts through this interface)
   + Password (auto-generated or manual input with strength indicator)
   + Account Status (Active/Inactive)
-+ Assigned Permissions (checkboxes for Staff role to customize specific access rights)
+  + Assigned Permissions (checkboxes for Staff role to customize specific access rights)
 - Save and Cancel buttons
 - Email notification sent to new user with login credentials
 
@@ -292,9 +295,9 @@ Each category contains multiple product variants with different packaging option
 - **Editable order status dropdown with options:** Order Placed, Processing, Shipped, Delivered\n- **Status update functionality:** Admin can change order status directly from the order list or order detail page with immediate save
 - **Delivery location identification:** System automatically detects whether delivery is intrastate (same city and state) or interstate based on customer delivery address
 - **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
-- **Shipment status tracking:** Track shipment status including received by customer or returned back for any reason
 - Generate and download invoices with shipping cost and discount percentage included
-- Order details view showing: Order ID, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total\n
+- Order details view showing: Order ID, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total
+
 **In-Store Purchases Management**
 - View and process in-store purchases\n- **Order status:** Automatically marked as Completed after payment
 - **No shipping management:** In-store purchases do not require delivery address or shipment tracking
@@ -302,7 +305,8 @@ Each category contains multiple product variants with different packaging option
 - Order details view showing: Order ID, Order Type (In-Store Purchase), Customer information (if registered), Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Grand total (no shipping charges)
 
 **Order Filtering and Search**
-- Filter orders by: Order Type (Online/In-Store/All), Date Range, Status, Customer Name\n- Search by Order ID or Customer Name
+- Filter orders by: Order Type (Online/In-Store/All), Date Range, Status, Customer Name
+- Search by Order ID or Customer Name
 - Sort by Date, Total Amount, Status
 \n**Order Reports**
 - Separate sales reports for Online Orders and In-Store Purchases
@@ -319,7 +323,8 @@ Each category contains multiple product variants with different packaging option
 - Search bar for vendor name or ID
 - Filter options: Product Category, Status (Active/Inactive)
 - Sort options: Name (A-Z), Total Transactions, Outstanding Amount
-\n**View Vendor Profile**\n- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms\n- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n
+\n**View Vendor Profile**\n- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms
+- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n
 **Edit Vendor Information**
 - Pre-filled form with existing vendor data\n- All fields editable except Vendor ID\n- Update and Cancel buttons
 \n**Record Purchase Transaction**
@@ -404,29 +409,52 @@ Each category contains multiple product variants with different packaging option
 - Pre-filled form with existing handler data
 - All fields editable except Handler ID\n- Update and Cancel buttons
 
-**Assign Shipment**
-- Order selection dropdown (shows only Online Orders with Shipped status)
-- Handler selection based on delivery location (intrastate/interstate)
-- Automatic calculation of shipping charges based on order weight and handler rates
-- Expected delivery date input
-- Tracking number input
-- Assign button
+**Shipment Tab - Assign and Track Shipments**
+- **Shipment List View:** Displays all online orders that require shipment handling
+- **Table display with columns:**
+  + Order ID
+  + Customer Name
+  + Delivery Address
+  + Order Weight (kg)
+  + Order Status
+  + Assigned Handler
+  + Shipped Date
+  + Expected Delivery Date
+  + Shipment Status
+  + Actions (Assign/Edit/View Details)
 
-**Shipment Tracking**
-- View all shipments for Online Orders with status: Assigned, In Transit, Out for Delivery, Delivered, Returned
-- Update shipment status with timestamp
-- Record delivery confirmation or return reason
-- Customer notification on status updates
-- Filter by handler, status, date range
-- Export shipment reports
+- **Assign Shipment Functionality:**
+  + **Handler Selection:** Dropdown to select shipment handler from registered handlers
+  + **Shipped Date:** Calendar picker to select the date when order is shipped
+  + **Expected Delivery Date:** Calendar picker to select expected delivery date
+  + **Assign Button:** Save shipment assignment with selected handler and dates
+  + **Automatic Shipping Charges Calculation:** System automatically calculates shipping charges based on order weight and handler rates (intrastate/interstate)
+\n- **Edit Shipment Details:**
+  + Modify assigned handler\n  + Update shipped date
+  + Update expected delivery date
+  + Save changes button
+
+- **Shipment Status Tracking:**
+  + Status options: Assigned, In Transit, Out for Delivery, Delivered, Returned
+  + Update status with timestamp
+  + Customer notification on status updates
+\n- **Filter and Search Options:**
+  + Search by Order ID or Customer Name
+  + Filter by Handler, Shipment Status, Date Range
+  + Sort by Shipped Date, Expected Delivery Date, Order ID
+
+- **Shipment Details View:**
+  + Order information: Order ID, Customer details, Delivery address\n  + Product list with weights\n  + Assigned handler details
+  + Shipped date and expected delivery date
+  + Shipping charges breakdown
+  + Current shipment status with history log
 
 **Shipment Payment Records Table**
 - **Add Payment Entry:** Admin can record payments made to shipment handlers with the following fields:
   + Payment ID (auto-generated)
   + Handler Name (dropdown selection from registered handlers)
   + Payment Date
-  + Shipment ID (optional, for linking specific shipments)
-  + Order ID (optional, for reference)
+  + Shipment ID (optional, for linking specific shipments)\n  + Order ID (optional, for reference)
   + Amount Paid (₹)
   + Payment Method (Cash/Bank Transfer/UPI/Cheque/Other)
   + Transaction Reference Number (optional)
@@ -437,9 +465,9 @@ Each category contains multiple product variants with different packaging option
   + Payment ID
   + Handler Name
   + Payment Date\n  + Shipment ID\n  + Order ID
-  + Amount Paid (₹)
-  + Payment Method
-  + Transaction Reference\n  + Notes
+  + Amount Paid (₹)\n  + Payment Method
+  + Transaction Reference
+  + Notes
   + Actions (Edit/Delete/View Receipt)
 
 - **Edit Payment Entry:** Pre-filled form with existing payment data, all fields editable except Payment ID\n
@@ -447,28 +475,30 @@ Each category contains multiple product variants with different packaging option
 
 - **Filter and Search Options:**
   + Search by Payment ID, Handler Name, Shipment ID, or Order ID
-  + Filter by Handler, Date Range, Payment Method\n  + Sort by Payment Date, Amount Paid\n
+  + Filter by Handler, Date Range, Payment Method
+  + Sort by Payment Date, Amount Paid\n
 - **Export Options:** Export payment records to CSV/PDF for accounting\n
 - **Payment Summary Dashboard:**
   + Total payments made (count)
   + Total amount paid to handlers (₹)
   + Handler-wise payment breakdown
   + Pending payments (if any outstanding amounts exist)
-\n**Transaction Management with Handlers**
+
+**Transaction Management with Handlers**
 - View all financial transactions with shipment handlers
 - Record payments made to handlers using the Shipment Payment Records Table
 - Track outstanding amounts\n- Generate handler payment reports
 - Filter by handler, date range, payment status
 - Export to CSV/PDF
-
-**Return Management**
+\n**Return Management**
 - Record returned shipments with reason (Customer Refused, Wrong Address, Damaged, Other)
 - Update order status to reflect return
 - Notify customer and initiate refund process
 - Track return statistics by handler
 - Generate return analysis reports
 
-#### 3.7.8 Sales Reports and Analytics\n- Sales reports by product, category, and time period
+#### 3.7.8 Sales Reports and Analytics
+- Sales reports by product, category, and time period
 - **Separate reports for Online Orders and In-Store Purchases**
 - **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends
@@ -477,7 +507,7 @@ Each category contains multiple product variants with different packaging option
 - Shipping handler performance reports (for Online Orders only)
 - Return rate analysis
 
-##4. Business Goals\n
+## 4. Business Goals\n
 ### 4.1 Sales Objectives
 - Achieve defined sales targets\n- Customer acquisition and retention
 \n### 4.2 Marketing Strategies
