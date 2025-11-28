@@ -105,6 +105,7 @@ export default function ShipmentTracking() {
       ]);
       console.log('Shipments loaded:', shipmentsData.length);
       console.log('Handlers loaded:', handlersData.length);
+      console.log('Active handlers:', handlersData.filter(h => h.status === 'active'));
       setShipments(shipmentsData);
       setHandlers(handlersData.filter(h => h.status === 'active'));
     } catch (error) {
@@ -148,7 +149,7 @@ export default function ShipmentTracking() {
 
     try {
       const updateData: any = {
-        handler_id: data.handler_id || null,
+        handler_id: data.handler_id && data.handler_id !== 'none' ? data.handler_id : null,
         status: data.status,
         shipped_date: data.shipped_date || null,
         expected_delivery_date: data.expected_delivery_date || null,
@@ -163,6 +164,7 @@ export default function ShipmentTracking() {
         updateData.actual_delivery_date = new Date().toISOString();
       }
 
+      console.log('Updating shipment with data:', updateData);
       await shipmentsApi.update(selectedShipment.id, updateData);
       toast({
         title: 'Success',
@@ -176,22 +178,26 @@ export default function ShipmentTracking() {
       console.error('Error updating shipment:', error);
       toast({
         title: 'Error',
-        description: 'Failed to update shipment',
+        description: error instanceof Error ? error.message : 'Failed to update shipment',
         variant: 'destructive',
       });
     }
   };
 
   const openStatusDialog = (shipment: ShipmentWithDetails) => {
+    console.log('Opening status dialog for shipment:', shipment);
+    console.log('Available handlers:', handlers);
     setSelectedShipment(shipment);
-    statusForm.reset({
-      handler_id: shipment.handler_id || '',
+    const formData = {
+      handler_id: shipment.handler_id || 'none',
       status: shipment.status,
       shipped_date: shipment.shipped_date ? shipment.shipped_date.split('T')[0] : '',
-      expected_delivery_date: shipment.expected_delivery_date || '',
+      expected_delivery_date: shipment.expected_delivery_date ? shipment.expected_delivery_date.split('T')[0] : '',
       return_reason: shipment.return_reason || '',
       notes: shipment.notes || ''
-    });
+    };
+    console.log('Form data:', formData);
+    statusForm.reset(formData);
     setStatusDialogOpen(true);
   };
 
@@ -509,11 +515,18 @@ export default function ShipmentTracking() {
                         </SelectTrigger>
                       </FormControl>
                       <SelectContent>
-                        {handlers.map((handler) => (
-                          <SelectItem key={handler.id} value={handler.id}>
-                            {handler.name} - {handler.service_type}
+                        <SelectItem value="none">Not Assigned</SelectItem>
+                        {handlers.length === 0 ? (
+                          <SelectItem value="no-handlers" disabled>
+                            No handlers available
                           </SelectItem>
-                        ))}
+                        ) : (
+                          handlers.map((handler) => (
+                            <SelectItem key={handler.id} value={handler.id}>
+                              {handler.name} - {handler.service_type}
+                            </SelectItem>
+                          ))
+                        )}
                       </SelectContent>
                     </Select>
                     <FormMessage />
