@@ -15,6 +15,7 @@ import VendorSupplies from './pages/admin/VendorSupplies';
 import ShipmentHandlersManagement from './pages/admin/ShipmentHandlersManagement';
 import ShipmentTracking from './pages/admin/ShipmentTracking';
 import VendorPayments from './pages/admin/VendorPayments';
+import PurchaseOrders from './pages/admin/PurchaseOrders';
 import { RequireAdmin } from './components/auth/RequireAdmin';
 
 interface RouteConfig {
@@ -119,6 +120,12 @@ const routes: RouteConfig[] = [
     name: 'Vendor Payments',
     path: '/admin/vendor-payments',
     element: <RequireAdmin><VendorPayments /></RequireAdmin>,
+    visible: false
+  },
+  {
+    name: 'Purchase Orders',
+    path: '/admin/purchase-orders',
+    element: <RequireAdmin><PurchaseOrders /></RequireAdmin>,
     visible: false
   }
 ];

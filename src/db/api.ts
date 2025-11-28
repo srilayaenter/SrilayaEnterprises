@@ -23,7 +23,10 @@ import type {
   HandlerPayment,
   HandlerPaymentWithDetails,
   VendorPayment,
-  VendorPaymentSummary
+  VendorPaymentSummary,
+  PurchaseOrder,
+  PurchaseOrderWithDetails,
+  PurchaseOrderStatus
 } from '@/types/types';
 
 export const productsApi = {
@@ -1098,6 +1101,195 @@ export const vendorPaymentsApi = {
     
     const uniqueVendors = [...new Set(data.map(v => v.vendor_name))];
     return uniqueVendors;
+  }
+};
+
+export const purchaseOrdersApi = {
+  async getAll(): Promise<PurchaseOrder[]> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select('*')
+      .order('order_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getById(id: string): Promise<PurchaseOrder | null> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select('*')
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getWithDetails(id: string): Promise<PurchaseOrderWithDetails | null> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select(`
+        *,
+        vendor:vendors(*),
+        ordered_by_profile:profiles(*),
+        vendor_supply:vendor_supplies(*)
+      `)
+      .eq('id', id)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getAllWithDetails(): Promise<PurchaseOrderWithDetails[]> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select(`
+        *,
+        vendor:vendors(*)
+      `)
+      .order('order_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByVendor(vendorId: string): Promise<PurchaseOrder[]> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select('*')
+      .eq('vendor_id', vendorId)
+      .order('order_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByStatus(status: PurchaseOrderStatus): Promise<PurchaseOrder[]> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select('*')
+      .eq('status', status)
+      .order('order_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getOutstanding(): Promise<PurchaseOrder[]> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select('*')
+      .in('status', ['ordered', 'confirmed', 'shipped'])
+      .order('expected_delivery_date', { ascending: true });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async create(order: Omit<PurchaseOrder, 'id' | 'created_at' | 'updated_at'>): Promise<PurchaseOrder> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .insert(order)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to create purchase order');
+    return data;
+  },
+
+  async update(id: string, order: Partial<PurchaseOrder>): Promise<PurchaseOrder> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .update(order)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update purchase order');
+    return data;
+  },
+
+  async updateStatus(id: string, status: PurchaseOrderStatus, actualDeliveryDate?: string): Promise<PurchaseOrder> {
+    const updateData: Partial<PurchaseOrder> = { status };
+    if (status === 'received' && actualDeliveryDate) {
+      updateData.actual_delivery_date = actualDeliveryDate;
+    }
+
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update purchase order status');
+    return data;
+  },
+
+  async delete(id: string): Promise<void> {
+    const { error } = await supabase
+      .from('purchase_orders')
+      .delete()
+      .eq('id', id);
+
+    if (error) throw error;
+  },
+
+  async markAsReceived(id: string, supplyId: string | null = null): Promise<PurchaseOrder> {
+    const today = new Date().toISOString().split('T')[0];
+    const updateData: Partial<PurchaseOrder> = {
+      status: 'received',
+      actual_delivery_date: today,
+      vendor_supply_id: supplyId
+    };
+
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .update(updateData)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to mark purchase order as received');
+    return data;
+  },
+
+  async generatePONumber(): Promise<string> {
+    const { data, error } = await supabase.rpc('generate_po_number');
+
+    if (error) throw error;
+    return data as string;
+  },
+
+  async getTotalOrderValue(): Promise<number> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select('total_amount');
+
+    if (error) throw error;
+    if (!Array.isArray(data)) return 0;
+
+    return data.reduce((sum, order) => sum + (Number(order.total_amount) || 0), 0);
+  },
+
+  async getOrdersThisMonth(): Promise<number> {
+    const startOfMonth = new Date();
+    startOfMonth.setDate(1);
+    startOfMonth.setHours(0, 0, 0, 0);
+
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .select('id', { count: 'exact', head: true })
+      .gte('order_date', startOfMonth.toISOString().split('T')[0]);
+
+    if (error) throw error;
+    return data?.length || 0;
   }
 };
 

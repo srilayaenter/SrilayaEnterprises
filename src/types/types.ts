@@ -278,4 +278,40 @@ export interface VendorPaymentSummary {
   last_payment_date: string | null;
 }
 
+export type PurchaseOrderStatus = 'ordered' | 'confirmed' | 'shipped' | 'received' | 'cancelled';
+
+export interface PurchaseOrderItem {
+  product_id: string;
+  product_name: string;
+  variant_id?: string;
+  packaging_size?: string;
+  quantity: number;
+  unit_cost: number;
+  total_cost: number;
+}
+
+export interface PurchaseOrder {
+  id: string;
+  po_number: string;
+  vendor_id: string;
+  order_date: string;
+  expected_delivery_date: string | null;
+  actual_delivery_date: string | null;
+  status: PurchaseOrderStatus;
+  items: PurchaseOrderItem[];
+  total_amount: number;
+  shipping_cost: number;
+  notes: string | null;
+  ordered_by: string | null;
+  vendor_supply_id: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PurchaseOrderWithDetails extends PurchaseOrder {
+  vendor?: Vendor;
+  ordered_by_profile?: Profile;
+  vendor_supply?: VendorSupply;
+}
+
 

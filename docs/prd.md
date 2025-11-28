@@ -80,7 +80,7 @@ Selling Price = Cost Price + 25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour):1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -241,8 +241,7 @@ Each category contains multiple product variants with different packaging option
 
 **Add New User (Admin Privilege Only)**
 - **Only Admin users can add new Staff and Customer users**
-- Form fields:\n  + User ID (auto-generated)
-  + Full Name
+- Form fields:\n  + User ID (auto-generated)\n  + Full Name
   + Email (must be unique)
   + Phone Number
   + Role Selection (dropdown: Staff/Customer only - Admin users cannot create new Admin accounts through this interface)
@@ -539,7 +538,8 @@ Each category contains multiple product variants with different packaging option
     * **Date Validation:** System validates that Expected Delivery Date cannot be earlier than Shipped Date\n  + **Assign Button:** Save shipment assignment with selected handler and dates
   + **Automatic Shipping Charges Calculation:** System automatically calculates shipping charges based on order weight and handler rates (intrastate/interstate)\n\n- **Edit Shipment Details:**
   + Modify assigned handler\n  + Update shipped date (with validation to ensure it is not earlier than order created date)
-  + Update expected delivery date (with validation to ensure it is not earlier than shipped date)\n  + Save changes button
+  + Update expected delivery date (with validation to ensure it is not earlier than shipped date)
+  + Save changes button
 
 - **Shipment Status Tracking:**
   + Status options: Assigned, In Transit, Out for Delivery, Delivered, Returned
