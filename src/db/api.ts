@@ -1293,3 +1293,511 @@ export const purchaseOrdersApi = {
   }
 };
 
+// ============================================================================
+// WISHLIST API
+// ============================================================================
+
+export const wishlistApi = {
+  async addToWishlist(userId: string, productId: string, variantId?: string) {
+    const { data, error } = await supabase
+      .from('wishlists')
+      .insert({
+        user_id: userId,
+        product_id: productId,
+        variant_id: variantId
+      })
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async removeFromWishlist(userId: string, productId: string) {
+    const { error } = await supabase
+      .from('wishlists')
+      .delete()
+      .eq('user_id', userId)
+      .eq('product_id', productId);
+
+    if (error) throw error;
+  },
+
+  async getWishlist(userId: string) {
+    const { data, error } = await supabase
+      .from('wishlists')
+      .select(`
+        *,
+        product:products(*),
+        variant:product_variants(*)
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async isInWishlist(userId: string, productId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from('wishlists')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('product_id', productId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return !!data;
+  },
+
+  async getWishlistCount(userId: string): Promise<number> {
+    const { data, error } = await supabase
+      .from('wishlists')
+      .select('id', { count: 'exact', head: true })
+      .eq('user_id', userId);
+
+    if (error) throw error;
+    return data?.length || 0;
+  },
+
+  async clearWishlist(userId: string) {
+    const { error } = await supabase
+      .from('wishlists')
+      .delete()
+      .eq('user_id', userId);
+
+    if (error) throw error;
+  }
+};
+
+// ============================================================================
+// PRODUCT REVIEWS API
+// ============================================================================
+
+export const reviewsApi = {
+  async createReview(
+    productId: string,
+    userId: string,
+    rating: number,
+    title?: string,
+    comment?: string
+  ) {
+    // Check if user purchased the product
+    const { data: verifiedData } = await supabase
+      .rpc('check_verified_purchase', {
+        p_user_id: userId,
+        p_product_id: productId
+      });
+
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .insert({
+        product_id: productId,
+        user_id: userId,
+        rating,
+        title,
+        comment,
+        verified_purchase: verifiedData || false
+      })
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async updateReview(
+    reviewId: string,
+    updates: { rating?: number; title?: string; comment?: string }
+  ) {
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .update(updates)
+      .eq('id', reviewId)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteReview(reviewId: string) {
+    const { error } = await supabase
+      .from('product_reviews')
+      .delete()
+      .eq('id', reviewId);
+
+    if (error) throw error;
+  },
+
+  async getProductReviews(productId: string) {
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .select(`
+        *,
+        user:profiles(id, full_name, nickname)
+      `)
+      .eq('product_id', productId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getUserReviews(userId: string) {
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .select(`
+        *,
+        product:products(id, name, image_url)
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getAverageRating(productId: string): Promise<number> {
+    const { data, error } = await supabase
+      .rpc('get_product_average_rating', { p_product_id: productId });
+
+    if (error) throw error;
+    return Number(data) || 0;
+  },
+
+  async getReviewCount(productId: string): Promise<number> {
+    const { data, error } = await supabase
+      .rpc('get_product_review_count', { p_product_id: productId });
+
+    if (error) throw error;
+    return Number(data) || 0;
+  },
+
+  async markReviewHelpful(reviewId: string, userId: string) {
+    const { data, error } = await supabase
+      .from('review_votes')
+      .insert({
+        review_id: reviewId,
+        user_id: userId
+      })
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async unmarkReviewHelpful(reviewId: string, userId: string) {
+    const { error } = await supabase
+      .from('review_votes')
+      .delete()
+      .eq('review_id', reviewId)
+      .eq('user_id', userId);
+
+    if (error) throw error;
+  },
+
+  async hasUserVoted(reviewId: string, userId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from('review_votes')
+      .select('id')
+      .eq('review_id', reviewId)
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return !!data;
+  }
+};
+
+// ============================================================================
+// LOYALTY POINTS API
+// ============================================================================
+
+export const loyaltyPointsApi = {
+  async getPointsBalance(userId: string): Promise<number> {
+    const { data, error } = await supabase
+      .from('profiles')
+      .select('points_balance')
+      .eq('id', userId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data?.points_balance || 0;
+  },
+
+  async getPointsHistory(userId: string) {
+    const { data, error } = await supabase
+      .from('loyalty_points')
+      .select(`
+        *,
+        order:orders(id, total_amount, created_at)
+      `)
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async awardPoints(userId: string, orderId: string, orderAmount: number) {
+    const { data, error } = await supabase
+      .rpc('award_loyalty_points', {
+        p_user_id: userId,
+        p_order_id: orderId,
+        p_order_amount: orderAmount
+      });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async redeemPoints(userId: string, orderId: string, points: number) {
+    const { data, error } = await supabase
+      .rpc('redeem_loyalty_points', {
+        p_user_id: userId,
+        p_order_id: orderId,
+        p_points: points
+      });
+
+    if (error) throw error;
+    return data;
+  },
+
+  calculatePointsEarned(orderAmount: number): number {
+    return Math.floor(orderAmount / 10);
+  },
+
+  calculatePointsDiscount(points: number): number {
+    return (points / 100) * 10;
+  },
+
+  async getExpiringPoints(userId: string) {
+    const { data, error } = await supabase
+      .rpc('get_expiring_points', { p_user_id: userId });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async expirePoints() {
+    const { data, error } = await supabase
+      .rpc('expire_loyalty_points');
+
+    if (error) throw error;
+    return data;
+  }
+};
+
+// ============================================================================
+// NOTIFICATIONS API
+// ============================================================================
+
+export const notificationsApi = {
+  async createNotification(
+    userId: string,
+    type: string,
+    title: string,
+    message: string,
+    link?: string
+  ) {
+    const { data, error } = await supabase
+      .rpc('create_notification', {
+        p_user_id: userId,
+        p_type: type,
+        p_title: title,
+        p_message: message,
+        p_link: link
+      });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getNotifications(userId: string) {
+    const { data, error } = await supabase
+      .from('notifications')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getUnreadCount(userId: string): Promise<number> {
+    const { data, error } = await supabase
+      .rpc('get_unread_notification_count', { p_user_id: userId });
+
+    if (error) throw error;
+    return Number(data) || 0;
+  },
+
+  async markAsRead(notificationId: string) {
+    const { error } = await supabase
+      .from('notifications')
+      .update({ read: true })
+      .eq('id', notificationId);
+
+    if (error) throw error;
+  },
+
+  async markAllAsRead(userId: string) {
+    const { data, error } = await supabase
+      .rpc('mark_all_notifications_read', { p_user_id: userId });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async deleteNotification(notificationId: string) {
+    const { error } = await supabase
+      .from('notifications')
+      .delete()
+      .eq('id', notificationId);
+
+    if (error) throw error;
+  },
+
+  async broadcastNotification(
+    type: string,
+    title: string,
+    message: string,
+    link?: string
+  ) {
+    const { data, error } = await supabase
+      .rpc('broadcast_notification', {
+        p_type: type,
+        p_title: title,
+        p_message: message,
+        p_link: link
+      });
+
+    if (error) throw error;
+    return data;
+  }
+};
+
+// ============================================================================
+// CHAT API
+// ============================================================================
+
+export const chatApi = {
+  async getOrCreateConversation(userId: string) {
+    const { data, error } = await supabase
+      .rpc('get_or_create_conversation', { p_user_id: userId });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getConversation(conversationId: string) {
+    const { data, error } = await supabase
+      .from('chat_conversations')
+      .select(`
+        *,
+        user:profiles(id, full_name, nickname, email)
+      `)
+      .eq('id', conversationId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getAllConversations() {
+    const { data, error } = await supabase
+      .from('chat_conversations')
+      .select(`
+        *,
+        user:profiles(id, full_name, nickname, email)
+      `)
+      .order('last_message_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async sendMessage(conversationId: string, senderId: string, message: string) {
+    const { data, error } = await supabase
+      .rpc('send_chat_message', {
+        p_conversation_id: conversationId,
+        p_sender_id: senderId,
+        p_message: message
+      });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getMessages(conversationId: string) {
+    const { data, error } = await supabase
+      .from('chat_messages')
+      .select(`
+        *,
+        sender:profiles(id, full_name, nickname, role)
+      `)
+      .eq('conversation_id', conversationId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getUnreadCount(conversationId: string, userId: string): Promise<number> {
+    const { data, error } = await supabase
+      .rpc('get_unread_message_count', {
+        p_conversation_id: conversationId,
+        p_user_id: userId
+      });
+
+    if (error) throw error;
+    return Number(data) || 0;
+  },
+
+  async markAsRead(conversationId: string, userId: string) {
+    const { data, error } = await supabase
+      .rpc('mark_conversation_read', {
+        p_conversation_id: conversationId,
+        p_user_id: userId
+      });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async closeConversation(conversationId: string) {
+    const { data, error } = await supabase
+      .rpc('close_conversation', { p_conversation_id: conversationId });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async reopenConversation(conversationId: string) {
+    const { data, error } = await supabase
+      .rpc('reopen_conversation', { p_conversation_id: conversationId });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getOpenConversationsCount(): Promise<number> {
+    const { data, error } = await supabase
+      .rpc('get_open_conversations_count');
+
+    if (error) throw error;
+    return Number(data) || 0;
+  },
+
+  async getConversationsWithUnread() {
+    const { data, error } = await supabase
+      .rpc('get_conversations_with_unread');
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  }
+};
+
+

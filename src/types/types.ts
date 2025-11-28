@@ -13,6 +13,7 @@ export interface Profile {
   city: string | null;
   state: string | null;
   role: UserRole;
+  points_balance: number;
   created_at: string;
   updated_at: string;
 }
@@ -79,6 +80,8 @@ export interface Order {
   customer_city: string | null;
   customer_state: string | null;
   shipping_address: string | null;
+  points_earned: number;
+  points_used: number;
   completed_at: string | null;
   created_at: string;
   updated_at: string;
@@ -312,6 +315,128 @@ export interface PurchaseOrderWithDetails extends PurchaseOrder {
   vendor?: Vendor;
   ordered_by_profile?: Profile;
   vendor_supply?: VendorSupply;
+}
+
+// Wishlist Types
+export interface Wishlist {
+  id: string;
+  user_id: string;
+  product_id: string;
+  variant_id?: string;
+  created_at: string;
+}
+
+export interface WishlistWithProduct extends Wishlist {
+  product?: Product;
+  variant?: ProductVariant;
+}
+
+// Product Reviews Types
+export type ReviewRating = 1 | 2 | 3 | 4 | 5;
+
+export interface ProductReview {
+  id: string;
+  product_id: string;
+  user_id: string;
+  rating: ReviewRating;
+  title?: string;
+  comment?: string;
+  verified_purchase: boolean;
+  helpful_count: number;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ProductReviewWithUser extends ProductReview {
+  user?: Profile;
+}
+
+export interface ReviewVote {
+  id: string;
+  review_id: string;
+  user_id: string;
+  created_at: string;
+}
+
+export interface ProductRating {
+  average_rating: number;
+  review_count: number;
+  rating_distribution: {
+    1: number;
+    2: number;
+    3: number;
+    4: number;
+    5: number;
+  };
+}
+
+// Loyalty Points Types
+export type LoyaltyTransactionType = 'earned' | 'redeemed' | 'expired' | 'adjusted';
+
+export interface LoyaltyPoint {
+  id: string;
+  user_id: string;
+  points: number;
+  transaction_type: LoyaltyTransactionType;
+  order_id?: string;
+  description?: string;
+  expires_at?: string;
+  created_at: string;
+}
+
+export interface LoyaltyPointWithOrder extends LoyaltyPoint {
+  order?: Order;
+}
+
+export interface PointsBalance {
+  total_points: number;
+  expiring_soon: number;
+  expiring_date?: string;
+}
+
+// Notifications Types
+export type NotificationType = 'order' | 'promotion' | 'points' | 'product' | 'system';
+
+export interface Notification {
+  id: string;
+  user_id: string;
+  type: NotificationType;
+  title: string;
+  message: string;
+  link?: string;
+  read: boolean;
+  created_at: string;
+}
+
+// Chat Types
+export type ConversationStatus = 'open' | 'closed';
+
+export interface ChatConversation {
+  id: string;
+  user_id: string;
+  status: ConversationStatus;
+  last_message_at: string;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface ChatConversationWithUser extends ChatConversation {
+  user?: Profile;
+  unread_count?: number;
+  last_message?: ChatMessage;
+}
+
+export interface ChatMessage {
+  id: string;
+  conversation_id: string;
+  sender_id: string;
+  message: string;
+  read: boolean;
+  created_at: string;
+}
+
+export interface ChatMessageWithSender extends ChatMessage {
+  sender?: Profile;
 }
 
 
