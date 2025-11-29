@@ -28,8 +28,8 @@ import {
 } from '@/components/ui/select';
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
-import { purchaseOrdersApi, vendorsApi, productsApi } from '@/db/api';
-import type { PurchaseOrder, PurchaseOrderWithDetails, PurchaseOrderStatus, PurchaseOrderItem, Vendor, Product } from '@/types/types';
+import { purchaseOrdersApi, vendorsApi, productsApi, variantsApi } from '@/db/api';
+import type { PurchaseOrder, PurchaseOrderWithDetails, PurchaseOrderStatus, PurchaseOrderItem, Vendor, Product, ProductVariant } from '@/types/types';
 import { Plus, Pencil, Trash2, Package, Search, X } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -38,6 +38,7 @@ export default function PurchaseOrders() {
   const [orders, setOrders] = useState<PurchaseOrderWithDetails[]>([]);
   const [vendors, setVendors] = useState<Vendor[]>([]);
   const [products, setProducts] = useState<Product[]>([]);
+  const [availableVariants, setAvailableVariants] = useState<ProductVariant[]>([]);
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
@@ -65,6 +66,8 @@ export default function PurchaseOrders() {
   const [itemForm, setItemForm] = useState({
     product_id: '',
     product_name: '',
+    variant_id: '',
+    packaging_size: '',
     quantity: 1,
     unit_cost: 0,
   });
@@ -238,10 +241,10 @@ export default function PurchaseOrders() {
   };
 
   const handleAddItem = () => {
-    if (!itemForm.product_id || itemForm.quantity <= 0 || itemForm.unit_cost <= 0) {
+    if (!itemForm.product_id || !itemForm.variant_id || itemForm.quantity <= 0 || itemForm.unit_cost <= 0) {
       toast({
         title: 'Validation Error',
-        description: 'Please fill in all item fields correctly',
+        description: 'Please fill in all item fields correctly including packaging size',
         variant: 'destructive',
       });
       return;
@@ -250,6 +253,8 @@ export default function PurchaseOrders() {
     const newItem: PurchaseOrderItem = {
       product_id: itemForm.product_id,
       product_name: itemForm.product_name,
+      variant_id: itemForm.variant_id,
+      packaging_size: itemForm.packaging_size,
       quantity: itemForm.quantity,
       unit_cost: itemForm.unit_cost,
       total_cost: itemForm.quantity * itemForm.unit_cost,
@@ -261,11 +266,43 @@ export default function PurchaseOrders() {
     }));
 
     setItemForm({
-      product_id: '',
-      product_name: '',
+      product_id: itemForm.product_id,
+      product_name: itemForm.product_name,
+      variant_id: '',
+      packaging_size: '',
       quantity: 1,
       unit_cost: 0,
     });
+  };
+
+  const handleProductChange = async (productId: string) => {
+    const product = products.find(p => p.id === productId);
+    setItemForm(prev => ({ 
+      ...prev, 
+      product_id: productId,
+      product_name: product?.name || '',
+      variant_id: '',
+      packaging_size: '',
+    }));
+
+    // Load variants for the selected product
+    try {
+      const variants = await variantsApi.getByProductId(productId);
+      setAvailableVariants(variants);
+    } catch (error) {
+      console.error('Error loading variants:', error);
+      setAvailableVariants([]);
+    }
+  };
+
+  const handleVariantChange = (variantId: string) => {
+    const variant = availableVariants.find(v => v.id === variantId);
+    setItemForm(prev => ({
+      ...prev,
+      variant_id: variantId,
+      packaging_size: variant?.packaging_size || '',
+      unit_cost: variant?.cost_price || 0,
+    }));
   };
 
   const handleRemoveItem = (index: number) => {
@@ -287,9 +324,12 @@ export default function PurchaseOrders() {
     setItemForm({
       product_id: '',
       product_name: '',
+      variant_id: '',
+      packaging_size: '',
       quantity: 1,
       unit_cost: 0,
     });
+    setAvailableVariants([]);
   };
 
   const openEditDialog = (order: PurchaseOrder) => {
@@ -453,19 +493,12 @@ export default function PurchaseOrders() {
                     {/* Add Items Section */}
                     <div className="border rounded-lg p-4 space-y-4">
                       <h3 className="font-semibold">Add Items</h3>
-                      <div className="grid grid-cols-4 gap-2">
+                      <div className="grid grid-cols-5 gap-2">
                         <div className="space-y-2">
                           <Label>Product *</Label>
                           <Select 
                             value={itemForm.product_id} 
-                            onValueChange={(value) => {
-                              const product = products.find(p => p.id === value);
-                              setItemForm(prev => ({ 
-                                ...prev, 
-                                product_id: value,
-                                product_name: product?.name || ''
-                              }));
-                            }}
+                            onValueChange={handleProductChange}
                           >
                             <SelectTrigger>
                               <SelectValue placeholder="Select product" />
@@ -480,7 +513,26 @@ export default function PurchaseOrders() {
                           </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label>Quantity *</Label>
+                          <Label>Packaging Size *</Label>
+                          <Select 
+                            value={itemForm.variant_id} 
+                            onValueChange={handleVariantChange}
+                            disabled={!itemForm.product_id || availableVariants.length === 0}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder="Select size" />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {availableVariants.map(variant => (
+                                <SelectItem key={variant.id} value={variant.id}>
+                                  {variant.packaging_size}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label>Quantity (Units) *</Label>
                           <Input
                             type="number"
                             min="1"
@@ -515,6 +567,7 @@ export default function PurchaseOrders() {
                               <TableHeader>
                                 <TableRow>
                                   <TableHead>Product</TableHead>
+                                  <TableHead>Size</TableHead>
                                   <TableHead>Quantity</TableHead>
                                   <TableHead>Unit Cost</TableHead>
                                   <TableHead>Total</TableHead>
@@ -525,6 +578,7 @@ export default function PurchaseOrders() {
                                 {formData.items.map((item, index) => (
                                   <TableRow key={index}>
                                     <TableCell>{item.product_name}</TableCell>
+                                    <TableCell>{item.packaging_size}</TableCell>
                                     <TableCell>{item.quantity}</TableCell>
                                     <TableCell>₹{item.unit_cost.toFixed(2)}</TableCell>
                                     <TableCell>₹{item.total_cost.toFixed(2)}</TableCell>
@@ -705,19 +759,12 @@ export default function PurchaseOrders() {
             {/* Add Items Section */}
             <div className="border rounded-lg p-4 space-y-4">
               <h3 className="font-semibold">Add Items</h3>
-              <div className="grid grid-cols-4 gap-2">
+              <div className="grid grid-cols-5 gap-2">
                 <div className="space-y-2">
                   <Label>Product *</Label>
                   <Select 
                     value={itemForm.product_id} 
-                    onValueChange={(value) => {
-                      const product = products.find(p => p.id === value);
-                      setItemForm(prev => ({ 
-                        ...prev, 
-                        product_id: value,
-                        product_name: product?.name || ''
-                      }));
-                    }}
+                    onValueChange={handleProductChange}
                   >
                     <SelectTrigger>
                       <SelectValue placeholder="Select product" />
@@ -732,7 +779,26 @@ export default function PurchaseOrders() {
                   </Select>
                 </div>
                 <div className="space-y-2">
-                  <Label>Quantity *</Label>
+                  <Label>Packaging Size *</Label>
+                  <Select 
+                    value={itemForm.variant_id} 
+                    onValueChange={handleVariantChange}
+                    disabled={!itemForm.product_id || availableVariants.length === 0}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select size" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {availableVariants.map(variant => (
+                        <SelectItem key={variant.id} value={variant.id}>
+                          {variant.packaging_size}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label>Quantity (Units) *</Label>
                   <Input
                     type="number"
                     min="1"
@@ -767,6 +833,7 @@ export default function PurchaseOrders() {
                       <TableHeader>
                         <TableRow>
                           <TableHead>Product</TableHead>
+                          <TableHead>Size</TableHead>
                           <TableHead>Quantity</TableHead>
                           <TableHead>Unit Cost</TableHead>
                           <TableHead>Total</TableHead>
@@ -777,6 +844,7 @@ export default function PurchaseOrders() {
                         {formData.items.map((item, index) => (
                           <TableRow key={index}>
                             <TableCell>{item.product_name}</TableCell>
+                            <TableCell>{item.packaging_size}</TableCell>
                             <TableCell>{item.quantity}</TableCell>
                             <TableCell>₹{item.unit_cost.toFixed(2)}</TableCell>
                             <TableCell>₹{item.total_cost.toFixed(2)}</TableCell>
