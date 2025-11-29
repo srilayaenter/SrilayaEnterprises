@@ -11,7 +11,6 @@ import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
 import { AlertTriangle, Package, TrendingUp, TrendingDown, Save, Filter, BarChart3, ArrowRight } from 'lucide-react';
-import BackButton from '@/components/common/BackButton';
 
 interface ProductWithVariants extends Product {
   variants: ProductVariant[];
@@ -160,8 +159,6 @@ export default function InventoryManagement() {
 
   return (
     <div className="space-y-6">
-      <BackButton />
-
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Inventory Management</h2>
         <div className="flex items-center gap-2">

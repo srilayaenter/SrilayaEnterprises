@@ -13,7 +13,6 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
 import { Plus, Edit, Trash2, Package, FolderPlus, X } from 'lucide-react';
-import BackButton from '@/components/common/BackButton';
 
 interface ProductFormData {
   name: string;
@@ -344,8 +343,6 @@ export default function ProductManagement() {
 
   return (
     <div className="space-y-6">
-      <BackButton />
-
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Product Management</h2>
         <div className="flex items-center gap-2">

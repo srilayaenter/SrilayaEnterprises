@@ -5,6 +5,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { AlertTriangle, PackageX, TrendingDown, Package, AlertCircle } from 'lucide-react';
 import { supabase } from '@/db/supabase';
 import type { Product, ProductVariant } from '@/types/types';
+import BackButton from '@/components/common/BackButton';
 
 interface InventoryItem {
   product: Product;
@@ -109,6 +110,7 @@ export default function InventoryStatus() {
   if (loading) {
     return (
       <div className="container mx-auto px-4 py-8">
+        <BackButton />
         <h1 className="text-3xl font-bold mb-8">Inventory Status</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-6 mb-8">
           {[1, 2, 3, 4].map((i) => (
@@ -140,6 +142,8 @@ export default function InventoryStatus() {
 
   return (
     <div className="container mx-auto px-4 py-8">
+      <BackButton />
+      
       <div className="flex items-center justify-between mb-8">
         <h1 className="text-3xl font-bold">Inventory Status</h1>
         <Badge variant="outline" className="text-lg px-4 py-2">
