@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { productsApi, variantsApi, adminApi } from '@/db/api';
 import type { Product, ProductVariant, ProductCategory } from '@/types/types';
 import { Button } from '@/components/ui/button';
@@ -9,7 +10,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { useToast } from '@/hooks/use-toast';
-import { AlertTriangle, Package, TrendingUp, TrendingDown, Save, Filter } from 'lucide-react';
+import { AlertTriangle, Package, TrendingUp, TrendingDown, Save, Filter, BarChart3, ArrowRight } from 'lucide-react';
 
 interface ProductWithVariants extends Product {
   variants: ProductVariant[];
@@ -27,6 +28,7 @@ const categories: { value: ProductCategory | 'all'; label: string }[] = [
 ];
 
 export default function InventoryManagement() {
+  const navigate = useNavigate();
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<ProductWithVariants[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ProductCategory | 'all'>('all');
@@ -221,11 +223,38 @@ export default function InventoryManagement() {
         <Alert variant="destructive">
           <AlertTriangle className="h-4 w-4" />
           <AlertTitle>Low Stock Alert</AlertTitle>
-          <AlertDescription>
-            {lowStockProducts.length} product variant(s) are running low on stock (below 20 units)
+          <AlertDescription className="flex items-center justify-between">
+            <span>{lowStockProducts.length} product variant(s) are running low on stock (below 20 units)</span>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              onClick={() => navigate('/admin/inventory-status')}
+              className="ml-4"
+            >
+              View Details <ArrowRight className="ml-2 h-4 w-4" />
+            </Button>
           </AlertDescription>
         </Alert>
       )}
+
+      <Card className="bg-gradient-to-r from-primary/10 to-primary/5 border-primary/20">
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <BarChart3 className="h-5 w-5 text-primary" />
+            Critical Inventory Status
+          </CardTitle>
+        </CardHeader>
+        <CardContent>
+          <p className="text-muted-foreground mb-4">
+            View detailed inventory status including out-of-stock, critical stock, and low stock products across all categories.
+          </p>
+          <Button onClick={() => navigate('/admin/inventory-status')} className="gap-2">
+            <BarChart3 className="h-4 w-4" />
+            View Inventory Status Dashboard
+            <ArrowRight className="h-4 w-4" />
+          </Button>
+        </CardContent>
+      </Card>
 
       {loading ? (
         <div className="text-center py-8">Loading inventory...</div>

@@ -80,7 +80,8 @@ Selling Price = Cost Price + 25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg
+- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -129,7 +130,7 @@ Each category contains multiple product variants with different packaging option
   + Invoice displays: subtotal, package discount (with percentage), GST, and grand total
 - **Invoice line item display:** Each product line shows base price, applicable discount percentage (if any), discounted price, GST, and final price
 
-### 3.7 Loyalty Points System (New Feature)
+### 3.7 Loyalty Points System
 \n####3.7.1 Points Earning Mechanism
 - Customers earn 1 loyalty point for every ₹100 spent on purchases
 - Points are credited to customer account after order completion
@@ -154,9 +155,8 @@ Each category contains multiple product variants with different packaging option
 - Tier benefits displayed in user profile
 - Tier upgrade notifications
 
-### 3.8 Notification System (New Feature)
-
-#### 3.8.1 Notification Types
+### 3.8 Notification System
+\n#### 3.8.1Notification Types
 - Order status updates (Order Placed, Processing, Shipped, Delivered)
 - Payment confirmations
 - Loyalty points earned and redeemed
@@ -181,7 +181,7 @@ Each category contains multiple product variants with different packaging option
 - Push notifications for time-sensitive updates
 - Sound and visual alerts for new notifications
 - Auto-refresh notification count without page reload
-\n### 3.9 Customer Support Chat System (New Feature)
+\n### 3.9 Customer Support Chat System
 
 #### 3.9.1 Live Chat Widget
 - Floating chat icon visible on all pages (bottom-right corner)
@@ -212,7 +212,8 @@ Each category contains multiple product variants with different packaging option
 - Canned responses library for quick replies
 - Chat analytics (response time, resolution rate, customer satisfaction)
 
-### 3.10 Product Review and Rating System (Enhanced)\n
+### 3.10 Product Review and Rating System
+
 #### 3.10.1 Review Submission\n- Customers can submit reviews after order delivery
 - Star rating (1-5 stars) with written review
 - Photo upload option (up to 3 images per review)
@@ -231,7 +232,7 @@ Each category contains multiple product variants with different packaging option
 - Admin approval required before review publication
 - Filter and flag system for inappropriate content
 - Edit or delete reviews from admin dashboard
-\n### 3.11 Updated Header Navigation (Enhanced)
+\n### 3.11 Updated Header Navigation
 
 #### 3.11.1 Header Components
 - Logo and website name (left-aligned)
@@ -246,7 +247,8 @@ Each category contains multiple product variants with different packaging option
 - Mobile-friendly hamburger menu
 - Collapsible navigation for smaller screens
 - Touch-optimized icons and buttons
-\n### 3.12 Admin Dashboard\n
+\n### 3.12 Admin Dashboard
+
 #### 3.12.1 Product Management (Implementation Ready)
 \n**Add New Product**
 - Form fields: Product ID (auto-generated or manual), Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
@@ -309,7 +311,27 @@ Each category contains multiple product variants with different packaging option
 - Overview cards: Total Products, Low Stock Items, Out of Stock Items, Total Inventory Value
 - Real-time stock status for all products
 - Color-coded indicators: Green (In Stock >50units), Yellow (Low Stock 10-50 units), Red (Critical<10 units), Grey (Out of Stock)
-\n**Update Stock Levels**
+\n**Critical Stock Status Overview (New Feature)**
+- **Centralized Critical Status Dashboard:** A dedicated section displaying all products with critical stock levels across all categories
+- **Table display with columns:**
+  + Product ID\n  + Product Name
+  + Category
+  + Current Stock Quantity (kg)
+  + Stock Status (Critical/Low/Out of Stock)
+  + Last Restocked Date
+  + Pending Purchase Orders (if any)
+  + Actions (Reorder/View Details)
+- **Visual Indicators:**
+  + Red badge for Out of Stock (0units)
+  + Orange badge for Critical Stock (<10 units)
+  + Yellow badge for Low Stock (10-50 units)
+- **Filter Options:** Filter by Category, Stock Status, Date Range
+- **Sort Options:** Sort by Stock Quantity (Low to High), Product Name, Last Restocked Date
+- **Quick Reorder Button:** Direct link to create purchase order for critical stock items
+- **Export Functionality:** Export critical stock report to CSV/PDF
+- **Alert Summary:** Display total count of Out of Stock, Critical, and Low Stock items at the top of dashboard
+
+**Update Stock Levels**
 - Product search and selection
 - Current stock display
 - Stock adjustment options: Add Stock, Remove Stock, Set Exact Quantity
@@ -414,8 +436,7 @@ Each category contains multiple product variants with different packaging option
 - **Delivery location identification:** System automatically detects whether delivery is intrastate (same city and state) or interstate based on customer delivery address
 - **Weight-based shipping calculation:** Shipping charges calculated automatically based on total order weight and delivery location (₹30-50/kg for intrastate, ₹70-100/kg for interstate)
 - Generate and download invoices with shipping cost and discount percentage included
-- Order details view showing: Order ID, Order Created Date, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total\n
-**In-Store Purchases Management**
+- Order details view showing: Order ID, Order Created Date, Order Type (Online Order), Customer information, Delivery address with state, Product list with weights and discount percentages, Subtotal, Package Discount (with %), GST, Shipping charges (with delivery type indicator), Grand total\n\n**In-Store Purchases Management**
 - View and process in-store purchases\n- **Order status:** Automatically marked as Completed after payment
 - **No shipping management:** In-store purchases do not require delivery address or shipment tracking
 - Generate and download invoices without shipping charges
@@ -432,17 +453,15 @@ Each category contains multiple product variants with different packaging option
 
 **Add New Vendor**
 - Form fields: Vendor ID (auto-generated), Vendor Name, Contact Person, Email, Phone Number, Address, Product Categories Supplied, Payment Terms, GST Number\n- Save and Cancel buttons
-
-**View Vendor List**
-- Table display with columns: Vendor ID, Vendor Name, Contact Person, Phone, Product Categories, Total Transactions, Total Amount Paid, Outstanding Amount, Status, Actions
+\n**View Vendor List**\n- Table display with columns: Vendor ID, Vendor Name, Contact Person, Phone, Product Categories, Total Transactions, Total Amount Paid, Outstanding Amount, Status, Actions
 - Pagination with 20 vendors per page
 - Search bar for vendor name or ID
 - Filter options: Product Category, Status (Active/Inactive)
 - Sort options: Name (A-Z), Total Transactions, Outstanding Amount
 
 **View Vendor Profile**
-- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms\n- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n\n**Edit Vendor Information**
-- Pre-filled form with existing vendor data\n- All fields editable except Vendor ID\n- Update and Cancel buttons
+- Vendor details section: Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms\n- Product categories supplied\n- Transaction history table: Transaction ID, Date, Product, Quantity, Amount, Payment Status\n- Financial summary: Total purchases, Total paid, Outstanding amount\n\n**Edit Vendor Information**\n- Pre-filled form with existing vendor data
+- All fields editable except Vendor ID\n- Update and Cancel buttons
 \n**Purchase Order Management**
 \n**Create Purchase Order to Vendor**
 - **Form fields:**
@@ -465,7 +484,8 @@ Each category contains multiple product variants with different packaging option
 - **Send Order button:** Finalizes and sends order to vendor (changes status to Sent to Vendor)\n- **Cancel button:** Discards order creation
 \n**View Purchase Orders List**
 - **Table display with columns:**
-  + Purchase Order ID\n  + Vendor Name
+  + Purchase Order ID
+  + Vendor Name
   + Order Date
   + Expected Delivery Date
   + Total Products (count)
@@ -509,16 +529,18 @@ Each category contains multiple product variants with different packaging option
 **Edit Purchase Order**
 - Pre-filled form with existing order data
 - All fields editable except Purchase Order ID
-- Can add or remove products\n- Can update quantities and prices
+- Can add or remove products
+- Can update quantities and prices
 - Update button saves changes
 - **Note:** Orders with status Confirmed, Partially Received, or Fully Received have limited editing (only notes and expected delivery date can be modified)
 
-**Mark Products as Received**
+**Mark Products as Received (Enhanced with Automatic Stock Update)**
 - **Receive Products Dialog:**
   + Product list with checkboxes for selection
   + Quantity Received input field for each product (defaults to ordered quantity)
   + Actual Received Date (calendar picker, defaults to current date)
-  + Quality Check Status (dropdown: Approved/Rejected/Partial Approval)\n  + Received By (auto-filled with logged-in admin name)
+  + Quality Check Status (dropdown: Approved/Rejected/Partial Approval)
+  + Received By (auto-filled with logged-in admin name)
   + Notes (optional, for recording any discrepancies or issues)
 - **Partial Receipt Handling:**
   + If received quantity is less than ordered quantity, order status changes to Partially Received
@@ -526,10 +548,37 @@ Each category contains multiple product variants with different packaging option
   + Admin can mark remaining products as received in subsequent transactions
 - **Full Receipt:**
   + When all products are received in full quantity, order status changes to Fully Received
-- **Inventory Update:**
-  + Upon marking products as received, system automatically updates inventory stock levels
-  + Inventory movement log records the stock addition with reference to Purchase Order ID
-- **Confirm Receipt button:** Saves received quantities and updates order status\n- **Cancel button:** Closes dialog without saving\n
+- **Automatic Inventory Stock Update (Enhanced):**
+  + **Upon marking products as received, system automatically updates inventory stock levels by adding the received quantity to current stock**
+  + **Stock Update Process:**
+    * System identifies the product by Product ID from the purchase order
+    * Retrieves current stock quantity from inventory database
+    * Adds received quantity to current stock: New Stock = Current Stock + Received Quantity
+    * Updates product stock level in inventory management system
+    * Displays confirmation message showing old stock, received quantity, and new stock level
+  + **Inventory Movement Log Entry:**
+    * Automatically creates an entry in Inventory Movement Log with the following details:
+      - Date: Actual Received Date
+      - Product: Product Name and ID
+      - Movement Type: Stock In (Purchase Order)\n      - Quantity: Received Quantity (kg)
+      - Reason: Purchase Order Receipt
+      - Reference: Purchase Order ID (PO-YYYYMMDD-XXX)
+      - Updated By: Admin/Staff name who marked the order as received
+      - Notes: Any notes entered during receipt process
+  + **Stock Status Update:**
+    * If product was previously Out of Stock or Low Stock, status automatically updates based on new stock level
+    * Color-coded indicator changes accordingly (Red → Yellow → Green)
+  + **Critical Stock Alert Removal:**
+    * If product was listed in Critical Stock Status Dashboard and new stock level exceeds critical threshold, it is automatically removed from critical status list
+- **Quality Check Handling:**
+  + If Quality Check Status is Rejected, received quantity is not added to inventory stock
+  + If Partial Approval, only approved quantity is added to stock
+  + Rejected items are logged separately for vendor follow-up
+- **Confirm Receipt button:** Saves received quantities, updates order status, and triggers automatic stock update
+- **Cancel button:** Closes dialog without saving\n- **Post-Receipt Confirmation:**
+  + Success message displays: Products received successfully. Inventory updated: [Product Name] stock increased from [Old Stock] kg to [New Stock] kg
+  + Option to view updated inventory or return to purchase order list
+
 **Cancel Purchase Order**
 - Cancel button with confirmation dialog
 - Cancellation reason dropdown: Vendor Unavailable/Price Change/Order Error/Other
@@ -551,7 +600,8 @@ Each category contains multiple product variants with different packaging option
 - Transaction date\n- Payment status (Paid/Pending/Partial)\n- Amount paid field
 - Invoice upload option
 - Notes field
-- Submit button\n\n**Vendor Supply Details Table**
+- Submit button
+\n**Vendor Supply Details Table**
 - **Add Supply Entry:** Admin can manually enter supply details with the following fields:
   + Supply ID (auto-generated)
   + Vendor Name (dropdown selection from registered vendors)
@@ -628,8 +678,7 @@ Each category contains multiple product variants with different packaging option
 - Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n
 **View Handler Profile**
 - Handler details section: Name, Contact Person, Email, Phone, Service Areas, Rate Structure, Payment Terms
-- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status
-- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
+- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status\n- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
 
 **Edit Handler Information**
 - Pre-filled form with existing handler data
@@ -724,8 +773,8 @@ Each category contains multiple product variants with different packaging option
 - View all financial transactions with shipment handlers
 - Record payments made to handlers using the Shipment Payment Records Table
 - Track outstanding amounts\n- Generate handler payment reports
-- Filter by handler, date range, payment status\n- Export to CSV/PDF
-\n**Return Management**
+- Filter by handler, date range, payment status\n- Export to CSV/PDF\n
+**Return Management**
 - Record returned shipments with reason (Customer Refused, Wrong Address, Damaged, Other)
 - Update order status to reflect return
 - Notify customer and initiate refund process
@@ -740,7 +789,7 @@ Each category contains multiple product variants with different packaging option
 - **Shipping handler payment summary reports showing total amount paid to each handler**
 - **Loyalty points analytics: Total points issued, redeemed, and outstanding**
 - Return rate analysis
-\n#### 3.12.9 Notification Management (New Feature)
+\n#### 3.12.9 Notification Management
 - View all system notifications sent to customers
 - Filter by notification type, date range, delivery status
 - Resend failed notifications
@@ -748,7 +797,7 @@ Each category contains multiple product variants with different packaging option
 - Notification templates management
 - Delivery statistics and open rates
 
-#### 3.12.10 Chat Management Dashboard (New Feature)
+#### 3.12.10 Chat Management Dashboard
 - Real-time chat queue with pending customer inquiries
 - Assign chats to available support staff
 - Monitor active chat sessions
@@ -799,26 +848,35 @@ Each category contains multiple product variants with different packaging option
 - **ReviewItem Component:** Individual review display with helpful voting\n- **RatingDistribution Component:** Visual chart showing rating breakdown
 - **AverageRating Component:** Star visualization with average score
 
+#### 5.1.5 Inventory Management Components (Enhanced)
+- **CriticalStockDashboard Component:** Centralized view of all critical stock items across categories
+- **StockStatusBadge Component:** Visual indicator for stock levels (Red/Orange/Yellow/Green)
+- **QuickReorderButton Component:** Direct link to create purchase order from critical stock dashboard
+- **StockUpdateConfirmation Component:** Display confirmation message after automatic stock update from purchase order receipt
+
 ### 5.2 Header Integration
 - Update header navigation to include notification icon, loyalty points display, and chat widget icon
 - Implement responsive design for mobile devices
 - Add real-time update functionality for notification count and points balance
 
 ### 5.3 Routes Configuration
-- Add routes for loyalty points pages: /loyalty, /loyalty/history, /loyalty/redeem
-- Add routes for notification pages: /notifications, /notifications/preferences\n- Add routes for chat pages: /chat, /chat/history\n- Update product detail route to include review section: /product/:id#reviews
+- Add routes for loyalty points pages: /loyalty, /loyalty/history, /loyalty/redeem\n- Add routes for notification pages: /notifications, /notifications/preferences\n- Add routes for chat pages: /chat, /chat/history\n- Update product detail route to include review section: /product/:id#reviews
+- Add route for critical stock dashboard: /admin/inventory/critical-status
 
 ### 5.4 Integration Requirements
 - Integrate review components into ProductDetail page
 - Add chat widget to all customer-facing pages
 - Connect notification system with order status updates
 - Link loyalty points calculation with checkout process
-
-### 5.5 Testing Requirements
+- **Integrate automatic stock update functionality with purchase order receipt process**
+- **Connect Critical Stock Status Dashboard with inventory database for real-time updates**
+\n### 5.5 Testing Requirements
 - End-to-end testing of loyalty points earning and redemption flow
 - Notification delivery testing across all channels (in-app, email, SMS)
 - Chat functionality testing including real-time messaging and file attachments
 - Review submission and moderation workflow testing
+- **Automatic stock update testing: Verify stock levels are correctly updated when purchase orders are marked as received**
+- **Critical stock dashboard testing: Ensure all products with critical stock levels are displayed accurately**
 - Cross-browser and device compatibility testing
 - Performance testing for real-time features
 
@@ -828,6 +886,8 @@ Each category contains multiple product variants with different packaging option
 - Notification preferences configuration guide
 - Product review submission guidelines
 - Admin dashboard user manual for new features
+- **Purchase order and automatic stock update workflow documentation**
+- **Critical stock monitoring and reordering guide**
 - API documentation for chat and notification systems
 
 ## 6. Design Style\n
@@ -835,17 +895,22 @@ Each category contains multiple product variants with different packaging option
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
 - Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
 - Accent colors: Gold (#FFD700) for loyalty tier badges, blue (#2196F3) for notification badges
-\n### 6.2 Layout\n- Card-based layout for product display with clear visual hierarchy
+- **Stock status colors: Red (#F44336) for Out of Stock, Orange (#FF9800) for Critical, Yellow (#FFC107) for Low Stock, Green (#4CAF50) for In Stock**
+
+### 6.2 Layout\n- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
 - Floating chat widget positioned at bottom-right corner
 - Notification panel as dropdown from header icon
-\n### 6.3 Visual Elements
+- **Critical Stock Dashboard with prominent placement in admin inventory section**
+
+### 6.3 Visual Elements
 - Rounded corners (8px radius) for cards and buttons for a friendly, approachable feel
 - Subtle shadows (0-2px 8px rgba(0,0,0,0.1)) to create depth\n- Nature-inspired icons with line-style design
 - Smooth hover transitions (0.3s ease) for interactive elements
 - Badge indicators for notifications and loyalty tiers with contrasting colors
-- Star rating visualization with gold color (#FFD700)\n
+- Star rating visualization with gold color (#FFD700)\n- **Color-coded stock status badges with clear visual distinction**
+
 ### 6.4 Typography
 - Clean, readable sans-serif fonts for easy navigation and product information display
 - Font hierarchy: Headings (18-24px bold), body text (14-16px regular), small text (12px for timestamps and metadata)
