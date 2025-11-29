@@ -11,6 +11,7 @@ import { Search, ShoppingCart, Leaf } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/components/auth/AuthProvider';
 import WishlistButton from '@/components/wishlist/WishlistButton';
+import ProductRating from '@/components/reviews/ProductRating';
 
 const categories: { value: ProductCategory | 'all'; label: string }[] = [
   { value: 'all', label: 'All Products' },
@@ -142,7 +143,8 @@ export default function Home() {
                         {product.category}
                       </Badge>
                     </div>
-                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3">
+                    <ProductRating productId={product.id} size="sm" showValue={false} />
+                    <p className="text-sm text-muted-foreground line-clamp-2 mb-3 mt-2">
                       {product.description}
                     </p>
                     <p className="text-xl font-bold text-primary">

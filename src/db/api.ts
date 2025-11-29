@@ -1571,6 +1571,52 @@ export const reviewsApi = {
 
     if (error) throw error;
     return !!data;
+  },
+
+  async getRatingDistribution(productId: string) {
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .select('rating')
+      .eq('product_id', productId);
+
+    if (error) throw error;
+
+    const distribution = { 1: 0, 2: 0, 3: 0, 4: 0, 5: 0 };
+    if (Array.isArray(data)) {
+      data.forEach(review => {
+        if (review.rating >= 1 && review.rating <= 5) {
+          distribution[review.rating as 1 | 2 | 3 | 4 | 5]++;
+        }
+      });
+    }
+
+    return distribution;
+  },
+
+  async getAllReviews() {
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .select(`
+        *,
+        user:profiles(id, full_name, nickname, email),
+        product:products(id, name, image_url)
+      `)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async hasUserReviewedProduct(userId: string, productId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .from('product_reviews')
+      .select('id')
+      .eq('user_id', userId)
+      .eq('product_id', productId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return !!data;
   }
 };
 

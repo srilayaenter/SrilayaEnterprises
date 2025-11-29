@@ -21,6 +21,7 @@ import VendorPayments from './pages/admin/VendorPayments';
 import PurchaseOrders from './pages/admin/PurchaseOrders';
 import ChatManagement from './pages/admin/ChatManagement';
 import InventoryStatus from './pages/admin/InventoryStatus';
+import ReviewManagement from './pages/admin/ReviewManagement';
 import { RequireAdmin } from './components/auth/RequireAdmin';
 
 interface RouteConfig {
@@ -161,6 +162,12 @@ const routes: RouteConfig[] = [
     name: 'Chat Management',
     path: '/admin/chat',
     element: <RequireAdmin><ChatManagement /></RequireAdmin>,
+    visible: false
+  },
+  {
+    name: 'Review Management',
+    path: '/admin/reviews',
+    element: <RequireAdmin><ReviewManagement /></RequireAdmin>,
     visible: false
   }
 ];
