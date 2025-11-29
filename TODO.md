@@ -21,11 +21,11 @@
 - [x] Update purchase orders API
 
 ### Phase 4: Product Management Updates
-- [ ] Add vendor selection dropdown to product form
-- [ ] Add "Add Vendor" button at top level (like Add Category)
-- [ ] Display vendor name in product list
-- [ ] Update product creation to include vendor_id
-- [ ] Update product edit to allow vendor change
+- [x] Add vendor selection dropdown to product form
+- [x] Add "Add Vendor" button at top level (like Add Category)
+- [x] Display vendor name in product list
+- [x] Update product creation to include vendor_id
+- [x] Update product edit to allow vendor change
 
 ### Phase 5: Purchase Orders Management Enhancement
 - [ ] Update PurchaseOrders page to show payment status

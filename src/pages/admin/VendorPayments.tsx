@@ -110,7 +110,9 @@ export default function VendorPayments() {
         payment_method: data.payment_method,
         reference_number: data.reference_number || null,
         purpose: data.purpose || null,
-        notes: data.notes || null
+        notes: data.notes || null,
+        vendor_id: null,
+        purchase_order_id: null
       };
 
       if (editingPayment) {

@@ -23,6 +23,7 @@ import type {
   HandlerPayment,
   HandlerPaymentWithDetails,
   VendorPayment,
+  VendorPaymentWithDetails,
   VendorPaymentSummary,
   PurchaseOrder,
   PurchaseOrderWithDetails,

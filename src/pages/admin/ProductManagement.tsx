@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { productsApi, variantsApi, categoriesApi } from '@/db/api';
-import type { Product, ProductVariant, ProductCategory, Category } from '@/types/types';
+import { productsApi, variantsApi, categoriesApi, vendorsApi } from '@/db/api';
+import type { Product, ProductVariant, ProductCategory, Category, Vendor, ProductWithVariants } from '@/types/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,7 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { Plus, Edit, Trash2, Package, FolderPlus, X } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, FolderPlus, X, Building2 } from 'lucide-react';
 
 interface ProductFormData {
   name: string;
@@ -21,6 +21,7 @@ interface ProductFormData {
   base_price: number;
   weight_per_kg: number;
   image_url: string;
+  vendor_id: string;
 }
 
 interface VariantFormData {
@@ -39,6 +40,15 @@ interface CategoryFormData {
   display_order: number;
 }
 
+interface VendorFormData {
+  name: string;
+  contact_person: string;
+  email: string;
+  phone: string;
+  address: string;
+  payment_terms: string;
+}
+
 interface NewVariant {
   packaging_size: string;
   price: number;
@@ -49,8 +59,9 @@ interface NewVariant {
 }
 
 export default function ProductManagement() {
-  const [products, setProducts] = useState<Product[]>([]);
+  const [products, setProducts] = useState<ProductWithVariants[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
+  const [vendors, setVendors] = useState<Vendor[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [newVariants, setNewVariants] = useState<NewVariant[]>([]);
@@ -58,6 +69,7 @@ export default function ProductManagement() {
   const [dialogOpen, setDialogOpen] = useState(false);
   const [variantDialogOpen, setVariantDialogOpen] = useState(false);
   const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
+  const [vendorDialogOpen, setVendorDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const productForm = useForm<ProductFormData>({
@@ -66,7 +78,8 @@ export default function ProductManagement() {
       category: 'millets',
       description: '',
       base_price: 0,
-      image_url: ''
+      image_url: '',
+      vendor_id: ''
     }
   });
 
@@ -90,9 +103,21 @@ export default function ProductManagement() {
     }
   });
 
+  const vendorForm = useForm<VendorFormData>({
+    defaultValues: {
+      name: '',
+      contact_person: '',
+      email: '',
+      phone: '',
+      address: '',
+      payment_terms: 'Net 30'
+    }
+  });
+
   useEffect(() => {
     loadProducts();
     loadCategories();
+    loadVendors();
   }, []);
 
   const loadCategories = async () => {
@@ -108,10 +133,23 @@ export default function ProductManagement() {
     }
   };
 
+  const loadVendors = async () => {
+    try {
+      const data = await vendorsApi.getAll();
+      setVendors(data);
+    } catch (error: any) {
+      toast({
+        title: 'Error loading vendors',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
   const loadProducts = async () => {
     setLoading(true);
     try {
-      const data = await productsApi.getAll();
+      const data = await productsApi.getAllWithVendors();
       setProducts(data);
     } catch (error: any) {
       toast({
@@ -139,15 +177,20 @@ export default function ProductManagement() {
 
   const onSubmitProduct = async (data: ProductFormData) => {
     try {
+      const productData = {
+        ...data,
+        vendor_id: data.vendor_id === 'none' || !data.vendor_id ? null : data.vendor_id
+      };
+
       if (selectedProduct) {
-        await productsApi.update(selectedProduct.id, data);
+        await productsApi.update(selectedProduct.id, productData);
         toast({
           title: 'Product updated',
           description: 'Product has been updated successfully'
         });
       } else {
         const newProduct = await productsApi.create({
-          ...data,
+          ...productData,
           product_code: null,
           weight_per_kg: 1.0,
           stock: 0,
@@ -233,6 +276,30 @@ export default function ProductManagement() {
     }
   };
 
+  const onSubmitVendor = async (data: VendorFormData) => {
+    try {
+      await vendorsApi.create({
+        ...data,
+        gstin: null,
+        status: 'active',
+        notes: null
+      });
+      toast({
+        title: 'Vendor created',
+        description: 'Vendor has been created successfully'
+      });
+      setVendorDialogOpen(false);
+      vendorForm.reset();
+      loadVendors();
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
   const handleCategoryNameChange = (name: string) => {
     categoryForm.setValue('name', name);
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
@@ -268,7 +335,8 @@ export default function ProductManagement() {
       category: product.category,
       description: product.description || '',
       base_price: product.base_price,
-      image_url: product.image_url || ''
+      image_url: product.image_url || '',
+      vendor_id: product.vendor_id || 'none'
     });
     setDialogOpen(true);
   };
@@ -436,6 +504,124 @@ export default function ProductManagement() {
             </DialogContent>
           </Dialog>
 
+          <Dialog open={vendorDialogOpen} onOpenChange={setVendorDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <Building2 className="mr-2 h-4 w-4" />
+                Add Vendor
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add New Vendor</DialogTitle>
+              </DialogHeader>
+              <Form {...vendorForm}>
+                <form onSubmit={vendorForm.handleSubmit(onSubmitVendor)} className="space-y-4">
+                  <FormField
+                    control={vendorForm.control}
+                    name="name"
+                    rules={{ required: 'Vendor name is required' }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Vendor Name</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="e.g., Organic Farms Ltd" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={vendorForm.control}
+                    name="contact_person"
+                    rules={{ required: 'Contact person is required' }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Contact Person</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="e.g., John Doe" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={vendorForm.control}
+                    name="email"
+                    rules={{ 
+                      required: 'Email is required',
+                      pattern: {
+                        value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                        message: 'Invalid email address'
+                      }
+                    }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Email</FormLabel>
+                        <FormControl>
+                          <Input {...field} type="email" placeholder="vendor@example.com" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={vendorForm.control}
+                    name="phone"
+                    rules={{ required: 'Phone is required' }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Phone</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="+91 9876543210" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={vendorForm.control}
+                    name="address"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Address (Optional)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} placeholder="Full address" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={vendorForm.control}
+                    name="payment_terms"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Payment Terms</FormLabel>
+                        <FormControl>
+                          <Input {...field} placeholder="e.g., Net 30, Net 60" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={() => setVendorDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit">Create Vendor</Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+
           <Dialog open={dialogOpen} onOpenChange={(open) => {
             setDialogOpen(open);
             if (!open) {
@@ -493,6 +679,32 @@ export default function ProductManagement() {
                           {categories.map((cat) => (
                             <SelectItem key={cat.slug} value={cat.slug}>
                               {cat.name}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={productForm.control}
+                  name="vendor_id"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Vendor (Optional)</FormLabel>
+                      <Select onValueChange={field.onChange} value={field.value}>
+                        <FormControl>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select vendor" />
+                          </SelectTrigger>
+                        </FormControl>
+                        <SelectContent>
+                          <SelectItem value="none">None</SelectItem>
+                          {vendors.map((vendor) => (
+                            <SelectItem key={vendor.id} value={vendor.id}>
+                              {vendor.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
@@ -714,6 +926,7 @@ export default function ProductManagement() {
                   <TableHead>Product Code</TableHead>
                   <TableHead>Name</TableHead>
                   <TableHead>Category</TableHead>
+                  <TableHead>Vendor</TableHead>
                   <TableHead>Base Price</TableHead>
                   <TableHead>Status</TableHead>
                   <TableHead className="text-right">Actions</TableHead>
@@ -728,6 +941,13 @@ export default function ProductManagement() {
                       <Badge variant="secondary">
                         {product.category}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      {product.vendor ? (
+                        <span className="text-sm text-muted-foreground">{product.vendor.name}</span>
+                      ) : (
+                        <span className="text-sm text-muted-foreground italic">No vendor</span>
+                      )}
                     </TableCell>
                     <TableCell>₹{product.base_price.toFixed(2)}</TableCell>
                     <TableCell>
