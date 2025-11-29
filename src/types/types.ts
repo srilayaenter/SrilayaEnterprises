@@ -3,6 +3,17 @@ export type ProductCategory = 'millets' | 'rice' | 'flour' | 'flakes' | 'sugar' 
 export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
 export type OrderType = 'online' | 'instore';
 
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  display_order: number;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+}
+
 export interface Profile {
   id: string;
   email: string | null;

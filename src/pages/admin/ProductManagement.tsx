@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import { productsApi, variantsApi } from '@/db/api';
-import type { Product, ProductVariant, ProductCategory } from '@/types/types';
+import { productsApi, variantsApi, categoriesApi } from '@/db/api';
+import type { Product, ProductVariant, ProductCategory, Category } from '@/types/types';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -12,9 +12,7 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { Plus, Edit, Trash2, Package } from 'lucide-react';
-
-const categories: ProductCategory[] = ['millets', 'rice', 'flour', 'flakes', 'sugar', 'honey', 'laddus'];
+import { Plus, Edit, Trash2, Package, FolderPlus } from 'lucide-react';
 
 interface ProductFormData {
   name: string;
@@ -22,7 +20,6 @@ interface ProductFormData {
   description: string;
   base_price: number;
   weight_per_kg: number;
-  product_code: string;
   image_url: string;
 }
 
@@ -35,13 +32,22 @@ interface VariantFormData {
   discount_percentage: number;
 }
 
+interface CategoryFormData {
+  name: string;
+  slug: string;
+  description: string;
+  display_order: number;
+}
+
 export default function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
+  const [categories, setCategories] = useState<Category[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [variantDialogOpen, setVariantDialogOpen] = useState(false);
+  const [categoryDialogOpen, setCategoryDialogOpen] = useState(false);
   const { toast } = useToast();
 
   const productForm = useForm<ProductFormData>({
@@ -50,7 +56,6 @@ export default function ProductManagement() {
       category: 'millets',
       description: '',
       base_price: 0,
-      product_code: '',
       image_url: ''
     }
   });
@@ -66,9 +71,32 @@ export default function ProductManagement() {
     }
   });
 
+  const categoryForm = useForm<CategoryFormData>({
+    defaultValues: {
+      name: '',
+      slug: '',
+      description: '',
+      display_order: 0
+    }
+  });
+
   useEffect(() => {
     loadProducts();
+    loadCategories();
   }, []);
+
+  const loadCategories = async () => {
+    try {
+      const data = await categoriesApi.getAll();
+      setCategories(data);
+    } catch (error: any) {
+      toast({
+        title: 'Error loading categories',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  };
 
   const loadProducts = async () => {
     setLoading(true);
@@ -110,13 +138,14 @@ export default function ProductManagement() {
       } else {
         await productsApi.create({
           ...data,
+          product_code: null,
           weight_per_kg: 1.0,
           stock: 0,
           is_active: true
         });
         toast({
           title: 'Product created',
-          description: 'Product has been created successfully'
+          description: 'Product has been created successfully. Product code auto-generated.'
         });
       }
       setDialogOpen(false);
@@ -156,6 +185,34 @@ export default function ProductManagement() {
     }
   };
 
+  const onSubmitCategory = async (data: CategoryFormData) => {
+    try {
+      await categoriesApi.create({
+        ...data,
+        is_active: true
+      });
+      toast({
+        title: 'Category created',
+        description: 'Category has been created successfully'
+      });
+      setCategoryDialogOpen(false);
+      categoryForm.reset();
+      loadCategories();
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleCategoryNameChange = (name: string) => {
+    categoryForm.setValue('name', name);
+    const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+    categoryForm.setValue('slug', slug);
+  };
+
   const handleEditProduct = (product: Product) => {
     setSelectedProduct(product);
     productForm.reset({
@@ -163,7 +220,6 @@ export default function ProductManagement() {
       category: product.category,
       description: product.description || '',
       base_price: product.base_price,
-      product_code: product.product_code || '',
       image_url: product.image_url || ''
     });
     setDialogOpen(true);
@@ -257,6 +313,11 @@ export default function ProductManagement() {
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{selectedProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
+              {!selectedProduct && (
+                <p className="text-sm text-muted-foreground mt-2">
+                  Product code will be auto-generated based on the category (e.g., MIL-001, RIC-002)
+                </p>
+              )}
             </DialogHeader>
             <Form {...productForm}>
               <form onSubmit={productForm.handleSubmit(onSubmitProduct)} className="space-y-4">
@@ -281,7 +342,18 @@ export default function ProductManagement() {
                   rules={{ required: 'Category is required' }}
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>Category</FormLabel>
+                      <div className="flex items-center justify-between">
+                        <FormLabel>Category</FormLabel>
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="sm"
+                          onClick={() => setCategoryDialogOpen(true)}
+                        >
+                          <FolderPlus className="h-4 w-4 mr-1" />
+                          Add Category
+                        </Button>
+                      </div>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
@@ -290,27 +362,12 @@ export default function ProductManagement() {
                         </FormControl>
                         <SelectContent>
                           {categories.map((cat) => (
-                            <SelectItem key={cat} value={cat}>
-                              {cat.charAt(0).toUpperCase() + cat.slice(1)}
+                            <SelectItem key={cat.slug} value={cat.slug}>
+                              {cat.name}
                             </SelectItem>
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={productForm.control}
-                  name="product_code"
-                  rules={{ required: 'Product code is required' }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Product Code</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="e.g., RICE001" />
-                      </FormControl>
                       <FormMessage />
                     </FormItem>
                   )}
@@ -398,6 +455,93 @@ export default function ProductManagement() {
                   </Button>
                   <Button type="submit">
                     {selectedProduct ? 'Update Product' : 'Create Product'}
+                  </Button>
+                </div>
+              </form>
+            </Form>
+          </DialogContent>
+        </Dialog>
+
+        <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+          <DialogContent className="max-w-md">
+            <DialogHeader>
+              <DialogTitle>Add New Category</DialogTitle>
+            </DialogHeader>
+            <Form {...categoryForm}>
+              <form onSubmit={categoryForm.handleSubmit(onSubmitCategory)} className="space-y-4">
+                <FormField
+                  control={categoryForm.control}
+                  name="name"
+                  rules={{ required: 'Category name is required' }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Category Name</FormLabel>
+                      <FormControl>
+                        <Input 
+                          {...field} 
+                          placeholder="e.g., Pulses" 
+                          onChange={(e) => handleCategoryNameChange(e.target.value)}
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={categoryForm.control}
+                  name="slug"
+                  rules={{ required: 'Slug is required' }}
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Slug (URL-friendly)</FormLabel>
+                      <FormControl>
+                        <Input {...field} placeholder="e.g., pulses" readOnly />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={categoryForm.control}
+                  name="description"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Description (Optional)</FormLabel>
+                      <FormControl>
+                        <Textarea {...field} placeholder="Enter category description" rows={3} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                  control={categoryForm.control}
+                  name="display_order"
+                  render={({ field }) => (
+                    <FormItem>
+                      <FormLabel>Display Order</FormLabel>
+                      <FormControl>
+                        <Input 
+                          type="number" 
+                          {...field} 
+                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                          placeholder="0"
+                        />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+
+                <div className="flex justify-end gap-2">
+                  <Button type="button" variant="outline" onClick={() => setCategoryDialogOpen(false)}>
+                    Cancel
+                  </Button>
+                  <Button type="submit">
+                    Create Category
                   </Button>
                 </div>
               </form>
