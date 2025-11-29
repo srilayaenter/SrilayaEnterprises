@@ -23,7 +23,7 @@ An e-commerce platform dedicated to selling organic products including millets, 
 
 ### 2.2 Pricing Structure
 \n**Selling Price Calculation:**
-Selling Price = Cost Price + 25%
+Selling Price = Cost Price +25%
 
 **Package-Based Discount Policy:**
 - **Standard Products (Rice, Flour, Flakes, Millets):**
@@ -83,8 +83,7 @@ Selling Price = Cost Price + 25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg
-- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -131,7 +130,8 @@ Each category contains multiple product variants with different packaging option
   + No shipping charges applied
   + Invoice displays: subtotal, package discount (with percentage), GST, and grand total
 - **Invoice line item display:** Each product line shows base price, applicable discount percentage (if any), discounted price, GST, and final price
-\n### 3.7 Loyalty Points System
+
+### 3.7 Loyalty Points System
 \n####3.7.1 Points Earning Mechanism
 - Customers earn 1 loyalty point for every ₹100 spent on purchases
 - Points are credited to customer account after order completion
@@ -168,7 +168,8 @@ Each category contains multiple product variants with different packaging option
 
 #### 3.8.2 Notification Delivery Channels
 - In-app notifications with badge counter in header
-- Email notifications\n- SMS notifications for critical updates (order shipped, delivered)
+- Email notifications
+- SMS notifications for critical updates (order shipped, delivered)
 \n#### 3.8.3 Notification Center
 - Centralized notification panel accessible from header icon
 - Notification list with timestamp and read/unread status
@@ -236,7 +237,8 @@ Each category contains multiple product variants with different packaging option
 
 #### 3.11.1 Header Components
 - Logo and website name (left-aligned)
-- Main navigation menu (Categories dropdown, About Us, Contact)\n- Search bar with autocomplete suggestions
+- Main navigation menu (Categories dropdown, About Us, Contact)
+- Search bar with autocomplete suggestions
 - **Notification icon with unread count badge**
 - **Loyalty points display showing current balance**
 - **Chat widget icon with unread message indicator**
@@ -259,8 +261,7 @@ Each category contains multiple product variants with different packaging option
   + Product ID is read-only and displayed after category selection
 - Form fields: Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey/Custom Categories - **admin can only select from existing categories, cannot add new categories here**), **Base Cost Price (₹/kg) - entered only once for1kg base**, Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- **Vendor Selection Section (Enhanced UI):**
   + **Vendor Assignment Dropdown:** Prominent dropdown field labeled 'Select Vendor' positioned directly below Category field
-    * Dropdown displays list of all registered vendors with format: [Vendor Name] - [Contact Person]
-    * Search functionality within dropdown for quick vendor lookup
+    * Dropdown displays list of all registered vendors with format: [Vendor Name] - [Contact Person]\n    * Search functionality within dropdown for quick vendor lookup
     * Selected vendor's details (Contact Person, Phone, Email) displayed below dropdown in read-only format
     * 'View Vendor Profile' link next to vendor details (opens vendor profile in new tab)
   + **Add New Vendor Option:**
@@ -275,7 +276,7 @@ Each category contains multiple product variants with different packaging option
       - GST Number (optional)
     * 'Save Vendor' button: Creates new vendor record and automatically selects it in the vendor dropdown
     * 'Cancel' button: Closes inline form and returns to vendor dropdown selection
-  + **Vendor-Product Linking:** System automatically creates association between selected vendor and product upon saving product
+  + **Vendor-Product Linking:** System automatically creates association between selected vendor and product upon saving product by storing vendor_id in products table
 - Image upload functionality with preview\n- **Add Variant Section (Updated Logic):**
   + **Packaging Size Selection:** Dropdown to select packaging size (1kg, 2kg, 5kg, 10kg for standard categories; 200g, 500g, 1kg for honey; custom options for custom categories)
   + **Automatic Weight Calculation:** When packaging size is selected, weight field is automatically populated based on the selected size (e.g., selecting 2kg automatically sets weight to 2kg, selecting 500g sets weight to 0.5kg)
@@ -325,7 +326,7 @@ Each category contains multiple product variants with different packaging option
     * Display format: [Vendor Name] - [Contact Person] - [Phone]\n    * 'View Vendor Profile' link (opens vendor profile in new tab)
   + **Change Vendor Dropdown:** Dropdown field labeled 'Change Vendor' positioned below current vendor display
     * Dropdown displays list of all registered vendors (same format as Add Product)
-    * Search functionality within dropdown\n    * Selecting different vendor updates the vendor-product association
+    * Search functionality within dropdown\n    * Selecting different vendor updates the vendor-product association by updating vendor_id in products table
   + **Add New Vendor Option:** 'Add New Vendor' button next to change vendor dropdown (same inline form as Add Product)
   + **Confirm Change Button:** Positioned below vendor dropdown, saves vendor update with confirmation prompt: 'Are you sure you want to change vendor from [Old Vendor] to [New Vendor]?'
 - **Variant Management (Updated Logic):**
@@ -355,8 +356,7 @@ Each category contains multiple product variants with different packaging option
 - **Bulk Vendor Assignment Dialog:**
   + Select vendor from dropdown
   + Preview list of selected products
-  + Confirm button applies vendor to all selected products
-  + Success message displays count of products updated
+  + Confirm button applies vendor to all selected products by updating vendor_id in products table\n  + Success message displays count of products updated
 \n**Category Management (Separate Section with Dedicated Add Category Button)**
 \n**View Category List**
 - **Back Button:** Navigate back to Admin Dashboard
@@ -399,8 +399,7 @@ Each category contains multiple product variants with different packaging option
 - Pagination with 25 customers per page
 - Search bar for name, email, or phone
 - Filter options: Registration Date Range, Order Count (0, 1-5, 5+), Loyalty Tier, Status (Active/Inactive)
-- Sort options: Name (A-Z), Registration Date, Total Spent, Loyalty Points
-
+- Sort options: Name (A-Z), Registration Date, Total Spent, Loyalty Points\n
 **View Customer Profile**
 - **Back Button:** Navigate back to Customer List page
 - Customer details section: Name, Email, Phone, Registration Date, Account Status, Loyalty Tier, Points Balance\n- Delivery addresses list with edit/delete options
@@ -438,7 +437,7 @@ Each category contains multiple product variants with different packaging option
   + Pending Purchase Orders (if any)
   + Actions (Reorder/View Details)
 - **Visual Indicators:**
-  + Red badge for Out of Stock (0units)
+  + Red badge for Out of Stock (0 units)
   + Orange badge for Critical Stock (<10 units)
   + Yellow badge for Low Stock (10-50 units)
 - **Filter Options:** Filter by Category, Stock Status, Date Range, Packaging Size
@@ -590,7 +589,7 @@ Each category contains multiple product variants with different packaging option
 \n**View Vendor Profile (Enhanced with Complete Transaction History)**
 - **Back Button:** Navigate back to Vendor List page
 - **Vendor Details Section:** Name, Contact Person, Email, Phone, Address, GST Number, Payment Terms\n- **Products Supplied Section:**
-  + Table display of all products linked to this vendor
+  + Table display of all products linked to this vendor (retrieved using vendor_id from products table)
   + Columns: Product ID, Product Name, Category, Current Stock Status\n  + Link to view product details
 - **Complete Transaction History Section:**
   + **All Purchase Orders Tab:**
@@ -600,8 +599,8 @@ Each category contains multiple product variants with different packaging option
 * Click on Purchase Order ID to view full order details
   + **All Payments Tab:**
     * Table display with columns: Payment ID, Payment Date, Purchase Order ID (if linked), Amount Paid (₹), Payment Method, Transaction Reference, Notes
-    * Filter by Date Range, Payment Method
-    * Sort by Payment Date, Amount Paid
+    * Data retrieved from vendor_payments table using vendor_id and purchase_order_id columns
+    * Filter by Date Range, Payment Method\n    * Sort by Payment Date, Amount Paid
     * Click on Payment ID to view payment details
   + **Supply Details Tab:**
     * Table display with columns: Supply ID, Supply Date, Product Name, Category, Quantity (kg), Cost Price (₹/kg), Total Amount (₹), Payment Status, Balance (₹)\n    * Filter by Date Range, Product Category, Payment Status
@@ -609,7 +608,7 @@ Each category contains multiple product variants with different packaging option
 - **Financial Summary Dashboard:**
   + Total Purchase Orders Placed (count)
   + Total Purchase Value (₹) (sum of all purchase orders)
-  + Total Amount Paid (₹) (sum of all payments made to vendor)
+  + Total Amount Paid (₹) (sum of all payments made to vendor from vendor_payments table)
   + Outstanding Balance (₹) (Total Purchase Value - Total Amount Paid)
   + Payment Status Indicator (Fully Paid/Partially Paid/Pending)
   + Visual chart showing payment trends over time
@@ -686,10 +685,10 @@ Each category contains multiple product variants with different packaging option
   + Total Quantity Ordered (kg)
   + Total Quantity Received (kg)
   + Order Total Amount (₹)
-  + **Total Amount Paid (₹)**
+  + **Total Amount Paid (₹)** (calculated from vendor_payments table using purchase_order_id)
   + **Outstanding Balance (₹)** (Order Total - Total Paid)
 - **Payment History Section:**
-  + Table display of all payments made for this purchase order
+  + Table display of all payments made for this purchase order (retrieved from vendor_payments table using purchase_order_id)
   + Columns: Payment ID, Payment Date, Amount Paid (₹), Payment Method, Transaction Reference, Recorded By\n  + Link to view full payment details
 - **Action Buttons:**
   + Edit Order (available for Draft and Sent to Vendor status)
@@ -767,7 +766,7 @@ Each category contains multiple product variants with different packaging option
   + Purchase Order ID (read-only, auto-filled)
   + Vendor Name (read-only, auto-filled)
   + Order Total Amount (₹) (read-only, auto-filled)
-  + Total Amount Already Paid (₹) (read-only, calculated from previous payments)
+  + Total Amount Already Paid (₹) (read-only, calculated from vendor_payments table using purchase_order_id)
   + Outstanding Balance (₹) (read-only, auto-calculated: Order Total - Total Paid)
   + **Payment Details:**
     * Payment Date (calendar picker, defaults to current date)
@@ -778,18 +777,19 @@ Each category contains multiple product variants with different packaging option
   + **Payment Validation:**
     * System validates that Amount to Pay does not exceed Outstanding Balance
     * If user attempts to enter amount greater than outstanding balance, error message displays: 'Payment amount cannot exceed outstanding balance of ₹[Balance]'
-  + **Record Payment button:** Saves payment details and updates payment status
-  + **Cancel button:** Closes dialog without saving
+  + **Record Payment button:** Saves payment details to vendor_payments table with purchase_order_id and vendor_id, and updates payment status\n  + **Cancel button:** Closes dialog without saving
 - **Automatic Payment Status Update:**
   + **If Total Amount Paid = Order Total Amount:** Payment Status changes to Fully Paid
   + **If Total Amount Paid < Order Total Amount and > 0:** Payment Status changes to Partially Paid
   + **If Total Amount Paid = 0:** Payment Status remains Unpaid
 - **Automatic Vendor Payment Tracking:**
-  + **Upon recording payment, system automatically creates a payment record in Vendor Profile:**
+  + **Upon recording payment, system automatically creates a payment record in vendor_payments table:**
     * Payment ID (auto-generated)
-    * Payment Date\n    * Purchase Order ID (linked)\n    * Amount Paid (₹)
-    * Payment Method\n    * Transaction Reference
-    * Notes
+    * Payment Date\n    * Purchase Order ID (linked via purchase_order_id column)
+    * Vendor ID (linked via vendor_id column)
+    * Amount Paid (₹)
+    * Payment Method
+    * Transaction Reference\n    * Notes
     * Recorded By (admin/staff name)
   + **Payment is immediately visible in Vendor Profile under Complete Transaction History > All Payments Tab**
   + **Vendor Financial Summary automatically updates:**
@@ -881,13 +881,12 @@ Each category contains multiple product variants with different packaging option
   + Total Supplies Received (count) (manual entries)
   + Total Supply Value (₹) (manual entries)
   + **Combined Total Purchase Value (₹)** (Purchase Orders + Manual Supplies)
-  + Total Amount Paid (₹) (all payments including purchase order payments and manual payments)
+  + Total Amount Paid (₹) (all payments including purchase order payments and manual payments from vendor_payments table)
   + Outstanding Balance (₹) (Combined Total Purchase Value - Total Amount Paid)
   + Payment Status (Fully Paid/Partially Paid/Pending)
 - **Detailed Breakdown Section:**
-  + Purchase Order Payments: List of all payments made for purchase orders
-  + Manual Supply Payments: List of all payments recorded manually\n  + Combined Payment Timeline: Chronological view of all payments
-- **Filter Options:** Filter by Vendor, Date Range, Payment Status, Transaction Type (Purchase Order/Manual Supply)
+  + Purchase Order Payments: List of all payments made for purchase orders (retrieved from vendor_payments table using purchase_order_id)
+  + Manual Supply Payments: List of all payments recorded manually\n  + Combined Payment Timeline: Chronological view of all payments\n- **Filter Options:** Filter by Vendor, Date Range, Payment Status, Transaction Type (Purchase Order/Manual Supply)
 - **Sort Options:** Sort by Vendor Name, Total Amount Paid, Outstanding Balance\n- **Export Options:** Export to CSV/PDF for accounting and financial reporting
 
 **Transaction Management**
@@ -908,14 +907,13 @@ Each category contains multiple product variants with different packaging option
 **View Shipment Handler List**
 - **Back Button:** Navigate back to Admin Dashboard
 - Table display with columns: Handler ID, Handler Name, Contact Person, Phone, Service Areas, Intrastate Rate, Interstate Rate, Total Shipments, Total Amount Paid, Status, Actions
-- Pagination with 20 handlers per page
+- Pagination with20 handlers per page
 - Search bar for handler name or ID
-- Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n
-**View Handler Profile**
+- Filter options: Service Area, Status (Active/Inactive)
+- Sort options: Name (A-Z), Total Shipments\n\n**View Handler Profile**
 - **Back Button:** Navigate back to Shipment Handler List page
 - Handler details section: Name, Contact Person, Email, Phone, Service Areas, Rate Structure, Payment Terms
-- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status
-- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
+- Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status\n- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
 \n**Edit Handler Information**
 - **Back Button:** Navigate back to Handler Profile page
 - Pre-filled form with existing handler data\n- All fields editable except Handler ID
@@ -1016,8 +1014,8 @@ Each category contains multiple product variants with different packaging option
 - View all financial transactions with shipment handlers
 - Record payments made to handlers using the Shipment Payment Records Table
 - Track outstanding amounts\n- Generate handler payment reports
-- Filter by handler, date range, payment status\n- Export to CSV/PDF
-\n**Return Management**
+- Filter by handler, date range, payment status\n- Export to CSV/PDF\n
+**Return Management**
 - **Back Button:** Navigate back to Shipment List page
 - Record returned shipments with reason (Customer Refused, Wrong Address, Damaged, Other)
 - Update order status to reflect return
@@ -1029,10 +1027,11 @@ Each category contains multiple product variants with different packaging option
 - **Separate reports for Online Orders and In-Store Purchases**\n- **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends
 - Inventory turnover reports (with variant breakdown)
-- **Vendor payment summary reports showing total amount paid to each vendor (including purchase order payments and manual payments)**
+- **Vendor payment summary reports showing total amount paid to each vendor (including purchase order payments and manual payments from vendor_payments table)**
 - **Shipping handler payment summary reports showing total amount paid to each handler**
 - **Loyalty points analytics: Total points issued, redeemed, and outstanding**
-- Return rate analysis\n\n#### 3.12.9 Notification Management
+- Return rate analysis
+\n#### 3.12.9 Notification Management
 - **Back Button:** Navigate back to Admin Dashboard
 - View all system notifications sent to customers
 - Filter by notification type, date range, delivery status
@@ -1066,42 +1065,124 @@ Each category contains multiple product variants with different packaging option
 
 ## 5. Technical Implementation Requirements
 
-### 5.1 Frontend Components Development
+### 5.1 Database Schema Updates
+\n#### 5.1.1 Products Table Enhancement
+- **Added vendor_id column:**
+  + Column Name: vendor_id
+  + Data Type: INTEGER or UUID (depending on vendor ID format)
+  + Foreign Key: References vendors table (vendor_id)
+  + Purpose: Links each product with its supplier vendor
+  + Nullable: No (every product must have an assigned vendor)
+  + Index: Created for efficient querying of vendor-product relationships
 
-#### 5.1.1 Loyalty Points Components
+#### 5.1.2 Vendor Payments Table Enhancement
+- **Added purchase_order_id column:**
+  + Column Name: purchase_order_id
+  + Data Type: VARCHAR or UUID (depending on purchase order ID format)
+  + Foreign Key: References purchase_orders table (purchase_order_id)
+  + Purpose: Links payment records to specific purchase orders
+  + Nullable: Yes (allows for manual payments not linked to purchase orders)
+  + Index: Created for efficient querying of payments by purchase order
+
+- **Added vendor_id column:**
+  + Column Name: vendor_id
+  + Data Type: INTEGER or UUID (matching vendors table)
+  + Foreign Key: References vendors table (vendor_id)\n  + Purpose: Directly links payment records to vendor for faster queries
+  + Nullable: No (every payment must be associated with a vendor)
+  + Index: Created for efficient querying of payments by vendor
+
+#### 5.1.3 Database Indexes
+- **Index on products.vendor_id:** Optimizes queries for retrieving all products supplied by a specific vendor
+- **Index on vendor_payments.purchase_order_id:** Optimizes queries for retrieving all payments for a specific purchase order
+- **Index on vendor_payments.vendor_id:** Optimizes queries for retrieving all payments made to a specific vendor
+- **Composite Index on vendor_payments (vendor_id, purchase_order_id):** Optimizes queries that filter by both vendor and purchase order
+
+### 5.2 Type System Updates
+
+#### 5.2.1 Product Interface Enhancement
+```typescript
+interface Product {
+  product_id: string;
+  product_name: string;
+  category: string;
+  vendor_id: number | string; // Added: Links product to vendor
+  base_cost_price: number;
+  selling_price: number;
+  gst_percentage: number;
+  image_url?: string;
+  status: 'active' | 'inactive';
+  created_at: Date;
+  updated_at: Date;
+}\n```
+
+#### 5.2.2 VendorPayment Interface Enhancement
+```typescript
+interface VendorPayment {
+  payment_id: string;
+  vendor_id: number | string; // Added: Direct link to vendor
+  purchase_order_id?: string; // Added: Optional link to purchase order
+  payment_date: Date;
+  amount_paid: number;
+  payment_method: 'Cash' | 'Bank Transfer' | 'UPI' | 'Cheque' | 'Other';
+  transaction_reference?: string;
+  notes?: string;\n  recorded_by: string;
+  created_at: Date;
+}\n```
+
+#### 5.2.3 VendorPaymentWithDetails Interface (New)
+```typescript
+interface VendorPaymentWithDetails extends VendorPayment {
+  vendor_name: string;
+  vendor_contact_person: string;
+  purchase_order_number?: string;
+  order_total_amount?: number;
+  order_date?: Date;
+}\n```
+
+#### 5.2.4 ProductWithVariants Interface Enhancement
+```typescript
+interface ProductWithVariants extends Product {
+  vendor_name: string; // Added: Vendor name for display
+  vendor_contact_person: string; // Added: Vendor contact for reference
+  variants: ProductVariant[];
+}\n```
+
+### 5.3 Frontend Components Development
+
+#### 5.3.1 Loyalty Points Components
 - **PointsBalance Component:** Display current points balance in header and user profile
 - **PointsHistory Component:** Transaction history table with filters\n- **PointsRedemption Component:** Redemption interface during checkout
 - **TierBadge Component:** Visual display of customer loyalty tier
 - **PointsEarningCalculator Component:** Real-time calculation of points to be earned on current order
-\n#### 5.1.2 Notification Components
-- **NotificationIcon Component:** Header icon with unread count badge
+
+#### 5.3.2 Notification Components\n- **NotificationIcon Component:** Header icon with unread count badge
 - **NotificationPanel Component:** Dropdown panel with notification list
 - **NotificationItem Component:** Individual notification display with read/unread status
 - **NotificationPreferences Component:** Settings page for notification preferences
 - **NotificationToast Component:** Pop-up alerts for real-time notifications
 
-#### 5.1.3 Chat Components
+#### 5.3.3 Chat Components
 - **ChatWidget Component:** Floating chat icon and expandable chat window
 - **ChatWindow Component:** Main chat interface with message list and input\n- **ChatMessage Component:** Individual message bubble with timestamp
 - **ChatInput Component:** Text input with file attachment and emoji picker
 - **ChatHistory Component:** Previous conversations list in user profile
 - **ChatAvailability Component:** Display support hours and offline message form
 
-#### 5.1.4 Review Components
+#### 5.3.4 Review Components
 - **ReviewForm Component:** Review submission form with star rating and photo upload
 - **ReviewList Component:** Display reviews with sorting and filtering
 - **ReviewItem Component:** Individual review display with helpful voting
 - **RatingDistribution Component:** Visual chart showing rating breakdown
 - **AverageRating Component:** Star visualization with average score
 
-#### 5.1.5 Inventory Management Components (Enhanced)
+#### 5.3.5 Inventory Management Components (Enhanced)
 - **CriticalStockDashboard Component:** Centralized view of all critical stock items across categories with variant breakdown
 - **StockStatusBadge Component:** Visual indicator for stock levels (Red/Orange/Yellow/Green)
 - **QuickReorderButton Component:** Direct link to create purchase order from critical stock dashboard
 - **StockUpdateConfirmation Component:** Display confirmation message after automatic stock update from purchase order receipt
 - **VariantSelector Component:** Dropdown selector for choosing variant when updating stock or receiving purchase orders
 
-#### 5.1.6 Product and Category Management Components (Enhanced with Variant Logic)
+#### 5.3.6 Product and Category Management Components (Enhanced with Variant Logic)
 - **ProductIDGenerator Component:** Auto-generates Product ID based on category selection with format [CATEGORY_PREFIX][SEQUENTIAL_NUMBER]
 - **CategoryManagement Component:** Interface for adding, editing, and managing product categories
 - **CategoryForm Component:** Form for creating new categories with name, prefix, packaging options, and discount policy
@@ -1112,35 +1193,37 @@ Each category contains multiple product variants with different packaging option
   + **Discount Percentage Input:** Optional input field for entering variant-specific discount percentage
   + **Initial Stock Quantity Input:** Input field for entering initial stock quantity for this variant
   + **Auto-Cost Calculation:** System automatically calculates cost price for variant using formula: Base Cost Price (₹/kg) × Variant Weight\n  + **Auto-Selling Price Calculation:** System automatically calculates selling price as (Cost Price +25%) and applies discount percentage if entered
-  + **Final Price Display:** Shows calculated final price including GST\n  + **Add Variant Button:** Saves variant with all calculated values\n  + **Variant List Table:** Displays all added variants with columns: Packaging Size, Weight, Discount %, Cost Price, Selling Price, Final Price (with GST), Stock Quantity, Actions (Edit/Delete)
+  + **Final Price Display:** Shows calculated final price including GST
+  + **Add Variant Button:** Saves variant with all calculated values\n  + **Variant List Table:** Displays all added variants with columns: Packaging Size, Weight, Discount %, Cost Price, Selling Price, Final Price (with GST), Stock Quantity, Actions (Edit/Delete)
 - **VariantEdit Component (New):** Component for editing existing variants with same logic as VariantAddition, allows changing packaging size (which auto-updates weight), discount percentage, and stock quantity. Cost and selling prices auto-recalculate based on current base cost price.
 - **VendorSelector Component (Enhanced):** **Prominent dropdown selector for choosing vendors with search functionality, positioned directly below Category field in product form. Includes 'Add New Vendor' button next to dropdown that opens inline vendor registration form. Displays selected vendor details (Contact Person, Phone, Email) below dropdown with'View Vendor Profile' link.**
 - **InlineVendorForm Component (New):** Inline form for creating new vendors during product addition/editing, with fields for Vendor Name, Contact Person, Email, Phone, Address, Product Categories, Payment Terms, and GST Number. Includes 'Save Vendor' and 'Cancel' buttons.
-\n#### 5.1.7 Vendor Management Components (Enhanced with Top-Level Add Vendor Button)
-- **VendorList Component (Enhanced):** Display vendor list with prominent'Add Vendor' button at the top (similar to Add Category button), includes vendor name column in product list table\n- **VendorProfile Component:** Display complete vendor information with products supplied, transaction history, and financial summary
-- **VendorTransactionHistory Component:** Tabbed interface showing All Purchase Orders, All Payments, and Supply Details\n- **VendorFinancialSummary Component:** Dashboard displaying total purchase value, total paid, outstanding balance, and payment status indicator
-- **PurchaseOrderPayment Component:** Dialog for recording payments against purchase orders with validation and automatic status updates
-- **VendorPaymentTracker Component:** Real-time display of payment status and outstanding balance in purchase order details
+\n#### 5.3.7 Vendor Management Components (Enhanced with Top-Level Add Vendor Button)
+- **VendorList Component (Enhanced):** Display vendor list with prominent'Add Vendor' button at the top (similar to Add Category button), includes vendor name column in product list table\n- **VendorProfile Component:** Display complete vendor information with products supplied (retrieved using vendor_id from products table), transaction history, and financial summary
+- **VendorTransactionHistory Component:** Tabbed interface showing All Purchase Orders, All Payments (retrieved from vendor_payments table using vendor_id and purchase_order_id), and Supply Details\n- **VendorFinancialSummary Component:** Dashboard displaying total purchase value, total paid (calculated from vendor_payments table), outstanding balance, and payment status indicator
+- **PurchaseOrderPayment Component:** Dialog for recording payments against purchase orders with validation and automatic status updates. Saves payment to vendor_payments table with purchase_order_id and vendor_id.\n- **VendorPaymentTracker Component:** Real-time display of payment status and outstanding balance in purchase order details, calculated from vendor_payments table
 - **AddVendorButton Component (New):** Prominent green button with plus icon at the top of Vendor List page, navigates to Add New Vendor page
 
-#### 5.1.8 Navigation Components
+#### 5.3.8 Navigation Components
 - **BackButton Component:** Reusable back button component for navigating between admin pages
 - **Breadcrumb Component:** Display current page hierarchy for easy navigation (e.g., Admin Dashboard > Products > Inventory > Stock Status)
-\n### 5.2 Header Integration
+\n### 5.4 Header Integration
 - Update header navigation to include notification icon, loyalty points display, and chat widget icon
 - Implement responsive design for mobile devices
 - Add real-time update functionality for notification count and points balance
 
-### 5.3 Routes Configuration
+### 5.5 Routes Configuration
 - Add routes for loyalty points pages: /loyalty, /loyalty/history, /loyalty/redeem
-- Add routes for notification pages: /notifications, /notifications/preferences\n- Add routes for chat pages: /chat, /chat/history\n- Update product detail route to include review section: /product/:id#reviews
+- Add routes for notification pages: /notifications, /notifications/preferences
+- Add routes for chat pages: /chat, /chat/history
+- Update product detail route to include review section: /product/:id#reviews
 - Add route for critical stock dashboard: /admin/inventory/critical-status
 - **Add routes for category management: /admin/categories, /admin/categories/add, /admin/categories/edit/:id**
 - **Add routes for variant management within product pages**
 - **Add routes for vendor transaction history: /admin/vendors/:id/transactions**
 - **Add route for purchase order payment recording: /admin/purchase-orders/:id/record-payment**
 - **Add route for vendor management: /admin/vendors, /admin/vendors/add, /admin/vendors/edit/:id**
-\n### 5.4 Integration Requirements
+\n### 5.6 Integration Requirements
 - Integrate review components into ProductDetail page
 - Add chat widget to all customer-facing pages
 - Connect notification system with order status updates
@@ -1155,15 +1238,15 @@ Each category contains multiple product variants with different packaging option
 - **Implement back button navigation across all admin pages for seamless page transitions**
 - **Ensure Add Category functionality is only accessible via dedicated Add Category button in Category List page, not from product add/edit pages**
 - **Integrate prominent vendor selection dropdown in product form with search functionality and inline vendor creation**
-- **Display vendor name column in product list table with clickable links to vendor profile**
+- **Display vendor name column in product list table with clickable links to vendor profile (retrieved using vendor_id from products table)**
 - **Enable vendor filtering and sorting in product list view**
-- **Connect vendor selection with product-vendor association in database**
-- **Integrate'Add Vendor' button at top of Vendor List page (similar to Add Category button) for easy vendor creation**
+- **Connect vendor selection with product-vendor association in database by storing vendor_id in products table**\n- **Integrate'Add Vendor' button at top of Vendor List page (similar to Add Category button) for easy vendor creation**
 - **Connect purchase order receipt process with vendor transaction tracking for automatic transaction record creation**
-- **Integrate payment recording with vendor financial summary for real-time updates of total paid and outstanding balance**
-- **Link purchase order payment status with vendor payment summary reports**
+- **Integrate payment recording with vendor financial summary for real-time updates of total paid and outstanding balance (using vendor_payments table with vendor_id and purchase_order_id)**
+- **Link purchase order payment status with vendor payment summary reports (calculated from vendor_payments table)**
 - **Implement automatic cost and selling price recalculation for all variants when base cost price is changed in product editing**
-\n### 5.5 Testing Requirements
+- **Connect VendorPaymentWithDetails interface with frontend components to display complete payment information including vendor and purchase order details**
+\n### 5.7 Testing Requirements
 - End-to-end testing of loyalty points earning and redemption flow
 - Notification delivery testing across all channels (in-app, email, SMS)
 - Chat functionality testing including real-time messaging and file attachments
@@ -1180,16 +1263,18 @@ Each category contains multiple product variants with different packaging option
 - **Category addition workflow testing: Verify that categories can only be added via dedicated Add Category button in Category List page, and that product add/edit pages only allow category selection from existing categories**
 - **Vendor selection UI testing: Verify that vendor dropdown appears prominently in product form, search functionality works correctly, and selected vendor details display properly**
 - **Inline vendor creation testing: Verify that 'Add New Vendor' button opens inline form, new vendor is saved correctly, and automatically selected in dropdown**
-- **Vendor display in product list testing: Verify that vendor name column displays correctly, is clickable, and links to vendor profile**
+- **Vendor display in product list testing: Verify that vendor name column displays correctly (retrieved using vendor_id from products table), is clickable, and links to vendor profile**
 - **Vendor filtering and sorting testing: Verify that vendor filter dropdown works correctly and sorting by vendor name functions properly**
 - **Top-level Add Vendor button testing: Verify that'Add Vendor' button is prominently displayed at top of Vendor List page and navigates to Add New Vendor page**
 - **Purchase order receipt and vendor transaction tracking testing: Verify that marking products as received automatically creates transaction record in vendor profile with correct details**
-- **Payment recording and vendor financial summary testing: Verify that recording payment against purchase order automatically updates vendor financial summary (total paid, outstanding balance, payment status)**
-- **Purchase order payment status testing: Verify that payment status (Unpaid/Partially Paid/Fully Paid) updates correctly based on total payments made**
-- **Vendor payment summary report testing: Verify that report displays accurate combined totals from purchase orders and manual supply entries**
+- **Payment recording and vendor financial summary testing: Verify that recording payment against purchase order automatically updates vendor financial summary (total paid, outstanding balance, payment status) using vendor_payments table with vendor_id and purchase_order_id**
+- **Purchase order payment status testing: Verify that payment status (Unpaid/Partially Paid/Fully Paid) updates correctly based on total payments made (calculated from vendor_payments table using purchase_order_id)**
+- **Vendor payment summary report testing: Verify that report displays accurate combined totals from purchase orders and manual supply entries (using vendor_payments table with vendor_id)**
+- **Database schema testing: Verify that vendor_id column in products table correctly links products to vendors, and purchase_order_id and vendor_id columns in vendor_payments table correctly track payment relationships**
+- **Type system testing: Verify that Product interface includes vendor_id, VendorPayment interface includes purchase_order_id and vendor_id, and ProductWithVariants interface includes vendor information**
 - Cross-browser and device compatibility testing
 - Performance testing for real-time features
-\n### 5.6 Documentation Requirements
+\n### 5.8 Documentation Requirements
 - User guide for loyalty points system
 - Customer support chat usage instructions
 - Notification preferences configuration guide
@@ -1207,20 +1292,21 @@ Each category contains multiple product variants with different packaging option
 - **Inline vendor creation guide: Step-by-step instructions for adding new vendors during product management using'Add New Vendor' button**
 - **Vendor management guide: Instructions for adding vendors via top-level 'Add Vendor' button and managing vendor-product associations**
 - **Product list vendor filtering guide: Instructions for filtering and sorting products by vendor name**
-- **Purchase order management guide: Complete workflow from order creation to receipt, payment recording, and vendor transaction tracking**
-- **Vendor transaction tracking guide: How to view complete transaction history including purchase orders, payments, and supply details in vendor profile**
+- **Purchase order management guide: Complete workflow from order creation to receipt, payment recording, and vendor transaction tracking**\n- **Vendor transaction tracking guide: How to view complete transaction history including purchase orders, payments, and supply details in vendor profile**
 - **Payment recording guide: Step-by-step instructions for recording payments against purchase orders and understanding automatic updates to vendor financial summary**
+- **Database schema documentation: Detailed explanation of vendor_id column in products table, purchase_order_id and vendor_id columns in vendor_payments table, and database indexes**
+- **Type system documentation: Explanation of updated Product, VendorPayment, VendorPaymentWithDetails, and ProductWithVariants interfaces**
 - API documentation for chat and notification systems
-\n## 6. Design Style\n
+\n##6. Design Style\n
 ### 6.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
-- Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
-- Accent colors: Gold (#FFD700) for loyalty tier badges, blue (#2196F3) for notification badges
+- Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons\n- Accent colors: Gold (#FFD700) for loyalty tier badges, blue (#2196F3) for notification badges
 - **Stock status colors: Red (#F44336) for Out of Stock, Orange (#FF9800) for Critical, Yellow (#FFC107) for Low Stock, Green (#4CAF50) for In Stock**
 - **Navigation colors: Light grey (#E0E0E0) for back buttons, dark grey (#424242) for breadcrumb text**
 - **Payment status colors: Red (#F44336) for Unpaid, Orange (#FF9800) for Partially Paid, Green (#4CAF50) for Fully Paid**
 - **Vendor UI colors: Green (#4CAF50) for Add Vendor button, blue (#2196F3) for vendor dropdown highlight**
-\n### 6.2 Layout\n- Card-based layout for product display with clear visual hierarchy
+
+### 6.2 Layout\n- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
 - Floating chat widget positioned at bottom-right corner
