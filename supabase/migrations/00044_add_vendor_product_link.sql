@@ -8,3 +8,4 @@ CREATE INDEX IF NOT EXISTS idx_vendor_payments_po_id ON vendor_payments(purchase
 
 -- Add vendor_id to vendor_payments for easier querying
 ALTER TABLE vendor_payments ADD COLUMN IF NOT EXISTS vendor_id uuid REFERENCES vendors(id) ON DELETE RESTRICT;
+CREATE INDEX IF NOT EXISTS idx_vendor_payments_vendor_id ON vendor_payments(vendor_id);
