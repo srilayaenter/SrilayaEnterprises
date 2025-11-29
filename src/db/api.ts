@@ -46,10 +46,32 @@ export const productsApi = {
     return Array.isArray(data) ? data : [];
   },
 
+  async getAllWithVendors(category?: ProductCategory): Promise<ProductWithVariants[]> {
+    let query = supabase
+      .from('products')
+      .select(`
+        *,
+        vendor:vendors(*)
+      `)
+      .eq('is_active', true)
+      .order('created_at', { ascending: false });
+
+    if (category) {
+      query = query.eq('category', category);
+    }
+
+    const { data, error } = await query;
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
   async getById(id: string): Promise<ProductWithVariants | null> {
     const { data: product, error: productError } = await supabase
       .from('products')
-      .select('*')
+      .select(`
+        *,
+        vendor:vendors(*)
+      `)
       .eq('id', id)
       .maybeSingle();
 
@@ -1012,6 +1034,20 @@ export const vendorPaymentsApi = {
     return Array.isArray(data) ? data : [];
   },
 
+  async getAllWithDetails(): Promise<VendorPaymentWithDetails[]> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .select(`
+        *,
+        vendor:vendors(*),
+        purchase_order:purchase_orders(*)
+      `)
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
   async getById(id: string): Promise<VendorPayment | null> {
     const { data, error } = await supabase
       .from('vendor_payments')
@@ -1028,6 +1064,32 @@ export const vendorPaymentsApi = {
       .from('vendor_payments')
       .select('*')
       .eq('vendor_name', vendorName)
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByVendorId(vendorId: string): Promise<VendorPaymentWithDetails[]> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .select(`
+        *,
+        vendor:vendors(*),
+        purchase_order:purchase_orders(*)
+      `)
+      .eq('vendor_id', vendorId)
+      .order('payment_date', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getByPurchaseOrder(purchaseOrderId: string): Promise<VendorPayment[]> {
+    const { data, error } = await supabase
+      .from('vendor_payments')
+      .select('*')
+      .eq('purchase_order_id', purchaseOrderId)
       .order('payment_date', { ascending: false });
 
     if (error) throw error;

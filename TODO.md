@@ -1,51 +1,57 @@
-# Task: Add In-Store vs Online Order Differentiation
-
-## Requirements
-- Add checkbox/field to distinguish online orders from in-store purchases
-- In-store purchases don't need shipment tracking
-- Separate views for in-store purchases and online orders
-- Different order flows for each type
+# Task: Vendor Integration & Purchase Order Tracking System
 
 ## Plan
 
-- [x] Step 1: Database Changes
-  - [x] Add order_type enum to orders table
-  - [x] Make shipping fields optional for in-store orders
-  - [x] Update migration file
+### Phase 1: Database Schema
+- [x] Add vendor_id to products table
+- [x] Add purchase_order_id to vendor_payments table
+- [x] Add vendor_id to vendor_payments table
+- [x] Add necessary indexes
 
-- [x] Step 2: Update Types
-  - [x] Add OrderType enum to types.ts
-  - [x] Update Order interface
+### Phase 2: Type Definitions
+- [x] Update Product type with vendor_id
+- [x] Update VendorPayment type with purchase_order_id and vendor_id
+- [x] Create VendorPaymentWithDetails type
+- [x] Update ProductWithVariants to include vendor
 
-- [x] Step 3: Update API Functions
-  - [x] Add order type parameter to create order
-  - [x] Add filter by order type
-  - [x] Update queries
+### Phase 3: API Functions
+- [ ] Update productsApi to include vendor info
+- [ ] Update vendorPaymentsApi for new fields
+- [ ] Add vendor transaction queries
+- [ ] Update purchase orders API
 
-- [x] Step 4: Update Checkout Flow
-  - [x] Add order type selection
-  - [x] Conditionally show/hide shipping fields
-  - [x] Update order creation logic
+### Phase 4: Product Management Updates
+- [ ] Add vendor selection dropdown to product form
+- [ ] Add "Add Vendor" button at top level (like Add Category)
+- [ ] Display vendor name in product list
+- [ ] Update product creation to include vendor_id
+- [ ] Update product edit to allow vendor change
 
-- [x] Step 5: Update Admin Dashboard
-  - [x] Add order type filter
-  - [x] Separate metrics for online vs in-store
-  - [x] Update order display
-  - [x] Update order detail dialog
+### Phase 5: Purchase Orders Management Enhancement
+- [ ] Update PurchaseOrders page to show payment status
+- [ ] Link to vendor payments from PO
+- [ ] Show payment history for each PO
 
-- [x] Step 6: Update Edge Function
-  - [x] Add order_type parameter to Edge Function
-  - [x] Pass order_type to database
+### Phase 6: Vendor Management Enhancement
+- [ ] Add transaction history tab/section
+- [ ] Display all purchase orders for vendor
+- [ ] Display all payments for vendor
+- [ ] Show financial summary (total owed, paid, outstanding)
+- [ ] Add quick payment action
 
-- [x] Step 7: Testing
-  - [x] Test in-store order creation
-  - [x] Test online order creation
-  - [x] Test filtering
-  - [x] Run linter
-  - [x] Deploy Edge Function
+### Phase 7: Vendor Payments Page Enhancement
+- [ ] Update VendorPayments page to link with POs
+- [ ] Add PO selection when creating payment
+- [ ] Show related PO info in payment list
+- [ ] Update payment status in PO when payment is made
+
+### Phase 8: Dashboard Updates
+- [ ] Update navigation if needed
+- [ ] Add summary cards for POs and payments if needed
 
 ## Notes
-- In-store orders: pending → processing → completed
-- Online orders: pending → processing → shipped → delivered
-- In-store orders don't need shipping address or shipment tracking
-- Shipping cost is 0 for in-store orders
+- Existing tables: purchase_orders, vendor_payments, vendors already exist
+- purchase_orders has: po_number, vendor_id, order_date, status, items (jsonb), total_amount
+- vendor_payments has: vendor_name, vendor_contact, amount, payment_date, payment_method, reference_number, purpose
+- Need to integrate existing structure with new vendor linkages
+- All monetary values in INR (₹)

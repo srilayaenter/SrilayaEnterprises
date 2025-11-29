@@ -40,6 +40,7 @@ export interface Product {
   stock: number;
   weight_per_kg: number;
   is_active: boolean;
+  vendor_id: string | null;
   created_at: string;
   updated_at: string;
 }
@@ -58,6 +59,7 @@ export interface ProductVariant {
 
 export interface ProductWithVariants extends Product {
   variants?: ProductVariant[];
+  vendor?: Vendor;
 }
 
 export interface OrderItem {
@@ -265,6 +267,8 @@ export interface VendorPayment {
   id: string;
   vendor_name: string;
   vendor_contact: string | null;
+  vendor_id: string | null;
+  purchase_order_id: string | null;
   amount: number;
   payment_date: string;
   payment_method: PaymentMethod;
@@ -273,6 +277,11 @@ export interface VendorPayment {
   notes: string | null;
   created_at: string;
   updated_at: string;
+}
+
+export interface VendorPaymentWithDetails extends VendorPayment {
+  vendor?: Vendor;
+  purchase_order?: PurchaseOrder;
 }
 
 export interface HandlerPaymentSummary {
