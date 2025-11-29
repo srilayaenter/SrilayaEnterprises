@@ -92,8 +92,7 @@ Each category contains multiple product variants with different packaging option
 - Product listing with images and descriptions
 - Main navigation menu displaying all categories including custom categories
 - Search functionality\n- Filter options by category, price, packaging size\n- Product detail pages with specifications and pricing information
-
-### 3.2 Shopping Cart and Checkout Process
+\n### 3.2 Shopping Cart and Checkout Process
 - Add to cart functionality with quantity selection
 - Cart summary showing items, quantities, and total price
 - Ability to update or remove items from cart
@@ -110,8 +109,7 @@ Each category contains multiple product variants with different packaging option
 - Secure payment gateway integration supporting multiple payment methods
 - Support for credit/debit cards, UPI, net banking, and digital wallets
 - Payment confirmation and receipt generation
-
-### 3.5 Order Tracking and History
+\n### 3.5 Order Tracking and History
 - Order confirmation with unique order ID
 - **Order Type Indicator:** Display whether order is Online Order or In-Store Purchase
 - **For Online Orders:** Real-time order status tracking (Order Placed, Processing, Shipped, Delivered)
@@ -154,11 +152,10 @@ Each category contains multiple product variants with different packaging option
 - Bronze Tier: 0-999 points (1x earning rate)
 - Silver Tier: 1000-2499 points (1.2x earning rate)
 - Gold Tier: 2500+ points (1.5x earning rate)
-- Tier benefits displayed in user profile
-- Tier upgrade notifications
+- Tier benefits displayed in user profile\n- Tier upgrade notifications
 
 ### 3.8 Notification System
-\n#### 3.8.1Notification Types
+\n#### 3.8.1 Notification Types
 - Order status updates (Order Placed, Processing, Shipped, Delivered)
 - Payment confirmations
 - Loyalty points earned and redeemed
@@ -259,16 +256,15 @@ Each category contains multiple product variants with different packaging option
   + Sequential numbering continues from last product in category
   + For custom categories, system uses first 3-5 letters of category name as prefix
   + Product ID is read-only and displayed after category selection
-- Form fields: Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey/Custom Categories), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
-- **Packaging Category Selection (New Feature):**
+- Form fields: Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey/Custom Categories - **admin can only select from existing categories, cannot add new categories here**), Cost Price (₹/kg), Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- Image upload functionality with preview
+- **Packaging Category Selection:**
   + **Packaging options selection with initial stock quantity input:**
     * For standard categories (Rice, Flour, Flakes, Millets): Checkboxes for 1kg, 2kg, 5kg, 10kg
     * For honey: Checkboxes for 200g, 500g, 1kg
 * For custom categories: Admin can select from available packaging options defined in category settings
   + **Stock Quantity Input for Each Selected Package:**
     * When a packaging option is checked, an input field appears next to it for entering initial stock quantity
-    * Example: [✓] 1kg [Input: 100] kg, [✓] 5kg [Input: 50] kg\n    * Stock quantity is recorded separately for each packaging size
-  + **Automatic Inventory Update:**
+    * Example: [✓] 1kg [Input: 100] kg, [✓] 5kg [Input: 50] kg\n    * Stock quantity is recorded separately for each packaging size\n  + **Automatic Inventory Update:**
     * Upon saving the product, system automatically creates inventory records for each selected packaging option with the specified stock quantities
     * Each packaging size is tracked independently in the inventory management system
     * Stock levels can be updated later through the Inventory Management section
@@ -286,6 +282,7 @@ Each category contains multiple product variants with different packaging option
 - **Back Button:** Navigate back to Product List page
 - Pre-filled form with existing product data
 - All fields editable except Product ID (read-only)
+- **Category field is a dropdown showing current category, admin can change to another existing category but cannot add new categories from this page**
 - Selling price auto-updates when cost price changes (Cost + 25%)
 - Image replacement option\n- **Packaging Category Management:**
   + Display currently active packaging options with current stock levels
@@ -294,16 +291,22 @@ Each category contains multiple product variants with different packaging option
   + Cannot delete packaging sizes with existing stock or order history
 - Update and Cancel buttons
 - Confirmation prompt before saving changes
-
-**Delete/Deactivate Product**
+\n**Delete/Deactivate Product**
 - Delete button with confirmation dialog
 - Option to deactivate instead of permanent deletion
 - Deactivated products hidden from customer view but retained in database
 \n**Bulk Operations**
 - Checkbox selection for multiple products
 - Bulk actions: Update prices, Change category, Deactivate, Export to CSV
-\n**Category Management**
-\n**Add New Category**
+\n**Category Management (Separate Section with Dedicated Add Category Button)**
+\n**View Category List**
+- **Back Button:** Navigate back to Admin Dashboard\n- **Add Category Button:** Prominent button at the top of the page to add new categories (navigates to Add New Category page)
+- Table display with columns: Category Name, Category Prefix, Total Products, Status, Actions
+- Search bar for category name
+- Filter by Status (Active/Inactive)
+- Sort by Name (A-Z), Total Products
+
+**Add New Category (Accessed via Dedicated Add Category Button)**
 - **Back Button:** Navigate back to Category List page
 - Form fields:\n  + Category Name (text input, required)
   + Category Description (optional text area)
@@ -313,13 +316,7 @@ Each category contains multiple product variants with different packaging option
   + Category Image Upload (optional)\n  + Status (Active/Inactive)
 - Save and Cancel buttons
 - Validation: Category name must be unique
-\n**View Category List**
-- **Back Button:** Navigate back to Admin Dashboard\n- Table display with columns: Category Name, Category Prefix, Total Products, Status, Actions
-- Search bar for category name
-- Filter by Status (Active/Inactive)
-- Sort by Name (A-Z), Total Products
-
-**Edit Category**
+\n**Edit Category**
 - **Back Button:** Navigate back to Category List page
 - Pre-filled form with existing category data
 - All fields editable except Category Prefix (read-only after products are added)
@@ -550,8 +547,7 @@ Each category contains multiple product variants with different packaging option
     * Product Category (auto-filled based on product selection)
     * Quantity Ordered (in kg)
     * Cost Price per kg (₹)
-    * Total Amount (auto-calculated: Quantity × Cost Price)
-  + Order Total Amount (₹) (auto-calculated sum of all product totals)
+    * Total Amount (auto-calculated: Quantity × Cost Price)\n  + Order Total Amount (₹) (auto-calculated sum of all product totals)
   + Payment Terms (dropdown: Advance Payment/Payment on Delivery/Credit/Other)
   + Delivery Address (text field for vendor delivery location)
   + Special Instructions (optional text area)
@@ -563,7 +559,8 @@ Each category contains multiple product variants with different packaging option
 \n**View Purchase Orders List**
 - **Back Button:** Navigate back to Vendor Profile page or Admin Dashboard
 - **Table display with columns:**
-  + Purchase Order ID\n  + Vendor Name
+  + Purchase Order ID
+  + Vendor Name
   + Order Date
   + Expected Delivery Date
   + Total Products (count)
@@ -638,8 +635,7 @@ Each category contains multiple product variants with different packaging option
     * Automatically creates an entry in Inventory Movement Log with the following details:
       - Date: Actual Received Date
       - Product: Product Name and ID
-      - **Packaging Size:** Selected packaging size (e.g., 1kg, 5kg, 200g)
-      - Movement Type: Stock In (Purchase Order)\n      - Quantity: Received Quantity (kg)
+      - **Packaging Size:** Selected packaging size (e.g., 1kg, 5kg, 200g)\n      - Movement Type: Stock In (Purchase Order)\n      - Quantity: Received Quantity (kg)
       - Reason: Purchase Order Receipt
       - Reference: Purchase Order ID (PO-YYYYMMDD-XXX)
       - Updated By: Admin/Staff name who marked the order as received
@@ -762,8 +758,7 @@ Each category contains multiple product variants with different packaging option
 - **Back Button:** Navigate back to Shipment Handler List page
 - Handler details section: Name, Contact Person, Email, Phone, Service Areas, Rate Structure, Payment Terms
 - Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status\n- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
-
-**Edit Handler Information**
+\n**Edit Handler Information**
 - **Back Button:** Navigate back to Handler Profile page
 - Pre-filled form with existing handler data
 - All fields editable except Handler ID\n- Update and Cancel buttons
@@ -950,8 +945,8 @@ Each category contains multiple product variants with different packaging option
 - **ProductIDGenerator Component:** Auto-generates Product ID based on category selection with format [CATEGORY_PREFIX][SEQUENTIAL_NUMBER]
 - **CategoryManagement Component:** Interface for adding, editing, and managing product categories
 - **CategoryForm Component:** Form for creating new categories with name, prefix, packaging options, and discount policy
-- **CategoryList Component:** Display all categories with product count and status
-- **ProductForm Component (Enhanced):** Enhanced product form with auto-generated Product ID field (read-only) and packaging category selection with initial stock quantity input
+- **CategoryList Component:** Display all categories with product count and status, includes prominent Add Category button at the top
+- **ProductForm Component (Enhanced):** Enhanced product form with auto-generated Product ID field (read-only), category dropdown (selection only, no add category option), and packaging category selection with initial stock quantity input
 - **PackagingCategorySelector Component (New):** Checkbox-based selector for choosing packaging options with stock quantity input fields for each selected package
 
 #### 5.1.7 Navigation Components (New)
@@ -980,6 +975,7 @@ Each category contains multiple product variants with different packaging option
 - **Connect category management with product catalog to display custom categories**
 - **Integrate packaging category selection with inventory management for separate stock tracking per packaging size**
 - **Implement back button navigation across all admin pages for seamless page transitions**
+- **Ensure Add Category functionality is only accessible via dedicated Add Category button in Category List page, not from product add/edit pages**
 
 ### 5.5 Testing Requirements
 - End-to-end testing of loyalty points earning and redemption flow
@@ -992,10 +988,10 @@ Each category contains multiple product variants with different packaging option
 - **Category management testing: Test adding, editing, and deleting categories with validation for existing products**
 - **Packaging category selection testing: Verify that stock quantities are recorded separately for each packaging size and updated correctly**
 - **Back button navigation testing: Ensure back buttons work correctly across all admin pages without data loss**
+- **Category addition workflow testing: Verify that categories can only be added via dedicated Add Category button in Category List page, and that product add/edit pages only allow category selection from existing categories**
 - Cross-browser and device compatibility testing
 - Performance testing for real-time features
-
-### 5.6 Documentation Requirements
+\n### 5.6 Documentation Requirements
 - User guide for loyalty points system
 - Customer support chat usage instructions
 - Notification preferences configuration guide
@@ -1006,13 +1002,13 @@ Each category contains multiple product variants with different packaging option
 - **Category management and Product ID auto-generation guide**
 - **Packaging category selection and stock management guide**
 - **Navigation and back button usage guide for admin users**
+- **Category addition workflow guide: Instructions for adding categories via dedicated Add Category button, and clarification that product pages only allow category selection**
 - API documentation for chat and notification systems
 
 ## 6. Design Style\n
 ### 6.1 Color Scheme
 - Primary colors: Fresh green (#4CAF50) and earthy brown (#8D6E63) to reflect organic and natural theme
-- Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons
-- Accent colors: Gold (#FFD700) for loyalty tier badges, blue (#2196F3) for notification badges
+- Secondary colors: Soft cream (#FFF8E1) for backgrounds, warm orange (#FF9800) for call-to-action buttons\n- Accent colors: Gold (#FFD700) for loyalty tier badges, blue (#2196F3) for notification badges
 - **Stock status colors: Red (#F44336) for Out of Stock, Orange (#FF9800) for Critical, Yellow (#FFC107) for Low Stock, Green (#4CAF50) for In Stock**
 - **Navigation colors: Light grey (#E0E0E0) for back buttons, dark grey (#424242) for breadcrumb text**
 
@@ -1024,6 +1020,7 @@ Each category contains multiple product variants with different packaging option
 - **Critical Stock Dashboard with prominent placement in admin inventory section**
 - **Back buttons positioned at top-left of each admin page for easy navigation**
 - **Breadcrumb navigation below header for page hierarchy display**
+- **Add Category button prominently displayed at the top of Category List page**
 
 ### 6.3 Visual Elements
 - Rounded corners (8px radius) for cards and buttons for a friendly, approachable feel
@@ -1033,6 +1030,7 @@ Each category contains multiple product variants with different packaging option
 - Star rating visualization with gold color (#FFD700)\n- **Color-coded stock status badges with clear visual distinction**
 - **Back button icon: Left arrow with text label**
 - **Breadcrumb separator: Right arrow (>) between page names**
+- **Add Category button: Prominent green button with plus icon**
 
 ### 6.4 Typography
 - Clean, readable sans-serif fonts for easy navigation and product information display

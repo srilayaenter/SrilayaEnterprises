@@ -348,20 +348,111 @@ export default function ProductManagement() {
 
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Product Management</h2>
-        <Dialog open={dialogOpen} onOpenChange={(open) => {
-          setDialogOpen(open);
-          if (!open) {
-            setSelectedProduct(null);
-            productForm.reset();
-            setNewVariants([]);
-          }
-        }}>
-          <DialogTrigger asChild>
-            <Button>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Product
-            </Button>
-          </DialogTrigger>
+        <div className="flex items-center gap-2">
+          <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
+            <DialogTrigger asChild>
+              <Button variant="outline">
+                <FolderPlus className="mr-2 h-4 w-4" />
+                Add Category
+              </Button>
+            </DialogTrigger>
+            <DialogContent className="max-w-md">
+              <DialogHeader>
+                <DialogTitle>Add New Category</DialogTitle>
+              </DialogHeader>
+              <Form {...categoryForm}>
+                <form onSubmit={categoryForm.handleSubmit(onSubmitCategory)} className="space-y-4">
+                  <FormField
+                    control={categoryForm.control}
+                    name="name"
+                    rules={{ required: 'Category name is required' }}
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Category Name</FormLabel>
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            placeholder="e.g., Millets, Rice, Honey"
+                            onChange={(e) => handleCategoryNameChange(e.target.value)}
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={categoryForm.control}
+                    name="slug"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Slug (Auto-generated)</FormLabel>
+                        <FormControl>
+                          <Input {...field} disabled className="bg-muted" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={categoryForm.control}
+                    name="description"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Description (Optional)</FormLabel>
+                        <FormControl>
+                          <Textarea {...field} placeholder="Brief description of the category" />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={categoryForm.control}
+                    name="display_order"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Display Order</FormLabel>
+                        <FormControl>
+                          <Input 
+                            {...field} 
+                            type="number"
+                            onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
+                            placeholder="Order for sorting (e.g., 1, 2, 3)"
+                          />
+                        </FormControl>
+                        <FormMessage />
+                      </FormItem>
+                    )}
+                  />
+
+                  <div className="flex justify-end gap-2">
+                    <Button type="button" variant="outline" onClick={() => setCategoryDialogOpen(false)}>
+                      Cancel
+                    </Button>
+                    <Button type="submit">Create Category</Button>
+                  </div>
+                </form>
+              </Form>
+            </DialogContent>
+          </Dialog>
+
+          <Dialog open={dialogOpen} onOpenChange={(open) => {
+            setDialogOpen(open);
+            if (!open) {
+              setSelectedProduct(null);
+              productForm.reset();
+              setNewVariants([]);
+            }
+          }}>
+            <DialogTrigger asChild>
+              <Button>
+                <Plus className="mr-2 h-4 w-4" />
+                Add Product
+              </Button>
+            </DialogTrigger>
           <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>{selectedProduct ? 'Edit Product' : 'Add New Product'}</DialogTitle>
@@ -394,18 +485,7 @@ export default function ProductManagement() {
                   rules={{ required: 'Category is required' }}
                   render={({ field }) => (
                     <FormItem>
-                      <div className="flex items-center justify-between">
-                        <FormLabel>Category</FormLabel>
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="sm"
-                          onClick={() => setCategoryDialogOpen(true)}
-                        >
-                          <FolderPlus className="h-4 w-4 mr-1" />
-                          Add Category
-                        </Button>
-                      </div>
+                      <FormLabel>Category</FormLabel>
                       <Select onValueChange={field.onChange} value={field.value}>
                         <FormControl>
                           <SelectTrigger>
@@ -620,93 +700,7 @@ export default function ProductManagement() {
             </Form>
           </DialogContent>
         </Dialog>
-
-        <Dialog open={categoryDialogOpen} onOpenChange={setCategoryDialogOpen}>
-          <DialogContent className="max-w-md">
-            <DialogHeader>
-              <DialogTitle>Add New Category</DialogTitle>
-            </DialogHeader>
-            <Form {...categoryForm}>
-              <form onSubmit={categoryForm.handleSubmit(onSubmitCategory)} className="space-y-4">
-                <FormField
-                  control={categoryForm.control}
-                  name="name"
-                  rules={{ required: 'Category name is required' }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Category Name</FormLabel>
-                      <FormControl>
-                        <Input 
-                          {...field} 
-                          placeholder="e.g., Pulses" 
-                          onChange={(e) => handleCategoryNameChange(e.target.value)}
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={categoryForm.control}
-                  name="slug"
-                  rules={{ required: 'Slug is required' }}
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Slug (URL-friendly)</FormLabel>
-                      <FormControl>
-                        <Input {...field} placeholder="e.g., pulses" readOnly />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={categoryForm.control}
-                  name="description"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Description (Optional)</FormLabel>
-                      <FormControl>
-                        <Textarea {...field} placeholder="Enter category description" rows={3} />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={categoryForm.control}
-                  name="display_order"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Display Order</FormLabel>
-                      <FormControl>
-                        <Input 
-                          type="number" 
-                          {...field} 
-                          onChange={(e) => field.onChange(parseInt(e.target.value) || 0)}
-                          placeholder="0"
-                        />
-                      </FormControl>
-                      <FormMessage />
-                    </FormItem>
-                  )}
-                />
-
-                <div className="flex justify-end gap-2">
-                  <Button type="button" variant="outline" onClick={() => setCategoryDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button type="submit">
-                    Create Category
-                  </Button>
-                </div>
-              </form>
-            </Form>
-          </DialogContent>
-        </Dialog>
+        </div>
       </div>
 
       {loading ? (
