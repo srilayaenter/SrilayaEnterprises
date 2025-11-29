@@ -1,3 +1,4 @@
+// Admin Dashboard with Sidebar Navigation
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
 import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList, Shield, Banknote, FileText, MessageCircle, ChevronDown, ChevronRight, BarChart3, Box, ShoppingCart, DollarSign, Settings } from 'lucide-react';
