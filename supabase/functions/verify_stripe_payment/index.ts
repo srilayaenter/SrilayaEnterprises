@@ -42,7 +42,7 @@ async function updateOrderStatus(
 ): Promise<boolean> {
   const { data: order, error: fetchError } = await supabase
     .from("orders")
-    .select("id, status, order_type")
+    .select("id, status, order_type, user_id, total_amount, points_used")
     .eq("stripe_session_id", sessionId)
     .single();
 
@@ -75,6 +75,57 @@ async function updateOrderStatus(
   if (error) {
     console.error("Failed to update order:", error);
     return false;
+  }
+
+  // Redeem loyalty points if used
+  if (order.user_id && order.points_used && order.points_used > 0) {
+    try {
+      const { error: redeemError } = await supabase
+        .rpc('redeem_loyalty_points', {
+          p_user_id: order.user_id,
+          p_order_id: order.id,
+          p_points: order.points_used
+        });
+      
+      if (redeemError) {
+        console.error("Failed to redeem points:", redeemError);
+      } else {
+        console.log(`Redeemed ${order.points_used} points for order ${order.id}`);
+      }
+    } catch (err) {
+      console.error("Error redeeming points:", err);
+    }
+  }
+
+  // Award loyalty points for the purchase
+  if (order.user_id && order.total_amount) {
+    try {
+      const { data: pointsAwarded, error: awardError } = await supabase
+        .rpc('award_loyalty_points', {
+          p_user_id: order.user_id,
+          p_order_id: order.id,
+          p_order_amount: order.total_amount
+        });
+      
+      if (awardError) {
+        console.error("Failed to award points:", awardError);
+      } else {
+        console.log(`Awarded ${pointsAwarded} points for order ${order.id}`);
+        
+        // Create notification for points earned
+        await supabase
+          .from('notifications')
+          .insert({
+            user_id: order.user_id,
+            type: 'points',
+            title: 'Points Earned!',
+            message: `You earned ${pointsAwarded} loyalty points from your recent purchase.`,
+            link: '/loyalty-points'
+          });
+      }
+    } catch (err) {
+      console.error("Error awarding points:", err);
+    }
   }
 
   // Automatically create shipment entry for online orders

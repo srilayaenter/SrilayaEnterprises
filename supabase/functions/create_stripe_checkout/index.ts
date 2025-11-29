@@ -30,6 +30,8 @@ interface CheckoutRequest {
   order_type?: 'online' | 'instore';
   shipping_address?: string;
   shipping_cost?: number;
+  points_used?: number;
+  points_discount?: number;
   customer_info?: {
     name?: string;
     email?: string;
@@ -77,7 +79,7 @@ function validateCheckoutRequest(request: CheckoutRequest): void {
   }
 }
 
-function processOrderItems(items: OrderItem[], shippingCost: number = 0) {
+function processOrderItems(items: OrderItem[], shippingCost: number = 0, pointsDiscount: number = 0) {
   const GST_RATE = 5; // 5% GST
   
   // Store items with prices in rupees (not paise)
@@ -100,13 +102,14 @@ function processOrderItems(items: OrderItem[], shippingCost: number = 0) {
   // Calculate GST in rupees
   const gstAmount = (subtotal * GST_RATE) / 100;
   
-  // Total in rupees
-  const totalAmount = subtotal + gstAmount + shippingCost;
+  // Total in rupees (subtract points discount)
+  const totalAmount = Math.max(0, subtotal + gstAmount + shippingCost - pointsDiscount);
   
   // For Stripe, convert to paise (smallest currency unit)
   const subtotalPaise = Math.round(subtotal * 100);
   const gstAmountPaise = Math.round(gstAmount * 100);
   const shippingAmountPaise = Math.round(shippingCost * 100);
+  const pointsDiscountPaise = Math.round(pointsDiscount * 100);
   const totalAmountPaise = Math.round(totalAmount * 100);
   
   return { 
@@ -114,10 +117,12 @@ function processOrderItems(items: OrderItem[], shippingCost: number = 0) {
     subtotal, 
     gstAmount, 
     shippingCost,
+    pointsDiscount,
     totalAmount,
     subtotalPaise,
     gstAmountPaise,
     shippingAmountPaise,
+    pointsDiscountPaise,
     totalAmountPaise
   };
 }
@@ -130,6 +135,8 @@ async function createCheckoutSession(
   paymentMethods: string[],
   origin: string,
   shippingCost: number = 0,
+  pointsUsed: number = 0,
+  pointsDiscount: number = 0,
   customerInfo?: any,
   shippingAddress?: string,
   orderType: 'online' | 'instore' = 'online'
@@ -140,8 +147,9 @@ async function createCheckoutSession(
     gstAmount, 
     totalAmount,
     gstAmountPaise,
-    shippingAmountPaise
-  } = processOrderItems(items, shippingCost);
+    shippingAmountPaise,
+    pointsDiscountPaise
+  } = processOrderItems(items, shippingCost, pointsDiscount);
   const GST_RATE = 5;
 
   // Store all amounts in rupees in the database
@@ -154,6 +162,7 @@ async function createCheckoutSession(
       gst_rate: GST_RATE,
       gst_amount: gstAmount, // GST in rupees
       shipping_cost: shippingCost, // Shipping in rupees
+      points_used: pointsUsed,
       currency: currency.toLowerCase(),
       status: "pending",
       order_type: orderType || 'online',
@@ -205,6 +214,20 @@ async function createCheckoutSession(
           name: 'Shipping Cost',
         },
         unit_amount: shippingAmountPaise, // Already in paise
+      },
+      quantity: 1,
+    });
+  }
+
+  // Add points discount as a negative line item (in paise)
+  if (pointsDiscountPaise > 0) {
+    lineItems.push({
+      price_data: {
+        currency: currency.toLowerCase(),
+        product_data: {
+          name: `Loyalty Points Discount (${pointsUsed} points)`,
+        },
+        unit_amount: -pointsDiscountPaise, // Negative amount for discount
       },
       quantity: 1,
     });
@@ -267,6 +290,8 @@ Deno.serve(async (req) => {
       request.payment_method_types || ['card'],
       origin,
       request.shipping_cost || 0,
+      request.points_used || 0,
+      request.points_discount || 0,
       request.customer_info,
       request.shipping_address,
       request.order_type || 'online'

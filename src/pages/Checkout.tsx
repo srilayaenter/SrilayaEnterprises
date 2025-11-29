@@ -13,6 +13,7 @@ import { shippingApi, profilesApi, productsApi } from '@/db/api';
 import { ArrowLeft, Package, MapPin, Truck, ShoppingCart, Store } from 'lucide-react';
 import type { Product, OrderType } from '@/types/types';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import RedeemPoints from '@/components/loyalty/RedeemPoints';
 
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
@@ -26,6 +27,8 @@ export default function Checkout() {
   const [shippingCost, setShippingCost] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [orderType, setOrderType] = useState<OrderType>('online');
+  const [pointsUsed, setPointsUsed] = useState(0);
+  const [pointsDiscount, setPointsDiscount] = useState(0);
   const [shippingInfo, setShippingInfo] = useState({
     name: '',
     email: '',
@@ -41,7 +44,7 @@ export default function Checkout() {
 
   const calculateFinalTotal = () => {
     const shipping = orderType === 'online' ? shippingCost : 0;
-    return totalPrice + calculateGST() + shipping;
+    return Math.max(0, totalPrice + calculateGST() + shipping - pointsDiscount);
   };
 
   useEffect(() => {
@@ -200,6 +203,8 @@ export default function Checkout() {
           })),
           order_type: orderType,
           shipping_cost: orderType === 'online' ? shippingCost : 0,
+          points_used: pointsUsed,
+          points_discount: pointsDiscount,
           customer_info: shippingInfo,
           currency: 'inr',
           payment_method_types: ['card'],
@@ -227,6 +232,15 @@ export default function Checkout() {
 
   const handleInputChange = (field: string, value: string) => {
     setShippingInfo(prev => ({ ...prev, [field]: value }));
+  };
+
+  const handlePointsApplied = (points: number, discount: number) => {
+    setPointsUsed(points);
+    setPointsDiscount(discount);
+    toast({
+      title: 'Points applied',
+      description: `${points} points redeemed for ₹${discount.toFixed(2)} discount`,
+    });
   };
 
   return (
@@ -375,6 +389,14 @@ export default function Checkout() {
               )}
             </CardContent>
           </Card>
+
+          {user && (
+            <RedeemPoints
+              userId={user.id}
+              orderTotal={totalPrice}
+              onPointsApplied={handlePointsApplied}
+            />
+          )}
         </div>
 
         <div>
@@ -443,6 +465,12 @@ export default function Checkout() {
                   <div className="flex justify-between text-sm">
                     <span className="text-muted-foreground">Shipping</span>
                     <span className="font-medium text-green-600">Free (In-Store Pickup)</span>
+                  </div>
+                )}
+                {pointsDiscount > 0 && (
+                  <div className="flex justify-between text-sm text-green-600">
+                    <span>Points Discount ({pointsUsed} points)</span>
+                    <span className="font-medium">-₹{pointsDiscount.toFixed(2)}</span>
                   </div>
                 )}
                 <div className="flex justify-between text-lg font-bold border-t pt-2">

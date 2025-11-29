@@ -132,8 +132,10 @@ Each category contains multiple product variants with different packaging option
   + Invoice displays: subtotal, package discount (with percentage), GST, and grand total
 - **Invoice line item display:** Each product line shows base price, applicable discount percentage (if any), discounted price, GST, and final price
 
-### 3.7 Loyalty Points System
-\n####3.7.1 Points Earning Mechanism
+### 3.7 Loyalty Points System (Priority 3 - Implement Third)
+\n**Purpose:** Encourages repeat purchases and builds long-term customer retention with measurable revenue impact over time.
+
+####3.7.1 Points Earning Mechanism
 - Customers earn 1 loyalty point for every ₹100 spent on purchases
 - Points are credited to customer account after order completion
 - Bonus points for first purchase, referrals, and special promotions
@@ -157,8 +159,8 @@ Each category contains multiple product variants with different packaging option
 - Tier benefits displayed in user profile
 - Tier upgrade notifications
 
-### 3.8 Notification System (Priority2 - Implement Second)\n
-**Purpose:** Keeps customers informed and improves customer satisfaction while reducing support queries.
+### 3.8 Notification System (Priority 2 - Implement Second)
+\n**Purpose:** Keeps customers informed and improves customer satisfaction while reducing support queries.
 
 #### 3.8.1 Core Notification Types
 - **Order status notifications:** Order Placed, Processing, Shipped, Delivered (email + in-app)
@@ -193,8 +195,7 @@ Each category contains multiple product variants with different packaging option
 - Quick reply templates for common queries
 - Emoji support for friendly communication
 
-#### 3.9.3 Chat History
-- Access to previous chat conversations in user profile
+#### 3.9.3 Chat History\n- Access to previous chat conversations in user profile
 - Search functionality within chat history
 - Download chat transcript option
 \n#### 3.9.4 Chat Availability
@@ -208,8 +209,7 @@ Each category contains multiple product variants with different packaging option
 - Assign chats to specific support staff
 - Canned responses library for quick replies
 
-### 3.10 Product Review and Rating System
-
+### 3.10 Product Review and Rating System\n
 **System Overview and Business Impact:**
 The Product Review and Rating System is a critical trust-building feature that directly drives sales conversion rates. By enabling customers to share authentic experiences and rate products, this system creates social proof that significantly influences purchase decisions. Research shows that products with customer reviews can increase conversion rates by up to 270%, making this feature essential for building customer confidence and driving revenue growth. The system combines star ratings, written reviews, and photo uploads to provide comprehensive product feedback that helps potential buyers make informed decisions.
 
@@ -259,8 +259,7 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Product ID is read-only and displayed after category selection
 - Form fields: Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey/Custom Categories - **admin can only select from existing categories, cannot add new categories here**), **Base Cost Price (₹/kg) - entered only once for1kg base**, Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- **Vendor Selection Section (Enhanced UI):**
   + **Vendor Assignment Dropdown:** Prominent dropdown field labeled 'Select Vendor' positioned directly below Category field
-    * Dropdown displays list of all registered vendors with format: [Vendor Name] - [Contact Person]
-    * Search functionality within dropdown for quick vendor lookup
+    * Dropdown displays list of all registered vendors with format: [Vendor Name] - [Contact Person]\n    * Search functionality within dropdown for quick vendor lookup
     * Selected vendor's details (Contact Person, Phone, Email) displayed below dropdown in read-only format
     * 'View Vendor Profile' link next to vendor details (opens vendor profile in new tab)
   + **Add New Vendor Option:**
@@ -313,7 +312,8 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Price (Low to High)
   + Recently Added
   + **Vendor Name (A-Z)**
-- **Vendor Name Display:** Clicking on vendor name in table opens vendor profile in new tab\n\n**Edit Product (Enhanced with Vendor Update UI and Updated Variant Logic)**
+- **Vendor Name Display:** Clicking on vendor name in table opens vendor profile in new tab
+\n**Edit Product (Enhanced with Vendor Update UI and Updated Variant Logic)**
 - **Back Button:** Navigate back to Product List page
 - Pre-filled form with existing product data
 - All fields editable except Product ID (read-only)
@@ -369,7 +369,7 @@ The Product Review and Rating System is a critical trust-building feature that d
 - Form fields:\n  + Category Name (text input, required)
   + Category Description (optional text area)
   + Category Prefix (auto-generated from first 3-5 letters of category name, editable)
-  + Default Packaging Options (checkboxes: 200g, 500g, 1kg, 2kg, 5kg, 10kg)
+  + Default Packaging Options (checkboxes:200g, 500g, 1kg, 2kg, 5kg, 10kg)
   + Discount Policy (optional: define package-based discount percentages)
   + Category Image Upload (optional)\n  + Status (Active/Inactive)
 - Save and Cancel buttons
@@ -910,7 +910,8 @@ The Product Review and Rating System is a critical trust-building feature that d
 - Table display with columns: Handler ID, Handler Name, Contact Person, Phone, Service Areas, Intrastate Rate, Interstate Rate, Total Shipments, Total Amount Paid, Status, Actions
 - Pagination with20 handlers per page
 - Search bar for handler name or ID
-- Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n\n**View Handler Profile**
+- Filter options: Service Area, Status (Active/Inactive)
+- Sort options: Name (A-Z), Total Shipments\n\n**View Handler Profile**
 - **Back Button:** Navigate back to Shipment Handler List page
 - Handler details section: Name, Contact Person, Email, Phone, Service Areas, Rate Structure, Payment Terms
 - Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status\n- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
@@ -1023,8 +1024,7 @@ The Product Review and Rating System is a critical trust-building feature that d
 - Track return statistics by handler
 - Generate return analysis reports
 
-#### 3.12.8 Sales Reports and Analytics\n- **Back Button:** Navigate back to Admin Dashboard
-- Sales reports by product, category, and time period
+#### 3.12.8 Sales Reports and Analytics\n- **Back Button:** Navigate back to Admin Dashboard\n- Sales reports by product, category, and time period
 - **Separate reports for Online Orders and In-Store Purchases**\n- **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends
 - Inventory turnover reports (with variant breakdown)
@@ -1150,13 +1150,13 @@ interface ProductWithVariants extends Product {
 
 ### 5.3 Frontend Components Development
 
-#### 5.3.1 Loyalty Points Components
+#### 5.3.1 Loyalty Points Components (Priority3)
 - **PointsBalance Component:** Display current points balance in header and user profile
 - **PointsHistory Component:** Transaction history table with filters\n- **PointsRedemption Component:** Redemption interface during checkout
 - **TierBadge Component:** Visual display of customer loyalty tier
 - **PointsEarningCalculator Component:** Real-time calculation of points to be earned on current order
 
-#### 5.3.2 Notification Components (Priority2)
+#### 5.3.2 Notification Components (Priority 2)
 - **NotificationIcon Component:** Header icon with unread count badge
 - **NotificationPanel Component:** Dropdown panel with notification list
 - **NotificationItem Component:** Individual notification display with read/unread status
@@ -1204,8 +1204,7 @@ interface ProductWithVariants extends Product {
 - **PurchaseOrderPayment Component:** Dialog for recording payments against purchase orders with validation and automatic status updates. Saves payment to vendor_payments table with purchase_order_id and vendor_id.\n- **VendorPaymentTracker Component:** Real-time display of payment status and outstanding balance in purchase order details, calculated from vendor_payments table
 - **AddVendorButton Component (New):** Prominent green button with plus icon at the top of Vendor List page, navigates to Add New Vendor page
 
-#### 5.3.8 Navigation Components
-- **BackButton Component:** Reusable back button component for navigating between admin pages
+#### 5.3.8 Navigation Components\n- **BackButton Component:** Reusable back button component for navigating between admin pages
 - **Breadcrumb Component:** Display current page hierarchy for easy navigation (e.g., Admin Dashboard > Products > Inventory > Stock Status)
 \n### 5.4 Header Integration
 - Update header navigation to include notification icon and chat widget icon
