@@ -28,8 +28,6 @@ interface VariantFormData {
   packaging_size: string;
   price: number;
   stock: number;
-  weight_kg: number;
-  cost_price: number;
   discount_percentage: number;
 }
 
@@ -54,9 +52,23 @@ interface NewVariant {
   price: number;
   stock: number;
   weight_kg: number;
-  cost_price: number;
   discount_percentage: number;
 }
+
+// Helper function to parse packaging size and return weight in kg
+const parsePackagingWeight = (packagingSize: string): number => {
+  const match = packagingSize.match(/^(\d+(?:\.\d+)?)(g|kg)$/i);
+  if (!match) return 1.0; // Default to 1kg if format is invalid
+  
+  const value = parseFloat(match[1]);
+  const unit = match[2].toLowerCase();
+  
+  if (unit === 'g') {
+    return value / 1000; // Convert grams to kg
+  }
+  return value; // Already in kg
+};
+
 
 export default function ProductManagement() {
   const [products, setProducts] = useState<ProductWithVariants[]>([]);
@@ -88,8 +100,6 @@ export default function ProductManagement() {
       packaging_size: '1kg',
       price: 0,
       stock: 100,
-      weight_kg: 1.0,
-      cost_price: 0,
       discount_percentage: 0
     }
   });
@@ -200,9 +210,11 @@ export default function ProductManagement() {
         // Create variants if any were added
         if (newVariants.length > 0) {
           for (const variant of newVariants) {
+            const cost_price = data.base_price * variant.weight_kg;
             await variantsApi.create({
               product_id: newProduct.id,
-              ...variant
+              ...variant,
+              cost_price
             });
           }
           toast({
@@ -234,9 +246,14 @@ export default function ProductManagement() {
     if (!selectedProduct) return;
 
     try {
+      const weight_kg = parsePackagingWeight(data.packaging_size);
+      const cost_price = selectedProduct.base_price * weight_kg;
+      
       await variantsApi.create({
         product_id: selectedProduct.id,
-        ...data
+        ...data,
+        weight_kg,
+        cost_price
       });
       toast({
         title: 'Variant created',
@@ -307,12 +324,12 @@ export default function ProductManagement() {
   };
 
   const handleAddVariant = () => {
+    const basePrice = productForm.getValues('base_price') || 0;
     const newVariant: NewVariant = {
       packaging_size: '1kg',
-      price: productForm.getValues('base_price') || 0,
+      price: basePrice,
       stock: 100,
       weight_kg: 1.0,
-      cost_price: 0,
       discount_percentage: 0
     };
     setNewVariants([...newVariants, newVariant]);
@@ -325,6 +342,12 @@ export default function ProductManagement() {
   const handleUpdateVariant = (index: number, field: keyof NewVariant, value: string | number) => {
     const updated = [...newVariants];
     updated[index] = { ...updated[index], [field]: value };
+    
+    // Auto-calculate weight when packaging_size changes
+    if (field === 'packaging_size' && typeof value === 'string') {
+      updated[index].weight_kg = parsePackagingWeight(value);
+    }
+    
     setNewVariants(updated);
   };
 
@@ -841,6 +864,17 @@ export default function ProductManagement() {
                                 </Select>
                               </div>
                               <div>
+                                <label className="text-sm font-medium">Weight (kg)</label>
+                                <Input
+                                  type="number"
+                                  step="0.001"
+                                  value={variant.weight_kg}
+                                  disabled
+                                  className="bg-muted"
+                                  placeholder="Auto-calculated"
+                                />
+                              </div>
+                              <div>
                                 <label className="text-sm font-medium">Price (₹)</label>
                                 <Input
                                   type="number"
@@ -851,35 +885,6 @@ export default function ProductManagement() {
                                 />
                               </div>
                               <div>
-                                <label className="text-sm font-medium">Stock</label>
-                                <Input
-                                  type="number"
-                                  value={variant.stock}
-                                  onChange={(e) => handleUpdateVariant(index, 'stock', parseInt(e.target.value) || 0)}
-                                  placeholder="Stock quantity"
-                                />
-                              </div>
-                              <div>
-                                <label className="text-sm font-medium">Weight (kg)</label>
-                                <Input
-                                  type="number"
-                                  step="0.1"
-                                  value={variant.weight_kg}
-                                  onChange={(e) => handleUpdateVariant(index, 'weight_kg', parseFloat(e.target.value) || 0)}
-                                  placeholder="Weight"
-                                />
-                              </div>
-                              <div>
-                                <label className="text-sm font-medium">Cost Price (₹)</label>
-                                <Input
-                                  type="number"
-                                  step="0.01"
-                                  value={variant.cost_price}
-                                  onChange={(e) => handleUpdateVariant(index, 'cost_price', parseFloat(e.target.value) || 0)}
-                                  placeholder="Cost price"
-                                />
-                              </div>
-                              <div>
                                 <label className="text-sm font-medium">Discount (%)</label>
                                 <Input
                                   type="number"
@@ -887,6 +892,15 @@ export default function ProductManagement() {
                                   value={variant.discount_percentage}
                                   onChange={(e) => handleUpdateVariant(index, 'discount_percentage', parseFloat(e.target.value) || 0)}
                                   placeholder="Discount"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-sm font-medium">Stock</label>
+                                <Input
+                                  type="number"
+                                  value={variant.stock}
+                                  onChange={(e) => handleUpdateVariant(index, 'stock', parseInt(e.target.value) || 0)}
+                                  placeholder="Stock quantity"
                                 />
                               </div>
                             </div>
@@ -1012,82 +1026,73 @@ export default function ProductManagement() {
                       render={({ field }) => (
                         <FormItem>
                           <FormLabel>Packaging Size</FormLabel>
-                          <FormControl>
-                            <Input {...field} placeholder="e.g., 1kg, 500g" />
-                          </FormControl>
+                          <Select onValueChange={field.onChange} value={field.value}>
+                            <FormControl>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select size" />
+                              </SelectTrigger>
+                            </FormControl>
+                            <SelectContent>
+                              <SelectItem value="200g">200g</SelectItem>
+                              <SelectItem value="500g">500g</SelectItem>
+                              <SelectItem value="1kg">1kg</SelectItem>
+                              <SelectItem value="2kg">2kg</SelectItem>
+                              <SelectItem value="5kg">5kg</SelectItem>
+                              <SelectItem value="10kg">10kg</SelectItem>
+                            </SelectContent>
+                          </Select>
                           <FormMessage />
                         </FormItem>
                       )}
                     />
 
-                    <FormField
-                      control={variantForm.control}
-                      name="price"
-                      rules={{ 
-                        required: 'Price is required',
-                        min: { value: 0, message: 'Price must be positive' }
-                      }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Selling Price (₹)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              {...field} 
-                              type="number" 
-                              step="0.01"
-                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                    <div className="grid grid-cols-2 gap-4">
+                      <FormField
+                        control={variantForm.control}
+                        name="price"
+                        rules={{ 
+                          required: 'Price is required',
+                          min: { value: 0, message: 'Price must be positive' }
+                        }}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Selling Price (₹)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                {...field} 
+                                type="number" 
+                                step="0.01"
+                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
 
-                    <FormField
-                      control={variantForm.control}
-                      name="cost_price"
-                      rules={{ 
-                        required: 'Cost price is required',
-                        min: { value: 0, message: 'Cost price must be positive' }
-                      }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Cost Price (₹)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              {...field} 
-                              type="number" 
-                              step="0.01"
-                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={variantForm.control}
-                      name="discount_percentage"
-                      rules={{ 
-                        min: { value: 0, message: 'Discount must be positive' },
-                        max: { value: 100, message: 'Discount cannot exceed 100%' }
-                      }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Discount (%)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              {...field} 
-                              type="number" 
-                              step="0.01"
-                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
+                      <FormField
+                        control={variantForm.control}
+                        name="discount_percentage"
+                        rules={{ 
+                          min: { value: 0, message: 'Discount must be positive' },
+                          max: { value: 100, message: 'Discount cannot exceed 100%' }
+                        }}
+                        render={({ field }) => (
+                          <FormItem>
+                            <FormLabel>Discount (%)</FormLabel>
+                            <FormControl>
+                              <Input 
+                                {...field} 
+                                type="number" 
+                                step="0.01"
+                                onChange={(e) => field.onChange(parseFloat(e.target.value))}
+                              />
+                            </FormControl>
+                            <FormMessage />
+                          </FormItem>
+                        )}
+                      />
+                    </div>
 
                     <FormField
                       control={variantForm.control}
@@ -1104,29 +1109,6 @@ export default function ProductManagement() {
                               {...field} 
                               type="number"
                               onChange={(e) => field.onChange(parseInt(e.target.value))}
-                            />
-                          </FormControl>
-                          <FormMessage />
-                        </FormItem>
-                      )}
-                    />
-
-                    <FormField
-                      control={variantForm.control}
-                      name="weight_kg"
-                      rules={{ 
-                        required: 'Weight is required',
-                        min: { value: 0, message: 'Weight must be positive' }
-                      }}
-                      render={({ field }) => (
-                        <FormItem>
-                          <FormLabel>Weight (kg)</FormLabel>
-                          <FormControl>
-                            <Input 
-                              {...field} 
-                              type="number" 
-                              step="0.001"
-                              onChange={(e) => field.onChange(parseFloat(e.target.value))}
                             />
                           </FormControl>
                           <FormMessage />
