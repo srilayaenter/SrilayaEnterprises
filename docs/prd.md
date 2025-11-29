@@ -83,7 +83,8 @@ Selling Price = Cost Price +25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg
+- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -156,61 +157,56 @@ Each category contains multiple product variants with different packaging option
 - Tier benefits displayed in user profile
 - Tier upgrade notifications
 
-### 3.8 Notification System
-\n#### 3.8.1 Notification Types
-- Order status updates (Order Placed, Processing, Shipped, Delivered)
-- Payment confirmations
-- Loyalty points earned and redeemed
-- Promotional offers and discounts
-- Low stock alerts for wishlist items
-- Product review requests
-- Account security alerts
+### 3.8 Notification System (Priority2 - Implement Second)\n
+**Purpose:** Keeps customers informed and improves customer satisfaction while reducing support queries.
 
-#### 3.8.2 Notification Delivery Channels
-- In-app notifications with badge counter in header
-- Email notifications\n- SMS notifications for critical updates (order shipped, delivered)
-\n#### 3.8.3 Notification Center
+#### 3.8.1 Core Notification Types
+- **Order status notifications:** Order Placed, Processing, Shipped, Delivered (email + in-app)
+- **Payment confirmations:** Successful payment receipt and transaction details (email + in-app)
+- Promotional offers and discounts\n- Low stock alerts for wishlist items
+- Account security alerts
+\n#### 3.8.2 Notification Delivery Channels
+- **In-app notifications:** Notification center with badge counter in header
+- **Email notifications:** Automated emails for order status and payment confirmations
+\n#### 3.8.3 Basic Notification Center
 - Centralized notification panel accessible from header icon
 - Notification list with timestamp and read/unread status
 - Mark as read/unread functionality
-- Delete individual or bulk notifications
-- Filter by notification type (Orders, Promotions, Account, Loyalty)
-- Notification preferences settings (enable/disable by type and channel)
+- Delete individual notifications
+- Filter by notification type (Orders, Payments, Promotions, Account)
 
 #### 3.8.4 Real-time Notifications
-- Push notifications for time-sensitive updates
-- Sound and visual alerts for new notifications
+- Push notifications for order status updates
+- Visual alerts for new notifications
 - Auto-refresh notification count without page reload
-\n### 3.9 Customer Support Chat System
+\n### 3.9 Customer Support Chat System (Priority 2 - Implement Second)
+\n**Purpose:** Reduces support burden and directly impacts customer service quality.
 
 #### 3.9.1 Live Chat Widget
 - Floating chat icon visible on all pages (bottom-right corner)
 - Click to expand chat window
 - Minimizable and closable chat interface
 - Unread message badge indicator
-\n#### 3.9.2 Chat Features
+\n#### 3.9.2 Real-time Messaging
 - Real-time messaging between customer and support staff
-- Message history retention for ongoing conversations
 - Typing indicators showing when support agent is typing
-- File attachment support (images, documents up to 5MB)
 - Quick reply templates for common queries
 - Emoji support for friendly communication
 
-#### 3.9.3 Chat Availability
-- Display support hours (e.g., Mon-Sat9AM-6PM)
-- Offline message form when support is unavailable
-- Auto-reply with expected response time
-- Queue position indicator during high traffic\n
-#### 3.9.4 Chat History
+#### 3.9.3 Chat History
 - Access to previous chat conversations in user profile
 - Search functionality within chat history
 - Download chat transcript option
-\n#### 3.9.5 Admin Chat Management
+\n#### 3.9.4 Chat Availability
+- Display support hours (e.g., Mon-Sat9AM-6PM)
+- Offline message form when support is unavailable
+- Auto-reply with expected response time
+
+#### 3.9.5 Admin Chat Management
 - Admin dashboard for managing customer chat requests
 - Queue management with priority assignment
 - Assign chats to specific support staff
 - Canned responses library for quick replies
-- Chat analytics (response time, resolution rate, customer satisfaction)
 
 ### 3.10 Product Review and Rating System
 
@@ -363,7 +359,8 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Confirm button applies vendor to all selected products by updating vendor_id in products table\n  + Success message displays count of products updated
 \n**Category Management (Separate Section with Dedicated Add Category Button)**
 \n**View Category List**
-- **Back Button:** Navigate back to Admin Dashboard\n- **Add Category Button:** Prominent green button with plus icon at the top of the page (navigates to Add New Category page)
+- **Back Button:** Navigate back to Admin Dashboard
+- **Add Category Button:** Prominent green button with plus icon at the top of the page (navigates to Add New Category page)
 - Table display with columns: Category Name, Category Prefix, Total Products, Status, Actions
 - Search bar for category name
 - Filter by Status (Active/Inactive)
@@ -678,7 +675,8 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Payment Terms
   + Delivery Address\n  + Special Instructions
 - **Product Details Table:**
-  + Product Name\n  + Category
+  + Product Name
+  + Category
   + Quantity Ordered (kg)
   + Quantity Received (kg) (editable when marking as received)
   + Cost Price per kg (₹)
@@ -912,8 +910,7 @@ The Product Review and Rating System is a critical trust-building feature that d
 - Table display with columns: Handler ID, Handler Name, Contact Person, Phone, Service Areas, Intrastate Rate, Interstate Rate, Total Shipments, Total Amount Paid, Status, Actions
 - Pagination with20 handlers per page
 - Search bar for handler name or ID
-- Filter options: Service Area, Status (Active/Inactive)
-- Sort options: Name (A-Z), Total Shipments\n\n**View Handler Profile**
+- Filter options: Service Area, Status (Active/Inactive)\n- Sort options: Name (A-Z), Total Shipments\n\n**View Handler Profile**
 - **Back Button:** Navigate back to Shipment Handler List page
 - Handler details section: Name, Contact Person, Email, Phone, Service Areas, Rate Structure, Payment Terms
 - Shipment history table: Shipment ID, Order ID, Date, Destination, Weight, Charges, Delivery Status\n- Financial summary: Total shipments, Total charges, Total paid, Outstanding amount
@@ -1026,7 +1023,8 @@ The Product Review and Rating System is a critical trust-building feature that d
 - Track return statistics by handler
 - Generate return analysis reports
 
-#### 3.12.8 Sales Reports and Analytics\n- **Back Button:** Navigate back to Admin Dashboard\n- Sales reports by product, category, and time period
+#### 3.12.8 Sales Reports and Analytics\n- **Back Button:** Navigate back to Admin Dashboard
+- Sales reports by product, category, and time period
 - **Separate reports for Online Orders and In-Store Purchases**\n- **Combined sales overview with order type breakdown**
 - Customer analytics and purchase trends
 - Inventory turnover reports (with variant breakdown)
@@ -1158,21 +1156,19 @@ interface ProductWithVariants extends Product {
 - **TierBadge Component:** Visual display of customer loyalty tier
 - **PointsEarningCalculator Component:** Real-time calculation of points to be earned on current order
 
-#### 5.3.2 Notification Components\n- **NotificationIcon Component:** Header icon with unread count badge
+#### 5.3.2 Notification Components (Priority2)
+- **NotificationIcon Component:** Header icon with unread count badge
 - **NotificationPanel Component:** Dropdown panel with notification list
 - **NotificationItem Component:** Individual notification display with read/unread status
-- **NotificationPreferences Component:** Settings page for notification preferences
 - **NotificationToast Component:** Pop-up alerts for real-time notifications
-
-#### 5.3.3 Chat Components
+\n#### 5.3.3 Chat Components (Priority 2)
 - **ChatWidget Component:** Floating chat icon and expandable chat window
 - **ChatWindow Component:** Main chat interface with message list and input\n- **ChatMessage Component:** Individual message bubble with timestamp
-- **ChatInput Component:** Text input with file attachment and emoji picker
+- **ChatInput Component:** Text input with emoji picker
 - **ChatHistory Component:** Previous conversations list in user profile
 - **ChatAvailability Component:** Display support hours and offline message form
 
-#### 5.3.4 Review Components
-- **ReviewForm Component:** Review submission form with star rating and photo upload
+#### 5.3.4 Review Components\n- **ReviewForm Component:** Review submission form with star rating and photo upload
 - **ReviewList Component:** Display reviews with sorting and filtering
 - **ReviewItem Component:** Individual review display with helpful voting
 - **RatingDistribution Component:** Visual chart showing rating breakdown
@@ -1212,13 +1208,14 @@ interface ProductWithVariants extends Product {
 - **BackButton Component:** Reusable back button component for navigating between admin pages
 - **Breadcrumb Component:** Display current page hierarchy for easy navigation (e.g., Admin Dashboard > Products > Inventory > Stock Status)
 \n### 5.4 Header Integration
-- Update header navigation to include notification icon, loyalty points display, and chat widget icon
+- Update header navigation to include notification icon and chat widget icon
 - Implement responsive design for mobile devices
-- Add real-time update functionality for notification count and points balance
+- Add real-time update functionality for notification count
 
 ### 5.5 Routes Configuration
 - Add routes for loyalty points pages: /loyalty, /loyalty/history, /loyalty/redeem
-- Add routes for notification pages: /notifications, /notifications/preferences\n- Add routes for chat pages: /chat, /chat/history\n- Update product detail route to include review section: /product/:id#reviews
+- Add routes for notification pages: /notifications\n- Add routes for chat pages: /chat, /chat/history
+- Update product detail route to include review section: /product/:id#reviews
 - Add route for critical stock dashboard: /admin/inventory/critical-status
 - **Add routes for category management: /admin/categories, /admin/categories/add, /admin/categories/edit/:id**
 - **Add routes for variant management within product pages**
@@ -1250,8 +1247,7 @@ interface ProductWithVariants extends Product {
 - **Connect VendorPaymentWithDetails interface with frontend components to display complete payment information including vendor and purchase order details**
 \n### 5.7 Testing Requirements
 - End-to-end testing of loyalty points earning and redemption flow
-- Notification delivery testing across all channels (in-app, email, SMS)
-- Chat functionality testing including real-time messaging and file attachments
+- Notification delivery testing (in-app and email)\n- Chat functionality testing including real-time messaging
 - Review submission and moderation workflow testing
 - **Review conversion impact testing: Measure conversion rate differences between products with and without reviews**
 - **Automatic stock update testing: Verify stock levels are correctly updated when purchase orders are marked as received, with separate tracking for each variant**
@@ -1311,8 +1307,7 @@ interface ProductWithVariants extends Product {
 - **Payment status colors: Red (#F44336) for Unpaid, Orange (#FF9800) for Partially Paid, Green (#4CAF50) for Fully Paid**
 - **Vendor UI colors: Green (#4CAF50) for Add Vendor button, blue (#2196F3) for vendor dropdown highlight**
 - **Review rating colors: Gold (#FFD700) for star ratings, green (#4CAF50) for verified purchase badges**
-
-### 6.2 Layout\n- Card-based layout for product display with clear visual hierarchy
+\n### 6.2 Layout\n- Card-based layout for product display with clear visual hierarchy
 - Grid system for product catalog with responsive design
 - Clean navigation with prominent search bar and category filters
 - Floating chat widget positioned at bottom-right corner
