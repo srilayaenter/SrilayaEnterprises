@@ -83,8 +83,7 @@ Selling Price = Cost Price +25%
 - HONEY005: Honey&Amla - Cost: ₹665/kg, Selling: ₹831.25/kg, GST: 41.56%, Final (200g): ₹872.81/kg
 - HONEY006: Rose Petals Honey - Cost: ₹765/kg, Selling: ₹956.25/kg, GST: 47.81%, Final (200g): ₹1004.06/kg
 \n### 2.4 Packaging Options
-- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg
-- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
+- Standard categories (Millets, Rice, Flakes, Flour): 1kg, 2kg, 5kg, 10kg\n- Honey: 200g, 500g, 1kg\n\n### 2.5 Product Structure
 Each category contains multiple product variants with different packaging options and pricing as listed above.
 
 ## 3. Core Features
@@ -132,8 +131,7 @@ Each category contains multiple product variants with different packaging option
   + Invoice displays: subtotal, package discount (with percentage), GST, and grand total
 - **Invoice line item display:** Each product line shows base price, applicable discount percentage (if any), discounted price, GST, and final price
 
-### 3.7 Loyalty Points System (Priority 3 - Implement Third)
-\n**Purpose:** Encourages repeat purchases and builds long-term customer retention with measurable revenue impact over time.
+### 3.7 Loyalty Points System (Priority3- Implement Third)\n\n**Purpose:** Encourages repeat purchases and builds long-term customer retention with measurable revenue impact over time.
 
 ####3.7.1 Points Earning Mechanism
 - Customers earn 1 loyalty point for every ₹100 spent on purchases
@@ -259,7 +257,8 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Product ID is read-only and displayed after category selection
 - Form fields: Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey/Custom Categories - **admin can only select from existing categories, cannot add new categories here**), **Base Cost Price (₹/kg) - entered only once for1kg base**, Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- **Vendor Selection Section (Enhanced UI):**
   + **Vendor Assignment Dropdown:** Prominent dropdown field labeled 'Select Vendor' positioned directly below Category field
-    * Dropdown displays list of all registered vendors with format: [Vendor Name] - [Contact Person]\n    * Search functionality within dropdown for quick vendor lookup
+    * Dropdown displays list of all registered vendors with format: [Vendor Name] - [Contact Person]
+    * Search functionality within dropdown for quick vendor lookup
     * Selected vendor's details (Contact Person, Phone, Email) displayed below dropdown in read-only format
     * 'View Vendor Profile' link next to vendor details (opens vendor profile in new tab)
   + **Add New Vendor Option:**
@@ -312,8 +311,7 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Price (Low to High)
   + Recently Added
   + **Vendor Name (A-Z)**
-- **Vendor Name Display:** Clicking on vendor name in table opens vendor profile in new tab
-\n**Edit Product (Enhanced with Vendor Update UI and Updated Variant Logic)**
+- **Vendor Name Display:** Clicking on vendor name in table opens vendor profile in new tab\n\n**Edit Product (Enhanced with Vendor Update UI and Updated Variant Logic)**
 - **Back Button:** Navigate back to Product List page
 - Pre-filled form with existing product data
 - All fields editable except Product ID (read-only)
@@ -675,8 +673,7 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Payment Terms
   + Delivery Address\n  + Special Instructions
 - **Product Details Table:**
-  + Product Name
-  + Category
+  + Product Name\n  + Category
   + Quantity Ordered (kg)
   + Quantity Received (kg) (editable when marking as received)
   + Cost Price per kg (₹)
