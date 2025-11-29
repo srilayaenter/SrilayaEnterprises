@@ -15,10 +15,10 @@
 - [x] Update ProductWithVariants to include vendor
 
 ### Phase 3: API Functions
-- [ ] Update productsApi to include vendor info
-- [ ] Update vendorPaymentsApi for new fields
-- [ ] Add vendor transaction queries
-- [ ] Update purchase orders API
+- [x] Update productsApi to include vendor info
+- [x] Update vendorPaymentsApi for new fields
+- [x] Add vendor transaction queries
+- [x] Update purchase orders API
 
 ### Phase 4: Product Management Updates
 - [ ] Add vendor selection dropdown to product form
