@@ -257,8 +257,7 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Product ID is read-only and displayed after category selection
 - Form fields: Product Name, Category (dropdown: Rice/Flour/Flakes/Millets/Honey/Custom Categories - **admin can only select from existing categories, cannot add new categories here**), **Base Cost Price (₹/kg) - entered only once for1kg base**, Selling Price (auto-calculated as Cost Price + 25%), GST percentage\n- **Vendor Selection Section (Enhanced UI):**
   + **Vendor Assignment Dropdown:** Prominent dropdown field labeled 'Select Vendor' positioned directly below Category field
-    * Dropdown displays list of all registered vendors with format: [Vendor Name] - [Contact Person]
-    * Search functionality within dropdown for quick vendor lookup
+    * Dropdown displays list of all registered vendors with format: [Vendor Name] - [Contact Person]\n    * Search functionality within dropdown for quick vendor lookup
     * Selected vendor's details (Contact Person, Phone, Email) displayed below dropdown in read-only format
     * 'View Vendor Profile' link next to vendor details (opens vendor profile in new tab)
   + **Add New Vendor Option:**
@@ -311,7 +310,8 @@ The Product Review and Rating System is a critical trust-building feature that d
   + Price (Low to High)
   + Recently Added
   + **Vendor Name (A-Z)**
-- **Vendor Name Display:** Clicking on vendor name in table opens vendor profile in new tab\n\n**Edit Product (Enhanced with Vendor Update UI and Updated Variant Logic)**
+- **Vendor Name Display:** Clicking on vendor name in table opens vendor profile in new tab
+\n**Edit Product (Enhanced with Vendor Update UI and Updated Variant Logic)**
 - **Back Button:** Navigate back to Product List page
 - Pre-filled form with existing product data
 - All fields editable except Product ID (read-only)
@@ -1353,6 +1353,892 @@ interface ProductWithVariants extends Product {
 - **Outstanding balance display: 16px bold with color-coded text (red for unpaid, orange for partial, green for fully paid)**
 - **Review text: 14px regular for review content, 16px bold for reviewer name**
 - **Rating display: 18px for average rating number, 14px for review count**
-\n## 7. Reference Files
+\n## 7. Comprehensive Test Plan for Core E-commerce Features
+
+### 7.1 Test Plan Overview
+
+**Purpose:** This test plan systematically validates the core e-commerce functionality of Srilaya Enterprises Organic Store, ensuring seamless customer experience from product discovery to payment completion.
+
+**Scope:** Product Catalog, Shopping Cart, Checkout Process, Payment Gateway Integration\n
+**Test Environment:**
+- Browsers: Chrome (latest), Firefox (latest), Safari (latest), Edge (latest)
+- Devices: Desktop (Windows/Mac), Mobile (iOS/Android), Tablet (iOS/Android)
+- Test Data: Sample products from all categories (Rice, Flour, Flakes, Millets, Honey, Custom Categories)
+- Test Users: Guest users, Registered customers, Admin users
+
+**Test Approach:**
+- Functional Testing: Verify all features work as specified\n- Integration Testing: Validate interactions between modules
+- UI/UX Testing: Ensure intuitive and responsive design
+- Performance Testing: Validate page load times and responsiveness
+- Security Testing: Verify secure data handling and payment processing
+- Cross-browser/Device Testing: Ensure compatibility across platforms
+\n---
+
+### 7.2 Product Catalog Testing
+
+#### 7.2.1 Product Listing and Display
+\n**Test Case PC-001: Verify Product Catalog Page Load**
+- **Objective:** Ensure product catalog page loads correctly with all products displayed
+- **Preconditions:** Database contains products from all categories
+- **Test Steps:**
+  1. Navigate to product catalog page
+  2. Verify page loads within 3 seconds
+  3. Verify all product cards display correctly with image, name, price, and 'Add to Cart' button
+  4. Verify pagination controls appear if products exceed 20 per page
+- **Expected Results:**
+  + Page loads successfully
+  + All products display with correct information
+  + Images load properly
+  + Pagination works correctly
+- **Priority:** High
+
+**Test Case PC-002: Verify Category Navigation**
+- **Objective:** Validate category filtering functionality
+- **Test Steps:**
+  1. Click on 'Rice' category in navigation menu
+  2. Verify only rice products are displayed
+  3. Repeat for all categories (Flour, Flakes, Millets, Honey, Custom Categories)
+  4. Verify product count matches category filter
+- **Expected Results:**\n  + Category filter displays only relevant products
+  + Product count is accurate
+  + URL updates to reflect selected category
+- **Priority:** High
+
+**Test Case PC-003: Verify Search Functionality**
+- **Objective:** Test product search with various inputs
+- **Test Steps:**\n  1. Enter 'Foxtail' in search bar
+  2. Verify search results display all products containing 'Foxtail' (Foxtail rice, Foxtail flour, Foxtail flakes)\n  3. Test partial search: Enter 'Ragi'\n  4. Test search with no results: Enter 'XYZ123'
+  5. Test search with special characters\n- **Expected Results:**
+  + Search returns relevant products
+  + Partial matches are included
+  + No results message displays appropriately
+  + Special characters are handled gracefully
+- **Priority:** High
+
+**Test Case PC-004: Verify Price Filter**
+- **Objective:** Validate price range filtering
+- **Test Steps:**
+  1. Set price range filter to ₹50-₹100
+  2. Verify only products within price range are displayed
+  3. Test minimum price only filter
+  4. Test maximum price only filter
+  5. Test invalid price range (max < min)
+- **Expected Results:**
+  + Products displayed match selected price range
+  + Invalid ranges show error message
+  + Filter resets correctly
+- **Priority:** Medium
+
+**Test Case PC-005: Verify Packaging Size Filter**
+- **Objective:** Test filtering by packaging options
+- **Test Steps:**\n  1. Select '1kg' packaging filter
+  2. Verify only products with 1kg variant are displayed
+  3. Select multiple packaging sizes (1kg + 5kg)
+  4. Verify products with either packaging option are shown
+  5. Test honey-specific packaging filters (200g, 500g)\n- **Expected Results:**
+  + Filter displays products with selected packaging sizes
+  + Multiple selections work correctly
+  + Category-specific packaging options display appropriately
+- **Priority:** Medium
+
+**Test Case PC-006: Verify Product Detail Page**
+- **Objective:** Validate product detail page displays complete information
+- **Test Steps:**
+  1. Click on a product card to open detail page
+  2. Verify product image, name, description, and pricing information display
+  3. Verify variant selector (packaging sizes) is present
+  4. Verify GST breakdown is shown
+  5. Verify package discount information displays for applicable variants
+  6. Verify 'Add to Cart' button is functional
+  7. Verify product reviews section displays (if reviews exist)
+- **Expected Results:**
+  + All product information displays correctly
+  + Variant selector shows available packaging options
+  + Pricing calculations are accurate
+  + Reviews section loads properly
+- **Priority:** High
+
+**Test Case PC-007: Verify Product Image Display**
+- **Objective:** Test product image loading and quality
+- **Test Steps:**\n  1. Verify product images load on catalog page
+  2. Verify image quality is appropriate (not pixelated)
+  3. Test image zoom functionality on product detail page
+  4. Verify placeholder image displays if product image is missing
+  5. Test image loading on slow network connection
+- **Expected Results:**\n  + Images load correctly
+  + Image quality is acceptable
+  + Zoom functionality works smoothly
+  + Placeholder displays for missing images
+- **Priority:** Medium
+
+**Test Case PC-008: Verify Autocomplete Suggestions**
+- **Objective:** Test search autocomplete functionality
+- **Test Steps:**
+  1. Start typing 'Barn' in search bar
+  2. Verify autocomplete suggestions appear (Barnyard rice, Barnyard flour, Barnyard flakes)
+  3. Click on a suggestion\n  4. Verify search executes with selected suggestion
+  5. Test autocomplete with no matching results
+- **Expected Results:**
+  + Autocomplete suggestions display relevant products
+  + Clicking suggestion executes search
+  + No suggestions message displays appropriately
+- **Priority:** Low
+
+---
+
+### 7.3 Shopping Cart Testing
+
+#### 7.3.1 Add to Cart Functionality
+
+**Test Case SC-001: Verify Add to Cart from Product Catalog**
+- **Objective:** Test adding products to cart from catalog page
+- **Test Steps:**\n  1. Click 'Add to Cart' button on a product card
+  2. Verify cart icon updates with item count
+  3. Verify success notification displays
+  4. Add same product again\n  5. Verify quantity increments instead of adding duplicate entry
+- **Expected Results:**\n  + Product is added to cart
+  + Cart count updates correctly
+  + Success message displays
+  + Duplicate products increment quantity
+- **Priority:** High\n
+**Test Case SC-002: Verify Add to Cart from Product Detail Page**
+- **Objective:** Test adding products with variant selection
+- **Test Steps:**
+  1. Open product detail page
+  2. Select packaging size variant (e.g., 5kg)
+  3. Enter quantity (e.g., 2)
+  4. Click 'Add to Cart'\n  5. Verify cart displays correct variant and quantity
+  6. Verify package discount is applied if applicable
+- **Expected Results:**
+  + Selected variant is added to cart
+  + Quantity is correct
+  + Package discount is calculated correctly
+- **Priority:** High
+
+**Test Case SC-003: Verify Cart Icon and Badge**
+- **Objective:** Validate cart icon displays correct item count
+- **Test Steps:**
+  1. Add 3 different products to cart
+  2. Verify cart badge shows '3'\n  3. Add 2 more of an existing product
+  4. Verify cart badge updates to '5'
+  5. Remove1 product\n  6. Verify cart badge updates to '4'
+- **Expected Results:**
+  + Cart badge displays accurate item count
+  + Badge updates in real-time
+- **Priority:** Medium
+
+**Test Case SC-004: Verify Cart Page Display**
+- **Objective:** Test cart page layout and information display
+- **Test Steps:**
+  1. Add multiple products to cart
+  2. Navigate to cart page
+  3. Verify all cart items display with image, name, variant, quantity, price\n  4. Verify subtotal, discount, GST, and total are calculated correctly
+  5. Verify'Continue Shopping' and 'Proceed to Checkout' buttons are present
+- **Expected Results:**\n  + Cart page displays all items correctly
+  + Pricing calculations are accurate
+  + Navigation buttons work properly
+- **Priority:** High
+
+#### 7.3.2 Cart Modification\n
+**Test Case SC-005: Verify Update Quantity in Cart**
+- **Objective:** Test quantity modification functionality
+- **Test Steps:**\n  1. Open cart page
+  2. Increase quantity of a product using '+' button
+  3. Verify quantity updates and total price recalculates
+  4. Decrease quantity using '-' button
+  5. Verify quantity updates and total price recalculates
+  6. Manually enter quantity in input field
+  7. Verify quantity updates correctly
+- **Expected Results:**\n  + Quantity updates successfully
+  + Price recalculates accurately
+  + Manual input is validated (no negative or zero values)
+- **Priority:** High
+
+**Test Case SC-006: Verify Remove Item from Cart**
+- **Objective:** Test item removal functionality
+- **Test Steps:**\n  1. Add 3 products to cart
+  2. Click 'Remove' button on one product
+  3. Verify confirmation dialog appears
+  4. Confirm removal\n  5. Verify product is removed from cart
+  6. Verify cart total updates\n  7. Verify cart badge updates
+- **Expected Results:**
+  + Confirmation dialog displays
+  + Product is removed successfully
+  + Cart totals and badge update correctly
+- **Priority:** High
+
+**Test Case SC-007: Verify Clear Cart**
+- **Objective:** Test clearing all items from cart
+- **Test Steps:**
+  1. Add multiple products to cart
+  2. Click 'Clear Cart' button\n  3. Verify confirmation dialog appears
+  4. Confirm clear action
+  5. Verify cart is empty
+  6. Verify 'Your cart is empty' message displays
+- **Expected Results:**
+  + Confirmation dialog displays
+  + All items are removed
+  + Empty cart message displays
+- **Priority:** Medium
+
+**Test Case SC-008: Verify Cart Persistence**
+- **Objective:** Test cart data persistence across sessions
+- **Test Steps:**\n  1. Add products to cart as guest user
+  2. Close browser
+  3. Reopen browser and navigate to website
+  4. Verify cart items are retained
+  5. Login as registered user
+  6. Verify cart items are merged with user's saved cart
+- **Expected Results:**
+  + Guest cart persists using local storage/cookies
+  + Registered user cart syncs with database
+  + Cart merge works correctly on login
+- **Priority:** Medium
+
+#### 7.3.3 Cart Calculations
+
+**Test Case SC-009: Verify Package Discount Calculation**
+- **Objective:** Validate package-based discount application
+- **Test Steps:**\n  1. Add 1kg rice product to cart (no discount)
+  2. Verify no discount is applied
+  3. Add 5kg rice product to cart (2% discount)
+  4. Verify 2% discount is applied to5kg product only
+  5. Add 10kg flour product to cart (3% discount)
+  6. Verify 3% discount is applied to 10kg product only
+  7. Verify subtotal and total calculations are correct
+- **Expected Results:**
+  + Discounts are applied correctly based on packaging size
+  + Discount percentages match policy (2% for 5kg, 3% for 10kg)
+  + Calculations are accurate
+- **Priority:** High
+
+**Test Case SC-010: Verify GST Calculation**
+- **Objective:** Test GST calculation for different products
+- **Test Steps:**
+  1. Add products with different GST rates to cart
+  2. Verify GST is calculated correctly for each product
+  3. Verify total GST is sum of individual product GST amounts
+  4. Verify GST breakdown displays in cart summary
+- **Expected Results:**\n  + GST is calculated accurately per product
+  + Total GST is correct
+  + GST breakdown is clear and accurate
+- **Priority:** High
+
+**Test Case SC-011: Verify Cart Total Calculation**
+- **Objective:** Validate overall cart total calculation
+- **Test Steps:**
+  1. Add multiple products with different variants to cart
+  2. Verify subtotal = sum of (product price × quantity) for all items
+  3. Verify discount = sum of package discounts\n  4. Verify GST = sum of GST for all items
+  5. Verify total = subtotal - discount + GST
+  6. Manually calculate and compare with displayed total
+- **Expected Results:**
+  + All calculations are mathematically correct
+  + Displayed totals match manual calculations
+- **Priority:** High
+
+**Test Case SC-012: Verify Honey Product Discount**
+- **Objective:** Test honey-specific discount policy
+- **Test Steps:**\n  1. Add 200g honey product to cart (no discount)
+  2. Verify no discount is applied
+  3. Add 500g honey product to cart (2% discount)
+  4. Verify 2% discount is applied\n  5. Add 1kg honey product to cart (3% discount)
+  6. Verify 3% discount is applied
+- **Expected Results:**
+  + Honey products follow separate discount policy
+  + Discounts are applied correctly (2% for 500g, 3% for 1kg)
+- **Priority:** Medium
+
+---
+
+### 7.4 Checkout Process Testing
+
+#### 7.4.1 Order Type Selection
+
+**Test Case CO-001: Verify Order Type Selection**
+- **Objective:** Test order type selection (Online Order / In-Store Purchase)
+- **Test Steps:**\n  1. Proceed to checkout from cart
+  2. Verify order type selection checkbox is present
+  3. Select'Online Order'\n  4. Verify delivery address fields appear
+  5. Verify shipping charges section appears
+  6. Select 'In-Store Purchase'
+  7. Verify delivery address fields are hidden
+  8. Verify shipping charges section is hidden
+- **Expected Results:**
+  + Order type selection is clear and functional
+  + Delivery fields display/hide based on selection
+  + Shipping charges apply only to online orders
+- **Priority:** High
+
+**Test Case CO-002: Verify Guest Checkout**
+- **Objective:** Test checkout as guest user
+- **Test Steps:**
+  1. Add products to cart as guest\n  2. Proceed to checkout
+  3. Verify option to checkout as guest is available
+  4. Enter required information (name, email, phone)
+  5. Complete checkout\n  6. Verify order confirmation is received
+- **Expected Results:**
+  + Guest checkout is available
+  + Required fields are validated
+  + Order is processed successfully
+- **Priority:** High
+
+**Test Case CO-003: Verify Registered User Checkout**
+- **Objective:** Test checkout for logged-in users
+- **Test Steps:**\n  1. Login as registered user
+  2. Add products to cart
+  3. Proceed to checkout
+  4. Verify user information is pre-filled
+  5. Verify saved delivery addresses are available for selection
+  6. Complete checkout
+- **Expected Results:**
+  + User information is auto-populated
+  + Saved addresses are accessible
+  + Checkout process is streamlined
+- **Priority:** High
+
+#### 7.4.2 Delivery Address Management
+
+**Test Case CO-004: Verify Delivery Address Input (Online Order)**
+- **Objective:** Test delivery address entry for online orders
+- **Test Steps:**
+  1. Select 'Online Order' as order type
+  2. Enter delivery address (Street, City, State, Pincode)
+  3. Verify all fields are required
+  4. Test with invalid pincode format
+  5. Test with missing fields
+  6. Enter valid address and proceed
+- **Expected Results:**\n  + All address fields are validated
+  + Invalid inputs show error messages
+  + Valid address is accepted
+- **Priority:** High\n
+**Test Case CO-005: Verify Saved Address Selection**
+- **Objective:** Test selecting from saved addresses
+- **Test Steps:**
+  1. Login as user with saved addresses
+  2. Proceed to checkout for online order
+  3. Verify saved addresses display in dropdown
+  4. Select a saved address
+  5. Verify address fields auto-populate
+  6. Verify option to add new address is available
+- **Expected Results:**
+  + Saved addresses display correctly
+  + Selected address auto-fills fields
+  + New address option is available
+- **Priority:** Medium
+
+**Test Case CO-006: Verify Delivery Location Detection**
+- **Objective:** Test intrastate vs interstate delivery detection
+- **Test Steps:**
+  1. Enter delivery address in same state as store
+  2. Verify system detects intrastate delivery
+  3. Verify shipping charges are calculated at₹30-50/kg
+  4. Enter delivery address in different state
+  5. Verify system detects interstate delivery
+  6. Verify shipping charges are calculated at ₹70-100/kg
+- **Expected Results:**
+  + System correctly identifies delivery location type
+  + Shipping charges are calculated based on location
+- **Priority:** High
+
+#### 7.4.3 Shipping Charges Calculation
+\n**Test Case CO-007: Verify Shipping Charges for Intrastate Delivery**
+- **Objective:** Test shipping cost calculation for same-state delivery
+- **Test Steps:**
+  1. Add products with total weight of 5kg to cart
+  2. Select online order with intrastate delivery address
+  3. Verify shipping charges are calculated at ₹30-50/kg
+  4. Verify total shipping cost is between ₹150-₹250(5kg ×₹30-50)
+  5. Verify shipping charges are added to order total
+- **Expected Results:**
+  + Shipping charges are calculated correctly
+  + Rate is within₹30-50/kg range
+  + Charges are added to total\n- **Priority:** High
+
+**Test Case CO-008: Verify Shipping Charges for Interstate Delivery**
+- **Objective:** Test shipping cost calculation for different-state delivery
+- **Test Steps:**
+  1. Add products with total weight of 3kg to cart
+  2. Select online order with interstate delivery address\n  3. Verify shipping charges are calculated at ₹70-100/kg
+  4. Verify total shipping cost is between ₹210-₹300 (3kg × ₹70-100)
+  5. Verify shipping charges are added to order total
+- **Expected Results:**
+  + Shipping charges are calculated correctly
+  + Rate is within ₹70-100/kg range
+  + Charges are added to total
+- **Priority:** High
+
+**Test Case CO-009: Verify No Shipping Charges for In-Store Purchase**
+- **Objective:** Validate no shipping charges for in-store orders
+- **Test Steps:**\n  1. Add products to cart
+  2. Select 'In-Store Purchase' as order type
+  3. Proceed to checkout
+  4. Verify shipping charges section does not appear
+  5. Verify order total does not include shipping charges
+- **Expected Results:**
+  + No shipping charges are applied
+  + Order total excludes shipping costs
+- **Priority:** High
+
+#### 7.4.4 Order Summary and Review
+
+**Test Case CO-010: Verify Order Summary Display**
+- **Objective:** Test order summary before payment
+- **Test Steps:**\n  1. Proceed to final checkout step
+  2. Verify order summary displays all cart items
+  3. Verify product names, variants, quantities, and prices are correct
+  4. Verify subtotal, package discount (with %), GST, shipping charges (if applicable), and grand total are displayed
+  5. Verify order type (Online Order / In-Store Purchase) is clearly indicated
+- **Expected Results:**
+  + Order summary is complete and accurate
+  + All pricing components are displayed
+  + Order type is clearly shown
+- **Priority:** High\n
+**Test Case CO-011: Verify Edit Cart from Checkout**
+- **Objective:** Test ability to modify cart during checkout
+- **Test Steps:**
+  1. Proceed to checkout
+  2. Click 'Edit Cart' or 'Back to Cart' button
+  3. Verify user is redirected to cart page
+  4. Modify cart (add/remove items, change quantities)
+  5. Return to checkout
+  6. Verify order summary reflects cart changes
+- **Expected Results:**
+  + User can navigate back to cart
+  + Cart modifications are reflected in checkout
+- **Priority:** Medium
+
+**Test Case CO-012: Verify Loyalty Points Display (If Applicable)**
+- **Objective:** Test loyalty points information during checkout
+- **Test Steps:**
+  1. Login as user with loyalty points
+  2. Proceed to checkout
+  3. Verify current points balance is displayed
+  4. Verify points to be earned from current order are shown
+  5. Verify option to redeem points is available (if balance≥ 500points)
+- **Expected Results:**
+  + Points balance displays correctly
+  + Points earning calculation is accurate
+  + Redemption option is available when eligible
+- **Priority:** Low (Priority 3feature)
+
+---
+\n### 7.5 Payment Gateway Testing
+
+#### 7.5.1 Payment Method Selection
+
+**Test Case PG-001: Verify Payment Method Options**
+- **Objective:** Test availability of payment methods\n- **Test Steps:**
+  1. Proceed to payment step in checkout
+  2. Verify payment method options are displayed
+  3. Verify options include: Credit/Debit Card, UPI, Net Banking, Digital Wallets\n  4. Select each payment method\n  5. Verify appropriate payment form/interface loads
+- **Expected Results:**\n  + All payment methods are available
+  + Payment forms load correctly for each method
+- **Priority:** High
+
+**Test Case PG-002: Verify Credit/Debit Card Payment Form**
+- **Objective:** Test card payment form fields and validation
+- **Test Steps:**
+  1. Select 'Credit/Debit Card' payment method
+  2. Verify form fields: Card Number, Cardholder Name, Expiry Date, CVV
+  3. Test with invalid card number
+  4. Test with expired card
+  5. Test with invalid CVV
+  6. Enter valid card details
+- **Expected Results:**
+  + All fields are present and validated
+  + Invalid inputs show error messages
+  + Valid card details are accepted
+- **Priority:** High
+
+**Test Case PG-003: Verify UPI Payment**
+- **Objective:** Test UPI payment flow
+- **Test Steps:**\n  1. Select 'UPI' payment method
+  2. Verify UPI ID input field appears
+  3. Enter valid UPI ID (e.g., user@paytm)
+  4. Verify UPI ID format validation
+  5. Proceed with payment
+  6. Verify UPI payment request is initiated
+- **Expected Results:**\n  + UPI ID field is validated
+  + Payment request is sent correctly
+- **Priority:** High\n
+**Test Case PG-004: Verify Net Banking Payment**
+- **Objective:** Test net banking payment flow
+- **Test Steps:**
+  1. Select 'Net Banking' payment method
+  2. Verify bank selection dropdown appears
+  3. Select a bank from dropdown
+  4. Proceed with payment
+  5. Verify redirect to bank's payment gateway
+- **Expected Results:**
+  + Bank selection is available
+  + Redirect to bank gateway works correctly
+- **Priority:** High\n
+**Test Case PG-005: Verify Digital Wallet Payment**
+- **Objective:** Test digital wallet payment options
+- **Test Steps:**\n  1. Select 'Digital Wallet' payment method
+  2. Verify wallet options (Paytm, PhonePe, Google Pay, etc.) are displayed
+  3. Select a wallet
+  4. Proceed with payment
+  5. Verify redirect to wallet app/interface
+- **Expected Results:**\n  + Wallet options are available
+  + Redirect to wallet works correctly
+- **Priority:** High
+
+#### 7.5.2 Payment Processing\n
+**Test Case PG-006: Verify Successful Payment Processing**
+- **Objective:** Test successful payment completion
+- **Test Steps:**\n  1. Complete checkout with valid payment details
+  2. Submit payment\n  3. Verify payment processing indicator displays
+  4. Verify redirect to order confirmation page
+  5. Verify order confirmation message displays
+  6. Verify order ID is generated and displayed
+- **Expected Results:**\n  + Payment processes successfully
+  + Order confirmation page loads
+  + Order ID is displayed
+- **Priority:** High\n
+**Test Case PG-007: Verify Failed Payment Handling**
+- **Objective:** Test payment failure scenarios
+- **Test Steps:**
+  1. Attempt payment with insufficient funds (test card)\n  2. Verify payment failure message displays
+  3. Verify user is redirected back to payment page
+  4. Verify cart items are retained
+  5. Verify option to retry payment is available
+- **Expected Results:**
+  + Payment failure is handled gracefully
+  + Error message is clear
+  + User can retry payment
+- **Priority:** High
+
+**Test Case PG-008: Verify Payment Timeout Handling**
+- **Objective:** Test payment gateway timeout scenarios
+- **Test Steps:**
+  1. Initiate payment\n  2. Simulate payment gateway timeout (do not complete payment within time limit)
+  3. Verify timeout message displays
+  4. Verify user is redirected back to payment page
+  5. Verify cart is retained
+- **Expected Results:**
+  + Timeout is handled properly
+  + User can retry payment
+- **Priority:** Medium
+
+**Test Case PG-009: Verify Payment Cancellation**
+- **Objective:** Test user-initiated payment cancellation
+- **Test Steps:**
+  1. Initiate payment
+  2. Click 'Cancel' or 'Back' during payment process
+  3. Verify cancellation confirmation dialog appears
+  4. Confirm cancellation
+  5. Verify user is redirected back to checkout
+  6. Verify cart is retained
+- **Expected Results:**
+  + Cancellation is handled correctly
+  + User can resume checkout
+- **Priority:** Medium
+
+#### 7.5.3 Payment Confirmation and Receipt
+
+**Test Case PG-010: Verify Payment Confirmation Email**
+- **Objective:** Test payment confirmation email delivery
+- **Test Steps:**\n  1. Complete successful payment
+  2. Verify payment confirmation email is sent to customer email
+  3. Verify email contains: Order ID, Order details, Payment amount, Payment method, Transaction reference
+  4. Verify email is formatted correctly
+- **Expected Results:**
+  + Confirmation email is sent immediately
+  + Email contains all required information
+- **Priority:** High
+
+**Test Case PG-011: Verify Receipt Generation**
+- **Objective:** Test payment receipt generation
+- **Test Steps:**
+  1. Complete successful payment
+  2. Verify receipt is generated automatically
+  3. Verify receipt contains: Order ID, Date, Customer details, Product list, Payment details, Total amount
+  4. Verify receipt can be downloaded as PDF
+  5. Verify receipt can be printed
+- **Expected Results:**
+  + Receipt is generated correctly
+  + All information is accurate
+  + Download and print functions work
+- **Priority:** High
+
+**Test Case PG-012: Verify Invoice Generation**
+- **Objective:** Test invoice generation with all pricing components
+- **Test Steps:**
+  1. Complete successful payment for online order
+  2. Verify invoice is generated\n  3. Verify invoice displays: Order Type (Online Order), Product list with variants, Subtotal, Package discount (with %), GST breakdown, Shipping charges (with delivery type), Grand total
+  4. Verify invoice can be downloaded\n  5. Repeat for in-store purchase
+  6. Verify in-store invoice excludes shipping charges
+- **Expected Results:**
+  + Invoice is generated correctly for both order types
+  + All pricing components are accurate
+  + Download function works
+- **Priority:** High
+
+#### 7.5.4 Payment Security
+
+**Test Case PG-013: Verify Secure Payment Connection**
+- **Objective:** Test SSL/TLS encryption for payment pages
+- **Test Steps:**\n  1. Navigate to payment page
+  2. Verify URL starts with 'https://'
+  3. Verify SSL certificate is valid
+  4. Verify browser security indicator (padlock icon) is present
+  5. Verify no mixed content warnings
+- **Expected Results:**
+  + Payment pages use HTTPS
+  + SSL certificate is valid
+  + No security warnings\n- **Priority:** High
+
+**Test Case PG-014: Verify Payment Data Encryption**
+- **Objective:** Test encryption of sensitive payment data
+- **Test Steps:**
+  1. Enter payment details
+  2. Inspect network traffic (using browser dev tools)
+  3. Verify payment data is encrypted in transit
+  4. Verify card details are not stored in plain text
+  5. Verify CVV is not stored\n- **Expected Results:**
+  + Payment data is encrypted
+  + Sensitive data is not stored insecurely
+- **Priority:** High
+
+**Test Case PG-015: Verify PCI DSS Compliance**
+- **Objective:** Validate PCI DSS compliance for card payments
+- **Test Steps:**\n  1. Verify payment gateway is PCI DSS certified
+  2. Verify card data is tokenized
+  3. Verify no card data is stored on application servers
+  4. Verify payment forms use secure iframes
+- **Expected Results:**
+  + Payment gateway is PCI DSS compliant
+  + Card data handling follows security standards
+- **Priority:** High
+
+---
+
+### 7.6 Cross-Functional Integration Testing
+
+#### 7.6.1 End-to-End User Journey
+
+**Test Case INT-001: Complete Purchase Flow (Online Order)**
+- **Objective:** Test complete user journey from product discovery to payment
+- **Test Steps:**
+  1. Browse product catalog
+  2. Search for specific product
+  3. View product details
+  4. Add product to cart with variant selection
+  5. View cart and update quantities
+  6. Proceed to checkout
+  7. Select'Online Order'\n  8. Enter delivery address
+  9. Review order summary with shipping charges
+  10. Complete payment
+  11. Verify order confirmation
+  12. Verify confirmation email
+- **Expected Results:**
+  + Complete flow works seamlessly
+  + All data is retained across steps
+  + Order is processed successfully
+- **Priority:** Critical
+
+**Test Case INT-002: Complete Purchase Flow (In-Store Purchase)**
+- **Objective:** Test complete flow for in-store purchase
+- **Test Steps:**\n  1. Browse product catalog\n  2. Add products to cart
+  3. Proceed to checkout
+  4. Select 'In-Store Purchase'\n  5. Verify no delivery address or shipping charges
+  6. Review order summary
+  7. Complete payment
+  8. Verify order confirmation
+  9. Verify order status is'Completed'
+- **Expected Results:**\n  + In-store purchase flow works correctly
+  + No shipping-related fields appear
+  + Order is marked as completed immediately
+- **Priority:** Critical\n
+**Test Case INT-003: Guest to Registered User Conversion**
+- **Objective:** Test cart retention when guest user registers
+- **Test Steps:**\n  1. Add products to cart as guest
+  2. Proceed to checkout\n  3. Choose to register account during checkout
+  4. Complete registration\n  5. Verify cart items are retained
+  6. Complete checkout as registered user
+- **Expected Results:**
+  + Cart items are preserved during registration
+  + Checkout continues seamlessly
+- **Priority:** Medium
+
+#### 7.6.2 Data Consistency Testing
+
+**Test Case INT-004: Verify Inventory Update After Purchase**
+- **Objective:** Test inventory deduction after successful order
+- **Test Steps:**\n  1. Note current stock level of a product variant
+  2. Purchase that product variant
+  3. Complete payment
+  4. Verify stock level is reduced by purchased quantity
+  5. Verify stock status updates if threshold is reached
+- **Expected Results:**\n  + Inventory is updated correctly
+  + Stock status reflects current levels
+- **Priority:** High\n
+**Test Case INT-005: Verify Order History Update**
+- **Objective:** Test order appears in customer order history
+- **Test Steps:**
+  1. Complete a purchase as registered user
+  2. Navigate to 'My Orders' page
+  3. Verify new order appears in order history
+  4. Verify order details are correct
+  5. Verify order type (Online/In-Store) is displayed
+- **Expected Results:**\n  + Order appears in history immediately
+  + All order details are accurate
+- **Priority:** High
+
+**Test Case INT-006: Verify Loyalty Points Credit (If Applicable)**
+- **Objective:** Test loyalty points are credited after purchase
+- **Test Steps:**
+  1. Note current loyalty points balance
+  2. Complete a purchase worth₹500
+  3. Verify order confirmation
+  4. Verify5loyalty points are credited (1 point per ₹100)\n  5. Verify points balance updates in user profile
+- **Expected Results:**
+  + Points are calculated correctly
+  + Points are credited after order completion
+- **Priority:** Low (Priority 3 feature)
+
+---
+
+### 7.7 Performance and Load Testing
+
+**Test Case PERF-001: Verify Page Load Times**
+- **Objective:** Test page load performance\n- **Test Steps:**
+  1. Measure load time for product catalog page
+  2. Measure load time for product detail page
+  3. Measure load time for cart page
+  4. Measure load time for checkout page
+  5. Verify all pages load within 3seconds on standard connection
+- **Expected Results:**\n  + All pages load within acceptable time limits
+- **Priority:** High
+
+**Test Case PERF-002: Verify Concurrent User Handling**
+- **Objective:** Test system performance under load
+- **Test Steps:**
+  1. Simulate 100 concurrent users browsing catalog
+  2. Simulate 50 concurrent users adding to cart
+  3. Simulate 25 concurrent users completing checkout
+  4. Monitor system response times
+  5. Verify no errors or timeouts occur
+- **Expected Results:**\n  + System handles concurrent users without degradation
+  + Response times remain acceptable
+- **Priority:** Medium\n
+**Test Case PERF-003: Verify Payment Gateway Response Time**
+- **Objective:** Test payment processing speed
+- **Test Steps:**\n  1. Initiate payment
+  2. Measure time from payment submission to confirmation
+  3. Verify payment processes within 10 seconds
+  4. Test with different payment methods
+- **Expected Results:**
+  + Payment processing is fast and reliable
+- **Priority:** High
+
+---
+
+### 7.8 Mobile and Responsive Testing
+
+**Test Case MOB-001: Verify Mobile Product Catalog**
+- **Objective:** Test product catalog on mobile devices
+- **Test Steps:**
+  1. Open product catalog on mobile device
+  2. Verify layout is responsive
+  3. Verify product cards display correctly
+  4. Verify images load properly
+  5. Test touch interactions (tap, swipe)\n- **Expected Results:**
+  + Catalog is fully functional on mobile
+  + Layout adapts to screen size
+- **Priority:** High
+
+**Test Case MOB-002: Verify Mobile Cart and Checkout**
+- **Objective:** Test cart and checkout on mobile
+- **Test Steps:**
+  1. Add products to cart on mobile
+  2. View cart page\n  3. Verify cart items display correctly
+  4. Proceed to checkout\n  5. Complete checkout flow on mobile
+- **Expected Results:**
+  + Cart and checkout are fully functional on mobile
+  + All features work with touch input
+- **Priority:** High\n
+**Test Case MOB-003: Verify Mobile Payment**
+- **Objective:** Test payment on mobile devices
+- **Test Steps:**
+  1. Proceed to payment on mobile
+  2. Test UPI payment (mobile-optimized)
+  3. Test digital wallet payment\n  4. Verify payment forms are mobile-friendly
+  5. Complete payment\n- **Expected Results:**
+  + Payment methods work seamlessly on mobile
+  + Forms are easy to use on small screens
+- **Priority:** High
+
+---
+
+### 7.9 Test Execution Schedule
+
+**Phase 1: Core Functionality (Week 1-2)**
+- Product Catalog Testing (PC-001 to PC-008)
+- Shopping Cart Testing (SC-001 to SC-012)
+\n**Phase 2: Checkout and Payment (Week 3-4)**
+- Checkout Process Testing (CO-001 to CO-012)
+- Payment Gateway Testing (PG-001 to PG-015)
+
+**Phase 3: Integration and Performance (Week 5)**
+- Cross-Functional Integration Testing (INT-001 to INT-006)
+- Performance and Load Testing (PERF-001 to PERF-003)
+
+**Phase 4: Mobile and Final Validation (Week 6)**
+- Mobile and Responsive Testing (MOB-001 to MOB-003)
+- Regression testing of all critical test cases
+- Bug fixes and retesting\n
+---
+
+### 7.10 Test Deliverables
+
+1. **Test Execution Report:** Summary of all test cases executed with pass/fail status
+2. **Defect Report:** List of all bugs found with severity, priority, and status
+3. **Test Coverage Report:** Percentage of requirements covered by test cases
+4. **Performance Test Report:** Load testing results with response times and system metrics
+5. **Final Test Summary:** Overall assessment of system readiness for production\n
+---
+
+### 7.11 Entry and Exit Criteria
+
+**Entry Criteria:**
+- All core e-commerce features are developed and deployed to test environment
+- Test environment is stable and accessible
+- Test data is prepared\n- Payment gateway test accounts are configured
+
+**Exit Criteria:**
+- All critical and high-priority test cases pass
+- No critical or high-severity defects remain open
+- Performance benchmarks are met
+- Mobile responsiveness is validated
+- Payment gateway integration is fully functional
+- Test coverage is at least 95% for core features
+
+---
+\n### 7.12 Defect Management
+
+**Severity Levels:**
+- **Critical:** System crash, data loss, payment failure, security vulnerability
+- **High:** Major functionality broken, incorrect calculations, checkout failure
+- **Medium:** Minor functionality issues, UI inconsistencies, performance degradation
+- **Low:** Cosmetic issues, minor UI improvements\n
+**Priority Levels:**
+- **P1:** Must be fixed before release
+- **P2:** Should be fixed before release
+- **P3:** Can be fixed in next release
+- **P4:** Nice to have, low impact
+
+**Defect Workflow:**
+1. Defect identified during testing
+2. Defect logged with details, severity, and priority
+3. Defect assigned to development team
+4. Defect fixed and deployed to test environment
+5. Defect retested and verified
+6. Defect closed if fix is successful
+
+---
+\n## 8. Reference Files
 1. Product list with pricing: image.png
 2. Product images: Barley Flakes.png, Finger Millet Flakes.png, Barnyard Millet Flakes.png, Greengram Flakes.png, Foxtail Millet Flakes.png
