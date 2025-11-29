@@ -12,7 +12,8 @@ import { Textarea } from '@/components/ui/textarea';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useToast } from '@/hooks/use-toast';
 import { useForm } from 'react-hook-form';
-import { Plus, Edit, Trash2, Package, FolderPlus } from 'lucide-react';
+import { Plus, Edit, Trash2, Package, FolderPlus, X } from 'lucide-react';
+import BackButton from '@/components/common/BackButton';
 
 interface ProductFormData {
   name: string;
@@ -39,11 +40,21 @@ interface CategoryFormData {
   display_order: number;
 }
 
+interface NewVariant {
+  packaging_size: string;
+  price: number;
+  stock: number;
+  weight_kg: number;
+  cost_price: number;
+  discount_percentage: number;
+}
+
 export default function ProductManagement() {
   const [products, setProducts] = useState<Product[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedProduct, setSelectedProduct] = useState<Product | null>(null);
   const [variants, setVariants] = useState<ProductVariant[]>([]);
+  const [newVariants, setNewVariants] = useState<NewVariant[]>([]);
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [variantDialogOpen, setVariantDialogOpen] = useState(false);
@@ -136,21 +147,37 @@ export default function ProductManagement() {
           description: 'Product has been updated successfully'
         });
       } else {
-        await productsApi.create({
+        const newProduct = await productsApi.create({
           ...data,
           product_code: null,
           weight_per_kg: 1.0,
           stock: 0,
           is_active: true
         });
-        toast({
-          title: 'Product created',
-          description: 'Product has been created successfully. Product code auto-generated.'
-        });
+
+        // Create variants if any were added
+        if (newVariants.length > 0) {
+          for (const variant of newVariants) {
+            await variantsApi.create({
+              product_id: newProduct.id,
+              ...variant
+            });
+          }
+          toast({
+            title: 'Product created',
+            description: `Product and ${newVariants.length} variant(s) created successfully. Product code auto-generated.`
+          });
+        } else {
+          toast({
+            title: 'Product created',
+            description: 'Product has been created successfully. Product code auto-generated.'
+          });
+        }
       }
       setDialogOpen(false);
       productForm.reset();
       setSelectedProduct(null);
+      setNewVariants([]);
       loadProducts();
     } catch (error: any) {
       toast({
@@ -211,6 +238,28 @@ export default function ProductManagement() {
     categoryForm.setValue('name', name);
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
     categoryForm.setValue('slug', slug);
+  };
+
+  const handleAddVariant = () => {
+    const newVariant: NewVariant = {
+      packaging_size: '1kg',
+      price: productForm.getValues('base_price') || 0,
+      stock: 100,
+      weight_kg: 1.0,
+      cost_price: 0,
+      discount_percentage: 0
+    };
+    setNewVariants([...newVariants, newVariant]);
+  };
+
+  const handleRemoveVariant = (index: number) => {
+    setNewVariants(newVariants.filter((_, i) => i !== index));
+  };
+
+  const handleUpdateVariant = (index: number, field: keyof NewVariant, value: string | number) => {
+    const updated = [...newVariants];
+    updated[index] = { ...updated[index], [field]: value };
+    setNewVariants(updated);
   };
 
   const handleEditProduct = (product: Product) => {
@@ -295,6 +344,8 @@ export default function ProductManagement() {
 
   return (
     <div className="space-y-6">
+      <BackButton />
+
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Product Management</h2>
         <Dialog open={dialogOpen} onOpenChange={(open) => {
@@ -302,6 +353,7 @@ export default function ProductManagement() {
           if (!open) {
             setSelectedProduct(null);
             productForm.reset();
+            setNewVariants([]);
           }
         }}>
           <DialogTrigger asChild>
@@ -448,6 +500,113 @@ export default function ProductManagement() {
                     </FormItem>
                   )}
                 />
+
+                {!selectedProduct && (
+                  <div className="space-y-4 border-t pt-4">
+                    <div className="flex items-center justify-between">
+                      <div>
+                        <h3 className="text-lg font-semibold">Packaging Variants</h3>
+                        <p className="text-sm text-muted-foreground">
+                          Add packaging sizes and stock for this product
+                        </p>
+                      </div>
+                      <Button type="button" variant="outline" size="sm" onClick={handleAddVariant}>
+                        <Plus className="h-4 w-4 mr-1" />
+                        Add Variant
+                      </Button>
+                    </div>
+
+                    {newVariants.length > 0 && (
+                      <div className="space-y-3">
+                        {newVariants.map((variant, index) => (
+                          <Card key={index} className="p-4">
+                            <div className="flex items-start justify-between mb-3">
+                              <h4 className="font-medium">Variant {index + 1}</h4>
+                              <Button
+                                type="button"
+                                variant="ghost"
+                                size="sm"
+                                onClick={() => handleRemoveVariant(index)}
+                              >
+                                <X className="h-4 w-4" />
+                              </Button>
+                            </div>
+                            <div className="grid grid-cols-2 gap-3">
+                              <div>
+                                <label className="text-sm font-medium">Packaging Size</label>
+                                <Select
+                                  value={variant.packaging_size}
+                                  onValueChange={(value) => handleUpdateVariant(index, 'packaging_size', value)}
+                                >
+                                  <SelectTrigger>
+                                    <SelectValue />
+                                  </SelectTrigger>
+                                  <SelectContent>
+                                    <SelectItem value="200g">200g</SelectItem>
+                                    <SelectItem value="500g">500g</SelectItem>
+                                    <SelectItem value="1kg">1kg</SelectItem>
+                                    <SelectItem value="2kg">2kg</SelectItem>
+                                    <SelectItem value="5kg">5kg</SelectItem>
+                                    <SelectItem value="10kg">10kg</SelectItem>
+                                  </SelectContent>
+                                </Select>
+                              </div>
+                              <div>
+                                <label className="text-sm font-medium">Price (₹)</label>
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  value={variant.price}
+                                  onChange={(e) => handleUpdateVariant(index, 'price', parseFloat(e.target.value) || 0)}
+                                  placeholder="Price"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-sm font-medium">Stock</label>
+                                <Input
+                                  type="number"
+                                  value={variant.stock}
+                                  onChange={(e) => handleUpdateVariant(index, 'stock', parseInt(e.target.value) || 0)}
+                                  placeholder="Stock quantity"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-sm font-medium">Weight (kg)</label>
+                                <Input
+                                  type="number"
+                                  step="0.1"
+                                  value={variant.weight_kg}
+                                  onChange={(e) => handleUpdateVariant(index, 'weight_kg', parseFloat(e.target.value) || 0)}
+                                  placeholder="Weight"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-sm font-medium">Cost Price (₹)</label>
+                                <Input
+                                  type="number"
+                                  step="0.01"
+                                  value={variant.cost_price}
+                                  onChange={(e) => handleUpdateVariant(index, 'cost_price', parseFloat(e.target.value) || 0)}
+                                  placeholder="Cost price"
+                                />
+                              </div>
+                              <div>
+                                <label className="text-sm font-medium">Discount (%)</label>
+                                <Input
+                                  type="number"
+                                  step="0.1"
+                                  value={variant.discount_percentage}
+                                  onChange={(e) => handleUpdateVariant(index, 'discount_percentage', parseFloat(e.target.value) || 0)}
+                                  placeholder="Discount"
+                                />
+                              </div>
+                            </div>
+                          </Card>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 <div className="flex justify-end gap-2">
                   <Button type="button" variant="outline" onClick={() => setDialogOpen(false)}>
