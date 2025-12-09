@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Profile from './pages/Profile';
 import ProductDetail from './pages/ProductDetail';
 import Cart from './pages/Cart';
 import Checkout from './pages/Checkout';
@@ -21,8 +22,11 @@ import VendorPayments from './pages/admin/VendorPayments';
 import PurchaseOrders from './pages/admin/PurchaseOrders';
 import ChatManagement from './pages/admin/ChatManagement';
 import InventoryStatus from './pages/admin/InventoryStatus';
+import InventoryDashboard from './pages/admin/InventoryDashboard';
 import ReviewManagement from './pages/admin/ReviewManagement';
+import SecurityDashboard from './pages/admin/SecurityDashboard';
 import { RequireAdmin } from './components/auth/RequireAdmin';
+import { RequireAuth } from './components/auth/RequireAuth';
 
 interface RouteConfig {
   name: string;
@@ -47,13 +51,19 @@ const routes: RouteConfig[] = [
   {
     name: 'Checkout',
     path: '/checkout',
-    element: <Checkout />,
+    element: <RequireAuth><Checkout /></RequireAuth>,
+    visible: false
+  },
+  {
+    name: 'Profile',
+    path: '/profile',
+    element: <RequireAuth><Profile /></RequireAuth>,
     visible: false
   },
   {
     name: 'Orders',
     path: '/orders',
-    element: <Orders />,
+    element: <RequireAuth><Orders /></RequireAuth>,
     visible: false
   },
   {
@@ -65,19 +75,19 @@ const routes: RouteConfig[] = [
   {
     name: 'Wishlist',
     path: '/wishlist',
-    element: <Wishlist />,
+    element: <RequireAuth><Wishlist /></RequireAuth>,
     visible: false
   },
   {
     name: 'Loyalty Points',
     path: '/loyalty-points',
-    element: <LoyaltyPoints />,
+    element: <RequireAuth><LoyaltyPoints /></RequireAuth>,
     visible: false
   },
   {
     name: 'Notifications',
     path: '/notifications',
-    element: <Notifications />,
+    element: <RequireAuth><Notifications /></RequireAuth>,
     visible: false
   },
   {
@@ -159,6 +169,12 @@ const routes: RouteConfig[] = [
     visible: false
   },
   {
+    name: 'Inventory Dashboard',
+    path: '/admin/inventory-dashboard',
+    element: <RequireAdmin><InventoryDashboard /></RequireAdmin>,
+    visible: false
+  },
+  {
     name: 'Chat Management',
     path: '/admin/chat',
     element: <RequireAdmin><ChatManagement /></RequireAdmin>,
@@ -168,6 +184,12 @@ const routes: RouteConfig[] = [
     name: 'Review Management',
     path: '/admin/reviews',
     element: <RequireAdmin><ReviewManagement /></RequireAdmin>,
+    visible: false
+  },
+  {
+    name: 'Security Dashboard',
+    path: '/admin/security',
+    element: <RequireAdmin><SecurityDashboard /></RequireAdmin>,
     visible: false
   }
 ];

@@ -10,10 +10,12 @@ import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/db/supabase';
 import { shippingApi, profilesApi, productsApi } from '@/db/api';
-import { ArrowLeft, Package, MapPin, Truck, ShoppingCart, Store } from 'lucide-react';
+import { ArrowLeft, Package, MapPin, Truck, ShoppingCart, Store, CreditCard, Banknote, Smartphone, Wallet } from 'lucide-react';
 import type { Product, OrderType } from '@/types/types';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import RedeemPoints from '@/components/loyalty/RedeemPoints';
+
+type PaymentMethod = 'card' | 'cash' | 'upi' | 'split';
 
 export default function Checkout() {
   const { items, totalPrice, clearCart } = useCart();
@@ -23,12 +25,18 @@ export default function Checkout() {
 
   const GST_RATE = 5; // 5% GST
   const [loading, setLoading] = useState(false);
+  const [processingCheckout, setProcessingCheckout] = useState(false);
   const [calculatingShipping, setCalculatingShipping] = useState(false);
   const [shippingCost, setShippingCost] = useState(0);
   const [products, setProducts] = useState<Product[]>([]);
   const [orderType, setOrderType] = useState<OrderType>('online');
+  const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('card');
   const [pointsUsed, setPointsUsed] = useState(0);
   const [pointsDiscount, setPointsDiscount] = useState(0);
+  const [splitPayment, setSplitPayment] = useState({
+    cash: 0,
+    digital: 0,
+  });
   const [shippingInfo, setShippingInfo] = useState({
     name: '',
     email: '',
@@ -42,24 +50,48 @@ export default function Checkout() {
     return (totalPrice * GST_RATE) / 100;
   };
 
+  const calculateSubtotalWithGST = () => {
+    return totalPrice + calculateGST();
+  };
+
   const calculateFinalTotal = () => {
     const shipping = orderType === 'online' ? shippingCost : 0;
-    return Math.max(0, totalPrice + calculateGST() + shipping - pointsDiscount);
+    const total = Math.max(0, totalPrice + calculateGST() + shipping - pointsDiscount);
+    return Math.round(total); // Round to nearest rupee
+  };
+
+  const getRoundingAdjustment = () => {
+    const shipping = orderType === 'online' ? shippingCost : 0;
+    const exactTotal = Math.max(0, totalPrice + calculateGST() + shipping - pointsDiscount);
+    const roundedTotal = Math.round(exactTotal);
+    return roundedTotal - exactTotal;
   };
 
   useEffect(() => {
-    if (items.length === 0) {
+    // Don't redirect if we're processing checkout (prevents race condition)
+    if (items.length === 0 && !processingCheckout) {
       navigate('/cart');
-    } else {
+    } else if (items.length > 0) {
       loadProducts();
     }
-  }, [items, navigate]);
+  }, [items, navigate, processingCheckout]);
 
   useEffect(() => {
     if (user) {
       loadUserProfile();
     }
   }, [user]);
+
+  // Reset payment method when order type changes
+  useEffect(() => {
+    if (orderType === 'online') {
+      setPaymentMethod('card'); // Online orders default to card payment
+    } else {
+      setPaymentMethod('cash'); // In-store orders default to cash
+    }
+    // Reset split payment when changing order type
+    setSplitPayment({ cash: 0, digital: 0 });
+  }, [orderType]);
 
   const loadProducts = async () => {
     try {
@@ -150,6 +182,8 @@ export default function Checkout() {
   };
 
   const handleCheckout = async () => {
+    console.log('Checkout started', { orderType, paymentMethod, items: items.length });
+    
     if (!shippingInfo.name || !shippingInfo.email || !shippingInfo.phone) {
       toast({
         title: 'Incomplete information',
@@ -179,8 +213,24 @@ export default function Checkout() {
       }
     }
 
+    // Validate split payment
+    if (orderType === 'instore' && paymentMethod === 'split') {
+      const finalTotal = calculateFinalTotal();
+      const splitTotal = Math.round(splitPayment.cash + splitPayment.digital);
+      if (Math.abs(splitTotal - finalTotal) > 0) {
+        toast({
+          title: 'Invalid split payment',
+          description: `Split payment total (₹${splitTotal}) must equal order total (₹${finalTotal})`,
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
+
     setLoading(true);
+    setProcessingCheckout(true); // Prevent redirect during checkout
     try {
+      console.log('Updating profile...');
       if (user) {
         await profilesApi.updateProfile(user.id, {
           city: shippingInfo.city,
@@ -190,6 +240,108 @@ export default function Checkout() {
         });
       }
 
+      // For in-store purchases with cash/UPI, create order directly
+      if (orderType === 'instore' && (paymentMethod === 'cash' || paymentMethod === 'upi' || paymentMethod === 'split')) {
+        console.log('Creating in-store order...');
+        const GST_RATE = 5;
+        const subtotal = totalPrice;
+        const gstAmount = (subtotal * GST_RATE) / 100;
+        const finalTotal = calculateFinalTotal();
+
+        const { data: orderData, error } = await supabase.rpc('create_order', {
+          p_user_id: user?.id || null,
+          p_items: items.map(item => ({
+            name: item.name,
+            price: item.price,
+            quantity: item.quantity,
+            image_url: item.image_url,
+            packaging_size: item.packaging_size,
+            product_id: item.product_id,
+            variant_id: item.variant_id,
+          })),
+          p_total_amount: subtotal,
+          p_gst_rate: GST_RATE,
+          p_gst_amount: gstAmount,
+          p_shipping_cost: 0,
+          p_points_used: pointsUsed,
+          p_currency: 'inr',
+          p_status: 'completed',
+          p_order_type: 'instore',
+          p_payment_method: paymentMethod,
+          p_payment_details: paymentMethod === 'split' ? splitPayment : null,
+          p_customer_name: shippingInfo.name,
+          p_customer_email: shippingInfo.email,
+          p_customer_phone: shippingInfo.phone,
+          p_completed_at: new Date().toISOString(),
+        });
+
+        if (error) {
+          console.error('Order creation error:', error);
+          throw error;
+        }
+
+        const order = Array.isArray(orderData) ? orderData[0] : orderData;
+        console.log('Order created:', order?.id);
+
+        // Redeem loyalty points if used (idempotent)
+        if (pointsUsed > 0 && user && order?.id) {
+          try {
+            await supabase.rpc('redeem_loyalty_points', {
+              p_user_id: user.id,
+              p_order_id: order.id,
+              p_points: pointsUsed,
+            });
+            console.log(`Redeemed ${pointsUsed} points for order ${order.id}`);
+          } catch (error) {
+            console.error('Failed to redeem points:', error);
+            // Don't fail the entire checkout if point redemption fails
+          }
+        }
+
+        // Award loyalty points for the purchase (idempotent)
+        if (user && order?.id && finalTotal > 0) {
+          try {
+            const pointsAwarded = await supabase.rpc('award_loyalty_points', {
+              p_user_id: user.id,
+              p_order_id: order.id,
+              p_order_amount: finalTotal,
+            });
+            console.log(`Awarded ${pointsAwarded} points for order ${order.id}`);
+          } catch (error) {
+            console.error('Failed to award points:', error);
+            // Don't fail the entire checkout if point awarding fails
+          }
+        }
+
+        console.log('Navigating to payment success...');
+        // Clear cart immediately before navigation
+        clearCart();
+        
+        // Navigate with replace to avoid back button issues
+        navigate(`/payment-success?order_id=${order?.id}`, {
+          state: { order },
+          replace: true
+        });
+        
+        // Keep processingCheckout flag set to prevent redirect
+        return;
+      }
+
+      // For online orders or in-store card payments, use Stripe
+      console.log('Creating Stripe checkout...');
+      
+      // Determine Stripe payment method types based on selected payment method
+      // Note: Stripe Checkout in India primarily supports card payments
+      // UPI preference is stored in database but Stripe checkout uses card
+      let stripePaymentMethods = ['card'];
+      if (paymentMethod === 'upi') {
+        // Store UPI preference but use card for Stripe checkout
+        // In future, this can be enhanced with Stripe Payment Links for UPI
+        stripePaymentMethods = ['card'];
+      } else if (paymentMethod === 'card') {
+        stripePaymentMethods = ['card'];
+      }
+      
       const { data, error } = await supabase.functions.invoke('create_stripe_checkout', {
         body: JSON.stringify({
           items: items.map(item => ({
@@ -207,24 +359,45 @@ export default function Checkout() {
           points_discount: pointsDiscount,
           customer_info: shippingInfo,
           currency: 'inr',
-          payment_method_types: ['card'],
+          payment_method_types: stripePaymentMethods,
+          payment_method: paymentMethod,
         }),
       });
 
       if (error) {
+        console.error('Stripe checkout error:', error);
         const errorMsg = await error?.context?.text();
         throw new Error(errorMsg || 'Failed to create checkout session');
       }
 
+      console.log('Stripe response:', data);
       if (data?.data?.url) {
-        window.open(data.data.url, '_blank');
+        // Open Stripe checkout in new tab
+        const stripeWindow = window.open(data.data.url, '_blank');
+        
+        if (stripeWindow) {
+          toast({
+            title: 'Redirecting to payment',
+            description: 'Please complete your payment in the new tab',
+          });
+        } else {
+          toast({
+            title: 'Pop-up blocked',
+            description: 'Please allow pop-ups and try again',
+            variant: 'destructive',
+          });
+        }
+      } else {
+        throw new Error('No checkout URL received');
       }
     } catch (error: any) {
+      console.error('Checkout error:', error);
       toast({
         title: 'Checkout failed',
         description: error.message,
         variant: 'destructive',
       });
+      setProcessingCheckout(false); // Reset flag on error
     } finally {
       setLoading(false);
     }
@@ -298,6 +471,125 @@ export default function Checkout() {
                   </Label>
                 </div>
               </RadioGroup>
+            </CardContent>
+          </Card>
+
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Wallet className="h-5 w-5" />
+                Payment Method
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <RadioGroup value={paymentMethod} onValueChange={(value: PaymentMethod) => setPaymentMethod(value)}>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  {orderType === 'instore' && (
+                    <Label
+                      htmlFor="cash"
+                      className={`flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        paymentMethod === 'cash' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <RadioGroupItem value="cash" id="cash" />
+                      <div className="flex items-center gap-2 flex-1">
+                        <Banknote className="h-5 w-5" />
+                        <div>
+                          <div className="font-semibold">Cash</div>
+                          <div className="text-sm text-muted-foreground">Pay with cash</div>
+                        </div>
+                      </div>
+                    </Label>
+                  )}
+
+                  <Label
+                    htmlFor="upi"
+                    className={`flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      paymentMethod === 'upi' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <RadioGroupItem value="upi" id="upi" />
+                    <div className="flex items-center gap-2 flex-1">
+                      <Smartphone className="h-5 w-5" />
+                      <div>
+                        <div className="font-semibold">UPI</div>
+                        <div className="text-sm text-muted-foreground">
+                          {orderType === 'online' ? 'Pay via UPI' : 'GPay, PhonePe, Paytm'}
+                        </div>
+                      </div>
+                    </div>
+                  </Label>
+
+                  <Label
+                    htmlFor="card"
+                    className={`flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                      paymentMethod === 'card' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                    }`}
+                  >
+                    <RadioGroupItem value="card" id="card" />
+                    <div className="flex items-center gap-2 flex-1">
+                      <CreditCard className="h-5 w-5" />
+                      <div>
+                        <div className="font-semibold">Card</div>
+                        <div className="text-sm text-muted-foreground">Credit/Debit card</div>
+                      </div>
+                    </div>
+                  </Label>
+
+                  {orderType === 'instore' && (
+                    <Label
+                      htmlFor="split"
+                      className={`flex items-center space-x-3 p-4 border-2 rounded-lg cursor-pointer transition-all ${
+                        paymentMethod === 'split' ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <RadioGroupItem value="split" id="split" />
+                      <div className="flex items-center gap-2 flex-1">
+                        <Wallet className="h-5 w-5" />
+                        <div>
+                          <div className="font-semibold">Split Payment</div>
+                          <div className="text-sm text-muted-foreground">Cash + Digital</div>
+                        </div>
+                      </div>
+                    </Label>
+                  )}
+                </div>
+              </RadioGroup>
+
+              {paymentMethod === 'split' && orderType === 'instore' && (
+                <div className="mt-4 space-y-4 p-4 border rounded-lg bg-muted/30">
+                  <div className="text-sm font-semibold">Split Payment Details</div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label htmlFor="cash-amount">Cash Amount (₹)</Label>
+                      <Input
+                        id="cash-amount"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={splitPayment.cash}
+                        onChange={(e) => setSplitPayment(prev => ({ ...prev, cash: parseFloat(e.target.value) || 0 }))}
+                        placeholder="0.00"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label htmlFor="digital-amount">Digital Amount (₹)</Label>
+                      <Input
+                        id="digital-amount"
+                        type="number"
+                        min="0"
+                        step="0.01"
+                        value={splitPayment.digital}
+                        onChange={(e) => setSplitPayment(prev => ({ ...prev, digital: parseFloat(e.target.value) || 0 }))}
+                        placeholder="0.00"
+                      />
+                    </div>
+                  </div>
+                  <div className="text-sm text-muted-foreground">
+                    Total: ₹{Math.round(splitPayment.cash + splitPayment.digital)} / ₹{calculateFinalTotal()}
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
 
@@ -473,9 +765,17 @@ export default function Checkout() {
                     <span className="font-medium">-₹{pointsDiscount.toFixed(2)}</span>
                   </div>
                 )}
+                {Math.abs(getRoundingAdjustment()) > 0.01 && (
+                  <div className="flex justify-between text-sm">
+                    <span className="text-muted-foreground">Rounding Adjustment</span>
+                    <span className={`font-medium ${getRoundingAdjustment() > 0 ? 'text-muted-foreground' : 'text-green-600'}`}>
+                      {getRoundingAdjustment() > 0 ? '+' : ''}₹{getRoundingAdjustment().toFixed(2)}
+                    </span>
+                  </div>
+                )}
                 <div className="flex justify-between text-lg font-bold border-t pt-2">
                   <span>Total</span>
-                  <span>₹{calculateFinalTotal().toFixed(2)}</span>
+                  <span>₹{calculateFinalTotal()}</span>
                 </div>
               </div>
 

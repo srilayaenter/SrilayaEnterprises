@@ -1,18 +1,40 @@
 import { Link, useNavigate } from 'react-router-dom';
+import { useState } from 'react';
 import { useCart } from '@/contexts/CartContext';
+import { useAuth } from '@/components/auth/AuthProvider';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardFooter, CardHeader, CardTitle } from '@/components/ui/card';
-import { Trash2, Plus, Minus, ShoppingBag } from 'lucide-react';
+import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Trash2, Plus, Minus, ShoppingBag, LogIn, UserPlus } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 
 export default function Cart() {
   const { items, removeItem, updateQuantity, totalPrice, clearCart } = useCart();
+  const { user, loading: authLoading } = useAuth();
   const navigate = useNavigate();
   const { toast } = useToast();
+  const [showAuthDialog, setShowAuthDialog] = useState(false);
 
   const handleCheckout = () => {
     if (items.length === 0) return;
+    
+    // Check if user is authenticated
+    if (!user && !authLoading) {
+      setShowAuthDialog(true);
+      return;
+    }
+    
     navigate('/checkout');
+  };
+
+  const handleLoginRedirect = () => {
+    setShowAuthDialog(false);
+    navigate('/login', { state: { from: '/checkout' } });
+  };
+
+  const handleRegisterRedirect = () => {
+    setShowAuthDialog(false);
+    navigate('/register', { state: { from: '/checkout' } });
   };
 
   if (items.length === 0) {
@@ -108,6 +130,45 @@ export default function Cart() {
           </Card>
         </div>
       </div>
+
+      {/* Authentication Required Dialog */}
+      <Dialog open={showAuthDialog} onOpenChange={setShowAuthDialog}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle className="text-2xl">Login Required</DialogTitle>
+            <DialogDescription className="text-base pt-2">
+              Please login or create an account to proceed with checkout and complete your order.
+            </DialogDescription>
+          </DialogHeader>
+          
+          <div className="space-y-4 py-4">
+            <div className="bg-muted p-4 rounded-lg">
+              <h4 className="font-semibold mb-2">Why do I need to login?</h4>
+              <ul className="text-sm text-muted-foreground space-y-1">
+                <li>• Track your order status</li>
+                <li>• View order history</li>
+                <li>• Save delivery addresses</li>
+                <li>• Earn loyalty points</li>
+                <li>• Faster checkout next time</li>
+              </ul>
+            </div>
+          </div>
+
+          <DialogFooter className="flex-col sm:flex-col gap-2">
+            <Button onClick={handleLoginRedirect} className="w-full gap-2" size="lg">
+              <LogIn className="w-4 h-4" />
+              Login to Existing Account
+            </Button>
+            <Button onClick={handleRegisterRedirect} variant="outline" className="w-full gap-2" size="lg">
+              <UserPlus className="w-4 h-4" />
+              Create New Account
+            </Button>
+            <Button onClick={() => setShowAuthDialog(false)} variant="ghost" className="w-full">
+              Continue Shopping
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }

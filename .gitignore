@@ -27,3 +27,9 @@ package-lock.json
 .sync
 history/*.json
 .vite_cache
+
+# Playwright
+/test-results/
+/playwright-report/
+/playwright/.auth/
+/.env.test

@@ -179,6 +179,43 @@ Deno.serve(async (req) => {
 
     const orderUpdated = await updateOrderStatus(sessionId, session);
 
+    // Fetch the complete order data to return
+    // First get the order ID
+    const { data: orderIdData, error: orderIdError } = await supabase
+      .from("orders")
+      .select("id")
+      .eq("stripe_session_id", sessionId)
+      .single();
+
+    if (orderIdError || !orderIdData) {
+      console.error("Failed to fetch order ID:", orderIdError);
+      return ok({
+        verified: true,
+        status: "paid",
+        sessionId: session.id,
+        paymentIntentId: session.payment_intent,
+        amount: session.amount_total,
+        currency: session.currency,
+        customerEmail: session.customer_details?.email,
+        customerName: session.customer_details?.name,
+        orderUpdated,
+        order: null,
+      });
+    }
+
+    // Then fetch the complete order details
+    const { data: orderData, error: orderError } = await supabase
+      .rpc('get_order_by_id', {
+        p_order_id: orderIdData.id
+      });
+
+    if (orderError) {
+      console.error("Failed to fetch order details:", orderError);
+    }
+
+    const order = Array.isArray(orderData) ? orderData[0] : orderData;
+    console.log("Order data fetched:", order ? "success" : "null");
+
     return ok({
       verified: true,
       status: "paid",
@@ -189,6 +226,7 @@ Deno.serve(async (req) => {
       customerEmail: session.customer_details?.email,
       customerName: session.customer_details?.name,
       orderUpdated,
+      order: order || null,
     });
   } catch (error) {
     console.error("Payment verification failed:", error);

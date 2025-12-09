@@ -1,7 +1,7 @@
 // Admin Dashboard with Sidebar Navigation
 import { useState } from 'react';
 import { cn } from '@/lib/utils';
-import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList, Shield, Banknote, FileText, MessageCircle, ChevronDown, ChevronRight, BarChart3, Box, ShoppingCart, DollarSign, Settings, Star } from 'lucide-react';
+import { Package, ShoppingBag, Users, Warehouse, Truck, UserCog, PackageCheck, ClipboardList, Shield, Banknote, FileText, MessageCircle, ChevronDown, ChevronRight, BarChart3, Box, ShoppingCart, DollarSign, Settings, Star, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import ProductManagement from './ProductManagement';
@@ -18,6 +18,7 @@ import VendorPayments from './VendorPayments';
 import PurchaseOrders from './PurchaseOrders';
 import ChatManagement from './ChatManagement';
 import ReviewManagement from './ReviewManagement';
+import SecurityDashboard from './SecurityDashboard';
 
 interface NavItem {
   id: string;
@@ -72,6 +73,7 @@ const navigationCategories: NavCategory[] = [
     icon: <Settings className="h-5 w-5" />,
     items: [
       { id: 'users', label: 'Users', icon: <Shield className="h-4 w-4" /> },
+      { id: 'security', label: 'Security', icon: <ShieldCheck className="h-4 w-4" /> },
       { id: 'reviews', label: 'Reviews', icon: <Star className="h-4 w-4" /> },
       { id: 'chat', label: 'Chat Support', icon: <MessageCircle className="h-4 w-4" /> },
     ],
@@ -118,6 +120,8 @@ export default function AdminDashboard() {
         return <VendorPayments />;
       case 'users':
         return <UsersManagement />;
+      case 'security':
+        return <SecurityDashboard />;
       case 'reviews':
         return <ReviewManagement />;
       case 'chat':

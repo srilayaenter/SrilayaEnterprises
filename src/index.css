@@ -122,3 +122,43 @@ All colors MUST be HSL.
     transition: var(--transition-smooth);
   }
 }
+
+/* Print styles for bill printing */
+@media print {
+  body * {
+    visibility: hidden;
+  }
+  
+  .print-bill, .print-bill * {
+    visibility: visible;
+  }
+  
+  .print-bill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 100%;
+  }
+  
+  /* Hide non-essential elements when printing */
+  button, .no-print {
+    display: none !important;
+  }
+  
+  /* Optimize for print */
+  .container {
+    max-width: 100%;
+    padding: 0;
+  }
+  
+  /* Ensure proper page breaks */
+  .print-bill {
+    page-break-after: auto;
+  }
+  
+  /* Remove shadows and backgrounds for better print quality */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+  }
+}

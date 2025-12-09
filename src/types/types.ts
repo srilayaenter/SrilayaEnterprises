@@ -1,6 +1,6 @@
 export type UserRole = 'user' | 'admin';
 export type ProductCategory = 'millets' | 'rice' | 'flour' | 'flakes' | 'sugar' | 'honey' | 'laddus';
-export type OrderStatus = 'pending' | 'completed' | 'cancelled' | 'refunded';
+export type OrderStatus = 'pending' | 'processing' | 'packed' | 'shipped' | 'out_for_delivery' | 'delivered' | 'completed' | 'cancelled' | 'refunded';
 export type OrderType = 'online' | 'instore';
 
 export interface Category {
@@ -41,6 +41,10 @@ export interface Product {
   weight_per_kg: number;
   is_active: boolean;
   vendor_id: string | null;
+  min_stock_threshold: number;
+  reserved_stock: number;
+  expiry_date: string | null;
+  expiry_alert_days: number;
   created_at: string;
   updated_at: string;
 }
@@ -85,6 +89,8 @@ export interface Order {
   currency: string;
   status: OrderStatus;
   order_type: OrderType;
+  payment_method: string | null;
+  payment_details: any | null;
   stripe_session_id: string | null;
   stripe_payment_intent_id: string | null;
   customer_email: string | null;
@@ -95,6 +101,13 @@ export interface Order {
   shipping_address: string | null;
   points_earned: number;
   points_used: number;
+  is_cancelled: boolean;
+  cancellation_requested_at: string | null;
+  cancellation_reason: string | null;
+  estimated_delivery: string | null;
+  tracking_number: string | null;
+  actual_delivery_at: string | null;
+  can_be_modified: boolean;
   completed_at: string | null;
   created_at: string;
   updated_at: string;
@@ -103,6 +116,27 @@ export interface Order {
 export interface CartItem extends OrderItem {
   product_id: string;
   variant_id: string;
+}
+
+export interface OrderModification {
+  id: string;
+  order_id: string;
+  modified_by: string;
+  modification_type: string;
+  old_value: any;
+  new_value: any;
+  notes: string | null;
+  created_at: string;
+}
+
+export interface OrderStatusHistory {
+  id: string;
+  order_id: string;
+  old_status: OrderStatus | null;
+  new_status: OrderStatus;
+  changed_by: string | null;
+  notes: string | null;
+  created_at: string;
 }
 
 export interface ShippingRate {
@@ -324,6 +358,11 @@ export interface PurchaseOrder {
   items: PurchaseOrderItem[];
   total_amount: number;
   shipping_cost: number;
+  payment_status: PaymentStatus;
+  payment_method: PaymentMethod | null;
+  payment_date: string | null;
+  payment_reference: string | null;
+  paid_amount: number;
   notes: string | null;
   ordered_by: string | null;
   vendor_supply_id: string | null;
@@ -459,4 +498,327 @@ export interface ChatMessageWithSender extends ChatMessage {
   sender?: Profile;
 }
 
+// Security Types
+export interface SecurityAuditLog {
+  id: string;
+  user_id: string | null;
+  event_type: string;
+  event_description: string | null;
+  ip_address: string | null;
+  user_agent: string | null;
+  metadata: Record<string, any>;
+  created_at: string;
+}
+
+export interface LoginAttempt {
+  id: string;
+  email: string;
+  ip_address: string;
+  success: boolean;
+  failure_reason: string | null;
+  created_at: string;
+}
+
+export interface AccountLockout {
+  id: string;
+  user_id: string | null;
+  email: string;
+  locked_until: string;
+  reason: string | null;
+  created_at: string;
+}
+
+export interface ActiveSession {
+  id: string;
+  user_id: string;
+  session_token: string;
+  ip_address: string | null;
+  user_agent: string | null;
+  last_activity: string;
+  expires_at: string;
+  created_at: string;
+}
+
+// Backup and Recovery Types
+export type BackupType = 'full' | 'incremental' | 'manual';
+export type BackupStatus = 'in_progress' | 'completed' | 'failed' | 'verified';
+export type RestoreType = 'full' | 'partial' | 'point_in_time';
+export type RestoreStatus = 'in_progress' | 'completed' | 'failed';
+
+export interface BackupMetadata {
+  id: string;
+  backup_name: string;
+  backup_type: BackupType;
+  backup_size_bytes: number | null;
+  backup_location: string | null;
+  backup_status: BackupStatus;
+  tables_included: string[] | null;
+  row_counts: Record<string, number>;
+  checksum: string | null;
+  error_message: string | null;
+  created_by: string | null;
+  created_at: string;
+  completed_at: string | null;
+  verified_at: string | null;
+}
+
+export interface BackupSchedule {
+  id: string;
+  schedule_name: string;
+  backup_type: BackupType;
+  frequency: 'hourly' | 'daily' | 'weekly' | 'monthly';
+  time_of_day: string | null;
+  day_of_week: number | null;
+  day_of_month: number | null;
+  is_active: boolean;
+  retention_days: number;
+  last_run_at: string | null;
+  next_run_at: string | null;
+  created_at: string;
+  updated_at: string;
+}
+
+export interface BackupRestoreHistory {
+  id: string;
+  backup_id: string | null;
+  restore_type: RestoreType;
+  tables_restored: string[] | null;
+  restore_status: RestoreStatus;
+  rows_restored: Record<string, number>;
+  error_message: string | null;
+  restored_by: string | null;
+  started_at: string;
+  completed_at: string | null;
+}
+
+// Performance Monitoring Types
+export interface PerformanceMetric {
+  id: string;
+  metric_type: string;
+  metric_name: string;
+  metric_value: number;
+  metadata: Record<string, any>;
+  recorded_at: string;
+}
+
+export interface TableSize {
+  table_name: string;
+  row_count: number;
+  total_size: string;
+  table_size: string;
+  indexes_size: string;
+}
+
+export interface IndexUsage {
+  table_name: string;
+  index_name: string;
+  index_scans: number;
+  rows_read: number;
+  index_size: string;
+}
+
+export interface DatabaseStats {
+  [tableName: string]: {
+    row_count: number;
+    total_size: number;
+  };
+}
+
+// ============================================================================
+// INVENTORY MANAGEMENT TYPES
+// ============================================================================
+
+export type StockMovementType = 'reserve' | 'release' | 'finalize' | 'adjustment' | 'restock';
+export type InventoryAlertType = 'low_stock' | 'expiring' | 'expired' | 'out_of_stock';
+export type AlertSeverity = 'low' | 'medium' | 'high' | 'critical';
+
+export interface StockMovement {
+  id: string;
+  product_id: string;
+  movement_type: StockMovementType;
+  quantity: number;
+  order_id: string | null;
+  previous_stock: number;
+  new_stock: number;
+  previous_reserved: number;
+  new_reserved: number;
+  notes: string | null;
+  created_by: string | null;
+  created_at: string;
+}
+
+export interface InventoryAlert {
+  id: string;
+  product_id: string;
+  alert_type: InventoryAlertType;
+  severity: AlertSeverity;
+  message: string;
+  is_resolved: boolean;
+  resolved_at: string | null;
+  resolved_by: string | null;
+  created_at: string;
+}
+
+export interface LowStockProduct {
+  product_id: string;
+  product_name: string;
+  current_stock: number;
+  reserved_stock: number;
+  available_stock: number;
+  min_threshold: number;
+}
+
+export interface ExpiringProduct {
+  product_id: string;
+  product_name: string;
+  expiry_date: string;
+  days_until_expiry: number;
+  current_stock: number;
+}
+
+export interface StockReservationResult {
+  success: boolean;
+  message: string;
+  reserved_quantity?: number;
+  available_stock?: number;
+}
+
+// ============================================================================
+// CUSTOMER COMMUNICATION TYPES
+// ============================================================================
+
+export type CommunicationType = 
+  | 'order_confirmation'
+  | 'shipping_notification'
+  | 'delivery_confirmation'
+  | 'promotional'
+  | 'newsletter'
+  | 'password_reset'
+  | 'account_verification'
+  | 'other';
+
+export type CommunicationChannel = 'email' | 'sms' | 'push' | 'in_app';
+export type CommunicationStatus = 'pending' | 'sent' | 'delivered' | 'failed' | 'bounced';
+export type CampaignStatus = 'draft' | 'scheduled' | 'sending' | 'sent' | 'cancelled';
+
+export interface CommunicationPreferences {
+  id: string;
+  user_id: string;
+  email: string;
+  phone: string | null;
+  
+  // Email preferences
+  email_order_confirmation: boolean;
+  email_shipping_updates: boolean;
+  email_delivery_confirmation: boolean;
+  email_promotional: boolean;
+  email_newsletter: boolean;
+  
+  // SMS preferences
+  sms_order_confirmation: boolean;
+  sms_shipping_updates: boolean;
+  sms_delivery_confirmation: boolean;
+  
+  // General preferences
+  language: string;
+  timezone: string;
+  
+  created_at: string;
+  updated_at: string;
+}
+
+export interface CommunicationLog {
+  id: string;
+  user_id: string | null;
+  order_id: string | null;
+  
+  // Communication details
+  type: CommunicationType;
+  channel: CommunicationChannel;
+  status: CommunicationStatus;
+  
+  // Recipient details
+  recipient_email: string | null;
+  recipient_phone: string | null;
+  recipient_name: string | null;
+  
+  // Content
+  subject: string | null;
+  message: string | null;
+  template_id: string | null;
+  template_data: Record<string, any> | null;
+  
+  // Tracking
+  sent_at: string | null;
+  delivered_at: string | null;
+  opened_at: string | null;
+  clicked_at: string | null;
+  
+  // Error handling
+  error_message: string | null;
+  retry_count: number;
+  
+  // Metadata
+  metadata: Record<string, any> | null;
+  created_at: string;
+}
+
+export interface NewsletterSubscription {
+  id: string;
+  email: string;
+  user_id: string | null;
+  
+  // Subscription details
+  is_active: boolean;
+  subscribed_at: string;
+  unsubscribed_at: string | null;
+  
+  // Preferences
+  categories: string[];
+  frequency: 'daily' | 'weekly' | 'monthly';
+  
+  // Tracking
+  confirmation_token: string | null;
+  confirmed_at: string | null;
+  last_sent_at: string | null;
+  
+  // Metadata
+  source: string | null;
+  metadata: Record<string, any> | null;
+  
+  created_at: string;
+  updated_at: string;
+}
+
+export interface PromotionalCampaign {
+  id: string;
+  
+  // Campaign details
+  name: string;
+  subject: string;
+  content: string;
+  template_id: string | null;
+  
+  // Targeting
+  target_audience: string;
+  segment_criteria: Record<string, any> | null;
+  
+  // Scheduling
+  status: CampaignStatus;
+  scheduled_at: string | null;
+  sent_at: string | null;
+  
+  // Tracking
+  total_recipients: number;
+  sent_count: number;
+  delivered_count: number;
+  opened_count: number;
+  clicked_count: number;
+  unsubscribed_count: number;
+  
+  // Metadata
+  created_by: string | null;
+  created_at: string;
+  updated_at: string;
+}
 
