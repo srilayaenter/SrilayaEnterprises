@@ -19,4 +19,4 @@ export default defineConfig({
     outDir: 'dist',
   },
 });
-Connection error. Please check your network or refresh the page.
+//Connection error. Please check your network or refresh the page.
