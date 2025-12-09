@@ -7,18 +7,25 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Textarea } from '@/components/ui/textarea';
 import { useToast } from '@/hooks/use-toast';
-import { Eye, TrendingUp, Package, DollarSign, ShoppingCart, Store } from 'lucide-react';
+import { useAuth } from '@/components/auth/AuthProvider';
+import { Eye, TrendingUp, Package, DollarSign, ShoppingCart, Store, CreditCard, Wallet, Banknote, Split } from 'lucide-react';
+import OrderStatusBadge from '@/components/orders/OrderStatusBadge';
 
 interface OrderStatusSelectProps {
   orderId: string;
   initialStatus: OrderStatus;
-  onStatusChange: (orderId: string, newStatus: OrderStatus) => Promise<void>;
+  onStatusChange: (orderId: string, newStatus: OrderStatus, notes?: string) => Promise<void>;
 }
 
 function OrderStatusSelect({ orderId, initialStatus, onStatusChange }: OrderStatusSelectProps) {
   const [status, setStatus] = useState<OrderStatus>(initialStatus);
   const [isUpdating, setIsUpdating] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [notes, setNotes] = useState('');
 
   useEffect(() => {
     setStatus(initialStatus);
@@ -27,29 +34,69 @@ function OrderStatusSelect({ orderId, initialStatus, onStatusChange }: OrderStat
   const handleChange = async (newStatus: OrderStatus) => {
     setIsUpdating(true);
     try {
-      await onStatusChange(orderId, newStatus);
+      await onStatusChange(orderId, newStatus, notes || undefined);
       setStatus(newStatus);
+      setDialogOpen(false);
+      setNotes('');
     } finally {
       setIsUpdating(false);
     }
   };
 
   return (
-    <Select
-      value={status}
-      onValueChange={(value) => handleChange(value as OrderStatus)}
-      disabled={isUpdating}
-    >
-      <SelectTrigger className="w-32">
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent>
-        <SelectItem value="pending">Pending</SelectItem>
-        <SelectItem value="completed">Completed</SelectItem>
-        <SelectItem value="cancelled">Cancelled</SelectItem>
-        <SelectItem value="refunded">Refunded</SelectItem>
-      </SelectContent>
-    </Select>
+    <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" size="sm">
+          <OrderStatusBadge status={status} />
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>Update Order Status</DialogTitle>
+        </DialogHeader>
+        <div className="space-y-4">
+          <div>
+            <Label>New Status</Label>
+            <Select
+              value={status}
+              onValueChange={(value) => setStatus(value as OrderStatus)}
+              disabled={isUpdating}
+            >
+              <SelectTrigger>
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="pending">Pending</SelectItem>
+                <SelectItem value="processing">Processing</SelectItem>
+                <SelectItem value="packed">Packed</SelectItem>
+                <SelectItem value="shipped">Shipped</SelectItem>
+                <SelectItem value="out_for_delivery">Out for Delivery</SelectItem>
+                <SelectItem value="delivered">Delivered</SelectItem>
+                <SelectItem value="completed">Completed</SelectItem>
+                <SelectItem value="cancelled">Cancelled</SelectItem>
+                <SelectItem value="refunded">Refunded</SelectItem>
+              </SelectContent>
+            </Select>
+          </div>
+          <div>
+            <Label>Notes (Optional)</Label>
+            <Textarea
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+              placeholder="Add any notes about this status change..."
+              rows={3}
+            />
+          </div>
+          <Button
+            onClick={() => handleChange(status)}
+            disabled={isUpdating}
+            className="w-full"
+          >
+            {isUpdating ? 'Updating...' : 'Update Status'}
+          </Button>
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 }
 
@@ -60,7 +107,12 @@ export default function OrdersView() {
   const [loading, setLoading] = useState(true);
   const [dialogOpen, setDialogOpen] = useState(false);
   const [orderTypeFilter, setOrderTypeFilter] = useState<'all' | OrderType>('all');
+  const [trackingDialogOpen, setTrackingDialogOpen] = useState(false);
+  const [trackingNumber, setTrackingNumber] = useState('');
+  const [estimatedDelivery, setEstimatedDelivery] = useState('');
+  const [orderForTracking, setOrderForTracking] = useState<Order | null>(null);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   useEffect(() => {
     loadOrders();
@@ -128,13 +180,64 @@ export default function OrdersView() {
     return getTotalRevenue() / completed.length;
   };
 
-  const handleStatusChange = async (orderId: string, newStatus: OrderStatus) => {
-    try {
-      await ordersApi.updateStatus(orderId, newStatus);
+  const handleStatusChange = async (orderId: string, newStatus: OrderStatus, notes?: string) => {
+    if (!user) {
       toast({
-        title: 'Status updated',
-        description: 'Order status has been updated successfully'
+        title: 'Error',
+        description: 'User not authenticated',
+        variant: 'destructive'
       });
+      return;
+    }
+
+    try {
+      const result = await ordersApi.updateOrderStatus(orderId, newStatus, user.id, notes);
+      if (result.success) {
+        toast({
+          title: 'Status updated',
+          description: result.message
+        });
+        loadOrders();
+      } else {
+        toast({
+          title: 'Error',
+          description: result.message,
+          variant: 'destructive'
+        });
+      }
+    } catch (error: any) {
+      toast({
+        title: 'Error',
+        description: error.message,
+        variant: 'destructive'
+      });
+    }
+  };
+
+  const handleUpdateTracking = async () => {
+    if (!orderForTracking || !trackingNumber) {
+      toast({
+        title: 'Error',
+        description: 'Please enter a tracking number',
+        variant: 'destructive'
+      });
+      return;
+    }
+
+    try {
+      await ordersApi.updateOrderTracking(
+        orderForTracking.id,
+        trackingNumber,
+        estimatedDelivery || undefined
+      );
+      toast({
+        title: 'Tracking Updated',
+        description: 'Order tracking information has been updated'
+      });
+      setTrackingDialogOpen(false);
+      setTrackingNumber('');
+      setEstimatedDelivery('');
+      setOrderForTracking(null);
       loadOrders();
     } catch (error: any) {
       toast({
@@ -143,6 +246,27 @@ export default function OrdersView() {
         variant: 'destructive'
       });
     }
+  };
+
+  const getPaymentMethodIcon = (method: string | null) => {
+    if (!method) return <CreditCard className="h-4 w-4" />;
+    switch (method.toLowerCase()) {
+      case 'cash':
+        return <Banknote className="h-4 w-4" />;
+      case 'upi':
+        return <Wallet className="h-4 w-4" />;
+      case 'card':
+        return <CreditCard className="h-4 w-4" />;
+      case 'split':
+        return <Split className="h-4 w-4" />;
+      default:
+        return <CreditCard className="h-4 w-4" />;
+    }
+  };
+
+  const getPaymentMethodLabel = (method: string | null) => {
+    if (!method) return 'Card';
+    return method.charAt(0).toUpperCase() + method.slice(1);
   };
 
   return (
@@ -240,6 +364,7 @@ export default function OrdersView() {
                   <TableHead>Customer</TableHead>
                   <TableHead>Date</TableHead>
                   <TableHead>Type</TableHead>
+                  <TableHead>Payment</TableHead>
                   <TableHead>Items</TableHead>
                   <TableHead>Subtotal</TableHead>
                   <TableHead>GST</TableHead>
@@ -273,6 +398,12 @@ export default function OrdersView() {
                           </div>
                         )}
                       </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-1">
+                        {getPaymentMethodIcon(order.payment_method)}
+                        <span className="text-xs">{getPaymentMethodLabel(order.payment_method)}</span>
+                      </div>
                     </TableCell>
                     <TableCell>{order.items?.length || 0}</TableCell>
                     <TableCell>₹{order.total_amount.toFixed(2)}</TableCell>
@@ -352,6 +483,15 @@ export default function OrdersView() {
                             </div>
                           )}
                         </Badge>
+                      </dd>
+                    </div>
+                    <div className="flex justify-between">
+                      <dt className="text-muted-foreground">Payment:</dt>
+                      <dd>
+                        <div className="flex items-center gap-1">
+                          {getPaymentMethodIcon(selectedOrder.payment_method)}
+                          <span>{getPaymentMethodLabel(selectedOrder.payment_method)}</span>
+                        </div>
                       </dd>
                     </div>
                     <div className="flex justify-between">
@@ -460,6 +600,42 @@ export default function OrdersView() {
                     <dd>₹{(selectedOrder.total_amount + (selectedOrder.gst_amount || 0) + (selectedOrder.shipping_cost || 0)).toFixed(2)}</dd>
                   </div>
                 </dl>
+
+                {/* Payment Details for Split Payments */}
+                {selectedOrder.payment_method === 'split' && selectedOrder.payment_details && (
+                  <div className="border-t pt-4 mt-4">
+                    <h4 className="font-semibold mb-2">Payment Breakdown</h4>
+                    <div className="space-y-2">
+                      {selectedOrder.payment_details.cash > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <Banknote className="h-4 w-4" />
+                            <span>Cash</span>
+                          </div>
+                          <span className="font-medium">₹{selectedOrder.payment_details.cash.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {selectedOrder.payment_details.upi > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <Wallet className="h-4 w-4" />
+                            <span>UPI</span>
+                          </div>
+                          <span className="font-medium">₹{selectedOrder.payment_details.upi.toFixed(2)}</span>
+                        </div>
+                      )}
+                      {selectedOrder.payment_details.card > 0 && (
+                        <div className="flex justify-between text-sm">
+                          <div className="flex items-center gap-2">
+                            <CreditCard className="h-4 w-4" />
+                            <span>Card</span>
+                          </div>
+                          <span className="font-medium">₹{selectedOrder.payment_details.card.toFixed(2)}</span>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
           )}

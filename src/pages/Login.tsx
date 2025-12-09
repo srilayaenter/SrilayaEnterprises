@@ -7,6 +7,11 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Leaf } from 'lucide-react';
+import {
+  logLoginAttempt,
+  logSecurityEventWrapper,
+  createActiveSession,
+} from '@/utils/security';
 
 export default function Login() {
   const [email, setEmail] = useState('');
@@ -23,12 +28,32 @@ export default function Login() {
     setLoading(true);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
+      const { data, error } = await supabase.auth.signInWithPassword({
         email,
         password,
       });
 
-      if (error) throw error;
+      if (error) {
+        // Log failed login attempt
+        await logLoginAttempt(email, false, error.message);
+        throw error;
+      }
+
+      // Log successful login attempt
+      await logLoginAttempt(email, true);
+
+      // Log security event
+      if (data.user) {
+        await logSecurityEventWrapper(
+          data.user.id,
+          'login',
+          'User logged in successfully',
+          { email }
+        );
+
+        // Create active session
+        await createActiveSession(data.user.id);
+      }
 
       toast({
         title: 'Welcome back!',
@@ -92,7 +117,7 @@ export default function Login() {
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Don't have an account?{' '}
             <Link to="/register" className="text-primary hover:underline font-medium">
-              Sign up
+              Sign up now
             </Link>
           </div>
         </CardContent>

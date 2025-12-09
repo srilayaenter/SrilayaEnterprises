@@ -204,7 +204,11 @@ export default function ProductManagement() {
           product_code: null,
           weight_per_kg: 1.0,
           stock: 0,
-          is_active: true
+          is_active: true,
+          min_stock_threshold: 10,
+          reserved_stock: 0,
+          expiry_date: null,
+          expiry_alert_days: 30
         });
 
         // Create variants if any were added

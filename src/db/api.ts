@@ -14,6 +14,7 @@ import type {
   VendorSupply,
   VendorSupplyWithDetails,
   PaymentStatus,
+  PaymentMethod,
   QualityCheckStatus,
   ShipmentHandler,
   ShipmentHandlerTransaction,
@@ -27,7 +28,20 @@ import type {
   VendorPaymentSummary,
   PurchaseOrder,
   PurchaseOrderWithDetails,
-  PurchaseOrderStatus
+  PurchaseOrderStatus,
+  StockMovement,
+  InventoryAlert,
+  LowStockProduct,
+  ExpiringProduct,
+  StockReservationResult,
+  CommunicationPreferences,
+  CommunicationLog,
+  NewsletterSubscription,
+  PromotionalCampaign,
+  CommunicationType,
+  CommunicationStatus,
+  CommunicationChannel,
+  CampaignStatus
 } from '@/types/types';
 
 export const productsApi = {
@@ -252,6 +266,87 @@ export const ordersApi = {
     if (error) throw error;
     if (!data) throw new Error('Failed to update order status');
     return data;
+  },
+
+  async canCancelOrder(orderId: string): Promise<boolean> {
+    const { data, error } = await supabase.rpc('can_cancel_order', {
+      p_order_id: orderId
+    });
+
+    if (error) throw error;
+    return data === true;
+  },
+
+  async canModifyOrder(orderId: string): Promise<boolean> {
+    const { data, error } = await supabase.rpc('can_modify_order', {
+      p_order_id: orderId
+    });
+
+    if (error) throw error;
+    return data === true;
+  },
+
+  async cancelOrder(orderId: string, userId: string, reason?: string): Promise<{ success: boolean; message: string }> {
+    const { data, error } = await supabase.rpc('cancel_order', {
+      p_order_id: orderId,
+      p_user_id: userId,
+      p_reason: reason || null
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async updateOrderStatus(orderId: string, newStatus: OrderStatus, userId: string, notes?: string): Promise<{ success: boolean; message: string; old_status?: string; new_status?: string }> {
+    const { data, error } = await supabase.rpc('update_order_status', {
+      p_order_id: orderId,
+      p_new_status: newStatus,
+      p_user_id: userId,
+      p_notes: notes || null
+    });
+
+    if (error) throw error;
+    return data;
+  },
+
+  async getOrderStatusHistory(orderId: string): Promise<any[]> {
+    const { data, error } = await supabase
+      .from('order_status_history')
+      .select('*')
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async getOrderModifications(orderId: string): Promise<any[]> {
+    const { data, error } = await supabase
+      .from('order_modifications')
+      .select('*')
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: true });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  async updateOrderTracking(orderId: string, trackingNumber: string, estimatedDelivery?: string): Promise<Order> {
+    const updates: any = { tracking_number: trackingNumber };
+    if (estimatedDelivery) {
+      updates.estimated_delivery = estimatedDelivery;
+    }
+
+    const { data, error } = await supabase
+      .from('orders')
+      .update(updates)
+      .eq('id', orderId)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update order tracking');
+    return data;
   }
 };
 
@@ -344,6 +439,42 @@ export const profilesApi = {
     if (!profileData) throw new Error('Failed to update profile');
     
     return profileData;
+  },
+
+  async deleteUser(userId: string): Promise<void> {
+    const { data, error } = await supabase.functions.invoke('admin_delete_user', {
+      body: JSON.stringify({ userId }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (error) {
+      const errorMsg = await error?.context?.text();
+      throw new Error(errorMsg || 'Failed to delete user');
+    }
+
+    if (!data?.success) {
+      throw new Error(data?.error || 'Failed to delete user');
+    }
+  },
+
+  async updateUserPassword(userId: string, newPassword: string): Promise<void> {
+    const { data, error } = await supabase.functions.invoke('admin_update_user_password', {
+      body: JSON.stringify({ userId, newPassword }),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
+
+    if (error) {
+      const errorMsg = await error?.context?.text();
+      throw new Error(errorMsg || 'Failed to update password');
+    }
+
+    if (!data?.success) {
+      throw new Error(data?.error || 'Failed to update password');
+    }
   }
 };
 
@@ -1294,6 +1425,28 @@ export const purchaseOrdersApi = {
     return data;
   },
 
+  async updatePayment(
+    id: string, 
+    paymentData: {
+      payment_status: PaymentStatus;
+      payment_method: PaymentMethod | null;
+      payment_date: string | null;
+      payment_reference: string | null;
+      paid_amount: number;
+    }
+  ): Promise<PurchaseOrder> {
+    const { data, error } = await supabase
+      .from('purchase_orders')
+      .update(paymentData)
+      .eq('id', id)
+      .select()
+      .maybeSingle();
+
+    if (error) throw error;
+    if (!data) throw new Error('Failed to update payment information');
+    return data;
+  },
+
   async delete(id: string): Promise<void> {
     const { error } = await supabase
       .from('purchase_orders')
@@ -1962,6 +2115,489 @@ export const categoriesApi = {
       .eq('id', id);
 
     if (error) throw error;
+  }
+};
+
+// ============================================================================
+// INVENTORY MANAGEMENT API
+// ============================================================================
+
+export const inventoryApi = {
+  // Get available stock for a product
+  async getAvailableStock(productId: string): Promise<number> {
+    const { data, error } = await supabase
+      .rpc('get_available_stock', { p_product_id: productId });
+
+    if (error) throw error;
+    return data || 0;
+  },
+
+  // Reserve stock for an order
+  async reserveStock(
+    productId: string,
+    quantity: number,
+    orderId: string,
+    userId?: string
+  ): Promise<StockReservationResult> {
+    const { data, error } = await supabase
+      .rpc('reserve_stock', {
+        p_product_id: productId,
+        p_quantity: quantity,
+        p_order_id: orderId,
+        p_user_id: userId || null
+      });
+
+    if (error) throw error;
+    return data as StockReservationResult;
+  },
+
+  // Release reserved stock (on cancellation)
+  async releaseStock(
+    productId: string,
+    quantity: number,
+    orderId: string,
+    userId?: string,
+    notes?: string
+  ): Promise<StockReservationResult> {
+    const { data, error } = await supabase
+      .rpc('release_stock', {
+        p_product_id: productId,
+        p_quantity: quantity,
+        p_order_id: orderId,
+        p_user_id: userId || null,
+        p_notes: notes || null
+      });
+
+    if (error) throw error;
+    return data as StockReservationResult;
+  },
+
+  // Finalize stock (on delivery)
+  async finalizeStock(
+    productId: string,
+    quantity: number,
+    orderId: string,
+    userId?: string
+  ): Promise<StockReservationResult> {
+    const { data, error } = await supabase
+      .rpc('finalize_stock', {
+        p_product_id: productId,
+        p_quantity: quantity,
+        p_order_id: orderId,
+        p_user_id: userId || null
+      });
+
+    if (error) throw error;
+    return data as StockReservationResult;
+  },
+
+  // Get low stock products
+  async getLowStockProducts(): Promise<LowStockProduct[]> {
+    const { data, error } = await supabase
+      .rpc('check_low_stock_products');
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Get expiring products
+  async getExpiringProducts(days: number = 30): Promise<ExpiringProduct[]> {
+    const { data, error } = await supabase
+      .rpc('check_expiring_products', { p_days: days });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Get expired products
+  async getExpiredProducts(): Promise<ExpiringProduct[]> {
+    const { data, error } = await supabase
+      .rpc('check_expired_products');
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Get stock movements for a product
+  async getStockMovements(productId: string): Promise<StockMovement[]> {
+    const { data, error } = await supabase
+      .from('stock_movements')
+      .select('*')
+      .eq('product_id', productId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Get all inventory alerts
+  async getInventoryAlerts(includeResolved: boolean = false): Promise<InventoryAlert[]> {
+    let query = supabase
+      .from('inventory_alerts')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (!includeResolved) {
+      query = query.eq('is_resolved', false);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Get alerts for a specific product
+  async getProductAlerts(productId: string): Promise<InventoryAlert[]> {
+    const { data, error } = await supabase
+      .from('inventory_alerts')
+      .select('*')
+      .eq('product_id', productId)
+      .eq('is_resolved', false)
+      .order('created_at', { ascending: false});
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Resolve an alert
+  async resolveAlert(alertId: string, userId: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .rpc('resolve_inventory_alert', {
+        p_alert_id: alertId,
+        p_user_id: userId
+      });
+
+    if (error) throw error;
+    return data === true;
+  },
+
+  // Update product stock threshold
+  async updateStockThreshold(productId: string, threshold: number): Promise<void> {
+    const { error } = await supabase
+      .from('products')
+      .update({ min_stock_threshold: threshold })
+      .eq('id', productId);
+
+    if (error) throw error;
+  },
+
+  // Update product expiry date
+  async updateExpiryDate(productId: string, expiryDate: string | null): Promise<void> {
+    const { error } = await supabase
+      .from('products')
+      .update({ expiry_date: expiryDate })
+      .eq('id', productId);
+
+    if (error) throw error;
+  },
+
+  // Get inventory summary
+  async getInventorySummary(): Promise<{
+    totalProducts: number;
+    lowStockCount: number;
+    outOfStockCount: number;
+    expiringCount: number;
+    expiredCount: number;
+    totalAlerts: number;
+  }> {
+    // Get all products
+    const { data: products, error: productsError } = await supabase
+      .from('products')
+      .select('id, stock, reserved_stock, min_stock_threshold, expiry_date');
+
+    if (productsError) throw productsError;
+
+    const totalProducts = products?.length || 0;
+    const lowStockCount = products?.filter(p => 
+      (p.stock - p.reserved_stock) <= p.min_stock_threshold && (p.stock - p.reserved_stock) > 0
+    ).length || 0;
+    const outOfStockCount = products?.filter(p => 
+      (p.stock - p.reserved_stock) === 0
+    ).length || 0;
+
+    const today = new Date();
+    const expiringCount = products?.filter(p => {
+      if (!p.expiry_date) return false;
+      const expiryDate = new Date(p.expiry_date);
+      const daysUntilExpiry = Math.ceil((expiryDate.getTime() - today.getTime()) / (1000 * 60 * 60 * 24));
+      return daysUntilExpiry > 0 && daysUntilExpiry <= 30;
+    }).length || 0;
+
+    const expiredCount = products?.filter(p => {
+      if (!p.expiry_date) return false;
+      const expiryDate = new Date(p.expiry_date);
+      return expiryDate < today;
+    }).length || 0;
+
+    // Get unresolved alerts count
+    const { data: alerts, error: alertsError } = await supabase
+      .from('inventory_alerts')
+      .select('id', { count: 'exact', head: true })
+      .eq('is_resolved', false);
+
+    if (alertsError) throw alertsError;
+
+    return {
+      totalProducts,
+      lowStockCount,
+      outOfStockCount,
+      expiringCount,
+      expiredCount,
+      totalAlerts: alerts?.length || 0
+    };
+  }
+};
+
+// ============================================================================
+// CUSTOMER COMMUNICATION API
+// ============================================================================
+
+export const communicationApi = {
+  // Get communication preferences for current user
+  async getPreferences(userId: string): Promise<CommunicationPreferences | null> {
+    const { data, error } = await supabase
+      .from('communication_preferences')
+      .select('*')
+      .eq('user_id', userId)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Update communication preferences
+  async updatePreferences(
+    userId: string,
+    email: string,
+    preferences: Partial<CommunicationPreferences>
+  ): Promise<CommunicationPreferences> {
+    const { data, error } = await supabase
+      .rpc('upsert_communication_preferences', {
+        p_user_id: userId,
+        p_email: email,
+        p_phone: preferences.phone || null,
+        p_email_order_confirmation: preferences.email_order_confirmation ?? true,
+        p_email_shipping_updates: preferences.email_shipping_updates ?? true,
+        p_email_delivery_confirmation: preferences.email_delivery_confirmation ?? true,
+        p_email_promotional: preferences.email_promotional ?? true,
+        p_email_newsletter: preferences.email_newsletter ?? true,
+        p_sms_order_confirmation: preferences.sms_order_confirmation ?? false,
+        p_sms_shipping_updates: preferences.sms_shipping_updates ?? false,
+        p_sms_delivery_confirmation: preferences.sms_delivery_confirmation ?? false
+      });
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Get communication logs for user
+  async getCommunicationLogs(userId: string, limit = 50): Promise<CommunicationLog[]> {
+    const { data, error } = await supabase
+      .from('communication_logs')
+      .select('*')
+      .eq('user_id', userId)
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Get communication logs for order
+  async getOrderCommunicationLogs(orderId: string): Promise<CommunicationLog[]> {
+    const { data, error } = await supabase
+      .from('communication_logs')
+      .select('*')
+      .eq('order_id', orderId)
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Subscribe to newsletter
+  async subscribeToNewsletter(
+    email: string,
+    userId?: string,
+    source = 'website'
+  ): Promise<NewsletterSubscription> {
+    const { data, error } = await supabase
+      .rpc('subscribe_to_newsletter', {
+        p_email: email,
+        p_user_id: userId || null,
+        p_source: source
+      });
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Unsubscribe from newsletter
+  async unsubscribeFromNewsletter(email: string): Promise<boolean> {
+    const { data, error } = await supabase
+      .rpc('unsubscribe_from_newsletter', {
+        p_email: email
+      });
+
+    if (error) throw error;
+    return data === true;
+  },
+
+  // Get newsletter subscription status
+  async getNewsletterSubscription(email: string): Promise<NewsletterSubscription | null> {
+    const { data, error } = await supabase
+      .from('newsletter_subscriptions')
+      .select('*')
+      .eq('email', email)
+      .maybeSingle();
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Admin: Get all communication logs
+  async getAllCommunicationLogs(
+    filters?: {
+      type?: CommunicationType;
+      status?: CommunicationStatus;
+      channel?: CommunicationChannel;
+      startDate?: string;
+      endDate?: string;
+    },
+    limit = 100
+  ): Promise<CommunicationLog[]> {
+    let query = supabase
+      .from('communication_logs')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(limit);
+
+    if (filters?.type) {
+      query = query.eq('type', filters.type);
+    }
+    if (filters?.status) {
+      query = query.eq('status', filters.status);
+    }
+    if (filters?.channel) {
+      query = query.eq('channel', filters.channel);
+    }
+    if (filters?.startDate) {
+      query = query.gte('created_at', filters.startDate);
+    }
+    if (filters?.endDate) {
+      query = query.lte('created_at', filters.endDate);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Admin: Get all newsletter subscriptions
+  async getAllNewsletterSubscriptions(activeOnly = true): Promise<NewsletterSubscription[]> {
+    let query = supabase
+      .from('newsletter_subscriptions')
+      .select('*')
+      .order('subscribed_at', { ascending: false });
+
+    if (activeOnly) {
+      query = query.eq('is_active', true);
+    }
+
+    const { data, error } = await query;
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Admin: Create promotional campaign
+  async createCampaign(campaign: {
+    name: string;
+    subject: string;
+    content: string;
+    target_audience?: string;
+    scheduled_at?: string;
+  }): Promise<PromotionalCampaign> {
+    const { data: user } = await supabase.auth.getUser();
+    
+    const { data, error } = await supabase
+      .from('promotional_campaigns')
+      .insert({
+        name: campaign.name,
+        subject: campaign.subject,
+        content: campaign.content,
+        target_audience: campaign.target_audience || 'all',
+        scheduled_at: campaign.scheduled_at || null,
+        status: campaign.scheduled_at ? 'scheduled' : 'draft',
+        created_by: user?.user?.id
+      })
+      .select()
+      .single();
+
+    if (error) throw error;
+    return data;
+  },
+
+  // Admin: Get all campaigns
+  async getAllCampaigns(): Promise<PromotionalCampaign[]> {
+    const { data, error } = await supabase
+      .from('promotional_campaigns')
+      .select('*')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
+    return Array.isArray(data) ? data : [];
+  },
+
+  // Admin: Update campaign status
+  async updateCampaignStatus(
+    campaignId: string,
+    status: CampaignStatus
+  ): Promise<void> {
+    const { error } = await supabase
+      .from('promotional_campaigns')
+      .update({ status })
+      .eq('id', campaignId);
+
+    if (error) throw error;
+  },
+
+  // Admin: Get communication statistics
+  async getCommunicationStats(days = 30): Promise<{
+    totalSent: number;
+    totalDelivered: number;
+    totalFailed: number;
+    byType: Record<CommunicationType, number>;
+    byChannel: Record<CommunicationChannel, number>;
+  }> {
+    const startDate = new Date();
+    startDate.setDate(startDate.getDate() - days);
+
+    const { data, error } = await supabase
+      .from('communication_logs')
+      .select('type, channel, status')
+      .gte('created_at', startDate.toISOString());
+
+    if (error) throw error;
+
+    const logs = Array.isArray(data) ? data : [];
+
+    const stats = {
+      totalSent: logs.filter(l => l.status === 'sent' || l.status === 'delivered').length,
+      totalDelivered: logs.filter(l => l.status === 'delivered').length,
+      totalFailed: logs.filter(l => l.status === 'failed').length,
+      byType: {} as Record<CommunicationType, number>,
+      byChannel: {} as Record<CommunicationChannel, number>
+    };
+
+    logs.forEach(log => {
+      stats.byType[log.type] = (stats.byType[log.type] || 0) + 1;
+      stats.byChannel[log.channel] = (stats.byChannel[log.channel] || 0) + 1;
+    });
+
+    return stats;
   }
 };
 

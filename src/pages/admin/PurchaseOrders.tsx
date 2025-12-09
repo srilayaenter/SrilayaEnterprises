@@ -29,8 +29,8 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { purchaseOrdersApi, vendorsApi, productsApi, variantsApi } from '@/db/api';
-import type { PurchaseOrder, PurchaseOrderWithDetails, PurchaseOrderStatus, PurchaseOrderItem, Vendor, Product, ProductVariant } from '@/types/types';
-import { Plus, Pencil, Trash2, Package, Search, X } from 'lucide-react';
+import type { PurchaseOrder, PurchaseOrderWithDetails, PurchaseOrderStatus, PurchaseOrderItem, Vendor, Product, ProductVariant, PaymentStatus, PaymentMethod } from '@/types/types';
+import { Plus, Pencil, Trash2, Package, Search, X, DollarSign } from 'lucide-react';
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from '@/components/ui/command';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 
@@ -42,8 +42,12 @@ export default function PurchaseOrders() {
   const [loading, setLoading] = useState(true);
   const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
+  const [isPaymentDialogOpen, setIsPaymentDialogOpen] = useState(false);
   const [selectedOrder, setSelectedOrder] = useState<PurchaseOrder | null>(null);
+  const [selectedPaymentOrder, setSelectedPaymentOrder] = useState<PurchaseOrderWithDetails | null>(null);
   const [statusFilter, setStatusFilter] = useState<string>('all');
+  const [paymentStatusFilter, setPaymentStatusFilter] = useState<string>('all');
+  const [vendorFilter, setVendorFilter] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const { toast } = useToast();
 
@@ -51,6 +55,8 @@ export default function PurchaseOrders() {
   const [totalOrders, setTotalOrders] = useState(0);
   const [outstandingOrders, setOutstandingOrders] = useState(0);
   const [totalValue, setTotalValue] = useState(0);
+  const [pendingPayments, setPendingPayments] = useState(0);
+  const [paidOrders, setPaidOrders] = useState(0);
 
   // Form state
   const [formData, setFormData] = useState({
@@ -60,6 +66,15 @@ export default function PurchaseOrders() {
     items: [] as PurchaseOrderItem[],
     shipping_cost: 0,
     notes: '',
+  });
+
+  // Payment form state
+  const [paymentForm, setPaymentForm] = useState({
+    payment_status: 'pending' as PaymentStatus,
+    payment_method: '' as PaymentMethod | '',
+    payment_date: new Date().toISOString().split('T')[0],
+    payment_reference: '',
+    paid_amount: 0,
   });
 
   // Item form state
@@ -98,6 +113,12 @@ export default function PurchaseOrders() {
 
       const total = ordersData.reduce((sum, o) => sum + Number(o.total_amount), 0);
       setTotalValue(total);
+
+      // Calculate payment stats
+      const pending = ordersData.filter(o => !o.payment_status || o.payment_status === 'pending').length;
+      setPendingPayments(pending);
+      const paid = ordersData.filter(o => o.payment_status === 'paid').length;
+      setPaidOrders(paid);
     } catch (error) {
       console.error('Error loading data:', error);
       toast({
@@ -143,6 +164,11 @@ export default function PurchaseOrders() {
         items: formData.items,
         total_amount: totalAmount,
         shipping_cost: formData.shipping_cost,
+        payment_status: 'pending',
+        payment_method: null,
+        payment_date: null,
+        payment_reference: null,
+        paid_amount: 0,
         notes: formData.notes || null,
         ordered_by: null,
         vendor_supply_id: null,
@@ -358,12 +384,122 @@ export default function PurchaseOrders() {
     return <Badge variant={config.variant}>{config.label}</Badge>;
   };
 
+  const getPaymentStatusBadge = (status: PaymentStatus) => {
+    const variants: Record<PaymentStatus, { className: string, label: string }> = {
+      pending: { className: 'bg-yellow-100 text-yellow-800 hover:bg-yellow-100', label: 'Pending' },
+      partial: { className: 'bg-blue-100 text-blue-800 hover:bg-blue-100', label: 'Partial' },
+      paid: { className: 'bg-green-100 text-green-800 hover:bg-green-100', label: 'Paid' },
+    };
+
+    const config = variants[status];
+    return <Badge className={config.className}>{config.label}</Badge>;
+  };
+
+  const openPaymentDialog = (order: PurchaseOrderWithDetails) => {
+    setSelectedPaymentOrder(order);
+    setPaymentForm({
+      payment_status: order.payment_status || 'pending',
+      payment_method: (order.payment_method || '') as PaymentMethod | '',
+      payment_date: order.payment_date || new Date().toISOString().split('T')[0],
+      payment_reference: order.payment_reference || '',
+      paid_amount: order.paid_amount || 0,
+    });
+    setIsPaymentDialogOpen(true);
+  };
+
+  const handleUpdatePayment = async () => {
+    if (!selectedPaymentOrder) return;
+
+    // Validation
+    if (paymentForm.payment_status !== 'pending' && !paymentForm.payment_method) {
+      toast({
+        title: 'Validation Error',
+        description: 'Please select a payment method',
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // Validate paid_amount for partial payments
+    if (paymentForm.payment_status === 'partial') {
+      if (paymentForm.paid_amount <= 0) {
+        toast({
+          title: 'Validation Error',
+          description: 'Paid amount must be greater than 0 for partial payments',
+          variant: 'destructive',
+        });
+        return;
+      }
+      if (paymentForm.paid_amount >= selectedPaymentOrder.total_amount) {
+        toast({
+          title: 'Validation Error',
+          description: 'Paid amount must be less than total amount for partial payments. Use "Paid" status if fully paid.',
+          variant: 'destructive',
+        });
+        return;
+      }
+    }
+
+    try {
+      // Calculate paid_amount based on payment_status
+      let paidAmount = 0;
+      if (paymentForm.payment_status === 'paid') {
+        paidAmount = selectedPaymentOrder.total_amount;
+      } else if (paymentForm.payment_status === 'partial') {
+        paidAmount = paymentForm.paid_amount;
+      }
+
+      await purchaseOrdersApi.updatePayment(selectedPaymentOrder.id, {
+        payment_status: paymentForm.payment_status,
+        payment_method: paymentForm.payment_method || null,
+        payment_date: paymentForm.payment_status !== 'pending' ? paymentForm.payment_date : null,
+        payment_reference: paymentForm.payment_reference || null,
+        paid_amount: paidAmount,
+      });
+
+      toast({
+        title: 'Success',
+        description: 'Payment status updated successfully',
+      });
+
+      setIsPaymentDialogOpen(false);
+      setSelectedPaymentOrder(null);
+      loadData();
+    } catch (error: any) {
+      console.error('Error updating payment:', error);
+      const errorMessage = error?.message || 'Failed to update payment status';
+      toast({
+        title: 'Error',
+        description: errorMessage,
+        variant: 'destructive',
+      });
+    }
+  };
+
   const filteredOrders = orders.filter(order => {
     const matchesStatus = statusFilter === 'all' || order.status === statusFilter;
+    const matchesPaymentStatus = paymentStatusFilter === 'all' || (order.payment_status || 'pending') === paymentStatusFilter;
+    const matchesVendor = vendorFilter === 'all' || order.vendor_id === vendorFilter;
     const matchesSearch = order.po_number.toLowerCase().includes(searchQuery.toLowerCase()) ||
                          order.vendor?.name?.toLowerCase().includes(searchQuery.toLowerCase());
-    return matchesStatus && matchesSearch;
+    return matchesStatus && matchesPaymentStatus && matchesVendor && matchesSearch;
   });
+
+  // Calculate filtered statistics (based on current filters)
+  const filteredStats = {
+    total: filteredOrders.length,
+    outstanding: filteredOrders.filter(o => 
+      ['ordered', 'confirmed', 'shipped'].includes(o.status)
+    ).length,
+    totalValue: filteredOrders.reduce((sum, o) => sum + Number(o.total_amount), 0),
+    pending: filteredOrders.filter(o => !o.payment_status || o.payment_status === 'pending').length,
+    paid: filteredOrders.filter(o => o.payment_status === 'paid').length,
+  };
+
+  // Get selected vendor name for display
+  const selectedVendorName = vendorFilter !== 'all' 
+    ? vendors.find(v => v.id === vendorFilter)?.name 
+    : null;
 
   const calculateTotal = () => {
     const itemsTotal = formData.items.reduce((sum, item) => sum + item.total_cost, 0);
@@ -380,35 +516,108 @@ export default function PurchaseOrders() {
 
   return (
     <div className="space-y-6">
-      {/* Summary Cards */}
-      <div className="grid gap-4 md:grid-cols-3">
+      {/* Vendor-Specific Header */}
+      {selectedVendorName && (
+        <Card className="bg-primary/5 border-primary/20">
+          <CardContent className="pt-6">
+            <div className="flex items-center justify-between">
+              <div>
+                <h3 className="text-lg font-semibold">Vendor View: {selectedVendorName}</h3>
+                <p className="text-sm text-muted-foreground">
+                  Showing statistics and orders for this vendor only
+                </p>
+              </div>
+              <Button 
+                variant="outline" 
+                size="sm"
+                onClick={() => setVendorFilter('all')}
+              >
+                <X className="mr-2 h-4 w-4" />
+                Clear Filter
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Summary Cards - Now showing filtered stats */}
+      <div className="grid gap-4 md:grid-cols-3 xl:grid-cols-5">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Orders</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {selectedVendorName ? 'Vendor Orders' : 'Total Orders'}
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{totalOrders}</div>
+            <div className="text-2xl font-bold">{filteredStats.total}</div>
+            {selectedVendorName && (
+              <p className="text-xs text-muted-foreground mt-1">
+                of {totalOrders} total
+              </p>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Outstanding Orders</CardTitle>
+            <CardTitle className="text-sm font-medium">Outstanding</CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{outstandingOrders}</div>
+            <div className="text-2xl font-bold">{filteredStats.outstanding}</div>
+            {selectedVendorName && (
+              <p className="text-xs text-muted-foreground mt-1">
+                of {outstandingOrders} total
+              </p>
+            )}
           </CardContent>
         </Card>
 
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Value</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              {selectedVendorName ? 'Vendor Value' : 'Total Value'}
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">₹{totalValue.toFixed(2)}</div>
+            <div className="text-2xl font-bold">₹{filteredStats.totalValue.toFixed(2)}</div>
+            {selectedVendorName && (
+              <p className="text-xs text-muted-foreground mt-1">
+                of ₹{totalValue.toFixed(2)} total
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Pending Payments</CardTitle>
+            <DollarSign className="h-4 w-4 text-yellow-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{filteredStats.pending}</div>
+            {selectedVendorName && (
+              <p className="text-xs text-muted-foreground mt-1">
+                of {pendingPayments} total
+              </p>
+            )}
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+            <CardTitle className="text-sm font-medium">Paid Orders</CardTitle>
+            <DollarSign className="h-4 w-4 text-green-600" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold">{filteredStats.paid}</div>
+            {selectedVendorName && (
+              <p className="text-xs text-muted-foreground mt-1">
+                of {paidOrders} total
+              </p>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -439,6 +648,30 @@ export default function PurchaseOrders() {
                   <SelectItem value="shipped">Shipped</SelectItem>
                   <SelectItem value="received">Received</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={paymentStatusFilter} onValueChange={setPaymentStatusFilter}>
+                <SelectTrigger className="w-full xl:w-40">
+                  <SelectValue placeholder="Payment status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Payments</SelectItem>
+                  <SelectItem value="pending">Pending</SelectItem>
+                  <SelectItem value="partial">Partial</SelectItem>
+                  <SelectItem value="paid">Paid</SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={vendorFilter} onValueChange={setVendorFilter}>
+                <SelectTrigger className="w-full xl:w-48">
+                  <SelectValue placeholder="Filter by vendor" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Vendors</SelectItem>
+                  {vendors.map(vendor => (
+                    <SelectItem key={vendor.id} value={vendor.id}>
+                      {vendor.name}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
               <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
@@ -641,6 +874,7 @@ export default function PurchaseOrders() {
                 <TableHead>Order Date</TableHead>
                 <TableHead>Expected Delivery</TableHead>
                 <TableHead>Status</TableHead>
+                <TableHead>Payment Status</TableHead>
                 <TableHead>Total Amount</TableHead>
                 <TableHead>Actions</TableHead>
               </TableRow>
@@ -648,7 +882,7 @@ export default function PurchaseOrders() {
             <TableBody>
               {filteredOrders.length === 0 ? (
                 <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground">
+                  <TableCell colSpan={8} className="text-center text-muted-foreground">
                     No purchase orders found
                   </TableCell>
                 </TableRow>
@@ -664,9 +898,42 @@ export default function PurchaseOrders() {
                         : 'Not set'}
                     </TableCell>
                     <TableCell>{getStatusBadge(order.status)}</TableCell>
+                    <TableCell>
+                      <div 
+                        className="flex items-center gap-2 cursor-pointer hover:opacity-80 transition-opacity"
+                        onClick={() => openPaymentDialog(order)}
+                        title="Click to update payment status"
+                      >
+                        <div className="flex flex-col gap-1">
+                          <div className="flex items-center gap-2">
+                            {getPaymentStatusBadge(order.payment_status || 'pending')}
+                            {order.payment_method && (
+                              <span className="text-xs text-muted-foreground">
+                                ({order.payment_method.replace('_', ' ')})
+                              </span>
+                            )}
+                            <Pencil className="h-3 w-3 text-muted-foreground" />
+                          </div>
+                          {order.payment_status === 'partial' && (
+                            <div className="text-xs text-muted-foreground">
+                              Paid: ₹{Number(order.paid_amount || 0).toFixed(2)} / Pending: ₹{(Number(order.total_amount) - Number(order.paid_amount || 0)).toFixed(2)}
+                            </div>
+                          )}
+                        </div>
+                      </div>
+                    </TableCell>
                     <TableCell>₹{Number(order.total_amount).toFixed(2)}</TableCell>
                     <TableCell>
-                      <div className="flex gap-2">
+                      <div className="flex gap-2 flex-wrap">
+                        <Button
+                          variant={order.payment_status === 'pending' ? 'default' : 'outline'}
+                          size="sm"
+                          onClick={() => openPaymentDialog(order)}
+                          className="gap-1"
+                        >
+                          <DollarSign className="h-4 w-4" />
+                          <span className="hidden xl:inline">Payment</span>
+                        </Button>
                         {order.status !== 'received' && order.status !== 'cancelled' && (
                           <>
                             <Button
@@ -893,6 +1160,112 @@ export default function PurchaseOrders() {
               <Button onClick={handleUpdateOrder}>Update Purchase Order</Button>
             </div>
           </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* Payment Dialog */}
+      <Dialog open={isPaymentDialogOpen} onOpenChange={setIsPaymentDialogOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>Update Payment Status</DialogTitle>
+          </DialogHeader>
+          {selectedPaymentOrder && (
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <div className="text-sm text-muted-foreground">
+                  <div>PO Number: <span className="font-medium text-foreground">{selectedPaymentOrder.po_number}</span></div>
+                  <div>Vendor: <span className="font-medium text-foreground">{selectedPaymentOrder.vendor?.name}</span></div>
+                  <div>Total Amount: <span className="font-medium text-foreground">₹{Number(selectedPaymentOrder.total_amount).toFixed(2)}</span></div>
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label>Payment Status *</Label>
+                <Select 
+                  value={paymentForm.payment_status} 
+                  onValueChange={(value) => setPaymentForm(prev => ({ ...prev, payment_status: value as PaymentStatus }))}
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select payment status" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="pending">Pending</SelectItem>
+                    <SelectItem value="partial">Partial</SelectItem>
+                    <SelectItem value="paid">Paid</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {paymentForm.payment_status !== 'pending' && (
+                <>
+                  {paymentForm.payment_status === 'partial' && (
+                    <div className="space-y-2">
+                      <Label>Paid Amount *</Label>
+                      <Input
+                        type="number"
+                        step="0.01"
+                        min="0"
+                        max={selectedPaymentOrder.total_amount}
+                        placeholder="Enter paid amount"
+                        value={paymentForm.paid_amount}
+                        onChange={(e) => setPaymentForm(prev => ({ ...prev, paid_amount: parseFloat(e.target.value) || 0 }))}
+                      />
+                      <div className="text-sm text-muted-foreground">
+                        <div>Total Amount: ₹{Number(selectedPaymentOrder.total_amount).toFixed(2)}</div>
+                        <div>Pending Amount: ₹{(Number(selectedPaymentOrder.total_amount) - paymentForm.paid_amount).toFixed(2)}</div>
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-2">
+                    <Label>Payment Method *</Label>
+                    <Select 
+                      value={paymentForm.payment_method || undefined} 
+                      onValueChange={(value) => setPaymentForm(prev => ({ ...prev, payment_method: value as PaymentMethod }))}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select payment method" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="cash">Cash</SelectItem>
+                        <SelectItem value="bank_transfer">Bank Transfer</SelectItem>
+                        <SelectItem value="upi">UPI</SelectItem>
+                        <SelectItem value="cheque">Cheque</SelectItem>
+                        <SelectItem value="card">Card</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Payment Date</Label>
+                    <Input
+                      type="date"
+                      value={paymentForm.payment_date}
+                      onChange={(e) => setPaymentForm(prev => ({ ...prev, payment_date: e.target.value }))}
+                    />
+                  </div>
+
+                  <div className="space-y-2">
+                    <Label>Payment Reference</Label>
+                    <Input
+                      placeholder="Transaction ID, Cheque Number, etc."
+                      value={paymentForm.payment_reference}
+                      onChange={(e) => setPaymentForm(prev => ({ ...prev, payment_reference: e.target.value }))}
+                    />
+                  </div>
+                </>
+              )}
+
+              <div className="flex justify-end gap-2 pt-4">
+                <Button variant="outline" onClick={() => setIsPaymentDialogOpen(false)}>
+                  Cancel
+                </Button>
+                <Button onClick={handleUpdatePayment}>
+                  Update Payment
+                </Button>
+              </div>
+            </div>
+          )}
         </DialogContent>
       </Dialog>
     </div>

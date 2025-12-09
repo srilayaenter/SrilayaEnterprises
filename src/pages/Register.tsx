@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate, useLocation, Link } from 'react-router-dom';
 import { supabase } from '@/db/supabase';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -7,6 +7,10 @@ import { Label } from '@/components/ui/label';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
 import { Leaf } from 'lucide-react';
+import {
+  logSecurityEventWrapper,
+  createActiveSession,
+} from '@/utils/security';
 
 export default function Register() {
   const [email, setEmail] = useState('');
@@ -15,7 +19,10 @@ export default function Register() {
   const [fullName, setFullName] = useState('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { toast } = useToast();
+
+  const from = (location.state as any)?.from || '/';
 
   const handleRegister = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -23,7 +30,7 @@ export default function Register() {
     if (password !== confirmPassword) {
       toast({
         title: 'Passwords do not match',
-        description: 'Please make sure your passwords match',
+        description: 'Please ensure both passwords are identical',
         variant: 'destructive',
       });
       return;
@@ -54,11 +61,22 @@ export default function Register() {
       if (error) throw error;
 
       if (data.user) {
+        // Log registration security event
+        await logSecurityEventWrapper(
+          data.user.id,
+          'registration',
+          'New user registration',
+          { email, full_name: fullName }
+        );
+
+        // Create active session
+        await createActiveSession(data.user.id);
+
         toast({
-          title: 'Account created!',
+          title: 'Account created successfully!',
           description: 'Welcome to Srilaya Enterprises',
         });
-        navigate('/');
+        navigate(from);
       }
     } catch (error: any) {
       toast({
@@ -82,7 +100,7 @@ export default function Register() {
           </div>
           <CardTitle className="text-2xl font-bold">Create Account</CardTitle>
           <CardDescription>
-            Join Srilaya Enterprises for organic goodness
+            Join Srilaya Enterprises for organic health
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -92,7 +110,7 @@ export default function Register() {
               <Input
                 id="fullName"
                 type="text"
-                placeholder="John Doe"
+                placeholder="Enter your full name"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
                 required
@@ -132,13 +150,13 @@ export default function Register() {
               />
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading ? 'Creating account...' : 'Sign Up'}
+              {loading ? 'Creating...' : 'Sign Up'}
             </Button>
           </form>
           <div className="mt-4 text-center text-sm text-muted-foreground">
             Already have an account?{' '}
             <Link to="/login" className="text-primary hover:underline font-medium">
-              Sign in
+              Sign in now
             </Link>
           </div>
         </CardContent>
